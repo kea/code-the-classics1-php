@@ -1,0 +1,30 @@
+{
+    "name": "kea/code-the-classics-php",
+    "description": "Porting in PHP of 'Code the Classics - Volume 1' games thanks to php-sdl extension",
+    "type": "project",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Manuel Baldassarri",
+            "email": "manuel+github@baldassarri.me"
+        }
+    ],
+    "require": {
+        "php": "^7.4.*",
+        "ext-sdl": "*"
+    },
+    "autoload": {
+        "psr-4": {
+            "PhpGame\\": "src/PhpGame",
+            "Boing\\": "src/Boing"
+        }
+    },
+    "require-dev": {
+        "phpstan/phpstan": "^0.12.25"
+    },
+    "scripts": {
+        "analyse": "./vendor/bin/phpstan analyse src --level=max --no-progress -vvv",
+        "cs-check": "./vendor/bin/php-cs-fixer fix ./ --dry-run --verbose",
+        "cs-fix": "./vendor/bin/php-cs-fixer fix --config=./.php_cs ./src/ ./tests"
+    }
+}
