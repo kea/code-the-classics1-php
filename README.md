@@ -43,3 +43,9 @@ composer install
 ```
 php src/Boing/boing.php
 ```
+
+Menu selection <kbd>Up</kbd>, <kbd>Down</kbd> and <kbd>Space</kbd> to confirm.
+
+Player 1 keys: <kbd>Up</kbd> or <kbd>a</kbd> and <kbd>Down</kbd> or <kbd>z</kbd>
+
+Player 2 keys: <kbd>k</kbd> and <kbd>m</kbd>

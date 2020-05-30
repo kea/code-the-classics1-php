@@ -4,6 +4,8 @@ namespace Boing;
 
 use PhpGame\SDL\Screen;
 
+define('MAX_AI_SPEED', 200);
+
 class GameStarter implements DrawableInterface
 {
     private const MENU = 0;
@@ -13,6 +15,7 @@ class GameStarter implements DrawableInterface
     private Screen $screen;
     private Game $game;
     private int $playersCount = 1;
+    private array $keyState;
 
     public function __construct(Screen $screen)
     {
@@ -33,13 +36,40 @@ class GameStarter implements DrawableInterface
         return min(MAX_AI_SPEED, max(-MAX_AI_SPEED, $targetY - $bat->y));
     }
 
+    public function player1Controller(Bat $bat): float
+    {
+        if (isset($this->keyState[\SDL_SCANCODE_UP]) ||
+            isset($this->keyState[\SDL_SCANCODE_A])) {
+            return -150;
+        }
+        if (isset($this->keyState[\SDL_SCANCODE_DOWN]) ||
+            isset($this->keyState[\SDL_SCANCODE_Z])) {
+            return 150;
+        }
+
+        return 0;
+    }
+
+    public function player2Controller(Bat $bat): float
+    {
+        if (isset($this->keyState[\SDL_SCANCODE_K])) {
+            return -150;
+        }
+        if (isset($this->keyState[\SDL_SCANCODE_M])) {
+            return 150;
+        }
+
+        return 0;
+    }
+
     public function update(float $deltaTime): void
     {
         $this->game->update($deltaTime);
-        if ($this->state === self::MENU) {
-            $numKeys = 0;
-            $keyState = array_flip(\SDL_GetKeyboardState($numKeys, false));
+        $numKeys = 0;
+        $keyState = array_flip(\SDL_GetKeyboardState($numKeys, false));
+        $this->keyState = $keyState;
 
+        if ($this->state === self::MENU) {
             if (isset($keyState[\SDL_SCANCODE_UP])) {
                 $this->playersCount = 1;
             }
@@ -47,7 +77,8 @@ class GameStarter implements DrawableInterface
                 $this->playersCount = 2;
             }
             if (isset($keyState[\SDL_SCANCODE_SPACE])) {
-                $this->game = new \Boing\Game($this->screen, [$this, 'ai'], [$this, 'ai']);
+                $player2Controller = $this->playersCount === 2 ? [$this, 'player2Controller'] : [$this, 'ai'];
+                $this->game = new \Boing\Game($this->screen, [$this, 'player1Controller'], $player2Controller);
                 $this->state = self::PLAY;
             }
         }

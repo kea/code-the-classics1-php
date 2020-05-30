@@ -5,8 +5,6 @@ namespace Boing;
 
 use PhpGame\SDL\Screen;
 
-define('MAX_AI_SPEED', 100);
-
 class Bat implements DrawableInterface
 {
     private int $score = 0;

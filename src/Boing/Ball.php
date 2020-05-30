@@ -11,7 +11,7 @@ class Ball implements DrawableInterface
     private float $y = 0;
     private float $dx = 0;
     private float $dy = 0;
-    private int $speed = 120;
+    private int $speed = 200;
 
     private int $fieldWidth;
     private int $fieldHalfWidth;
@@ -77,7 +77,7 @@ class Ball implements DrawableInterface
                 $this->dy = min(max($this->dy, -1), 1);
                 [$this->dx, $this->dy] = $this->normalised($this->dx, $this->dy);
                 $game->impacts[] = new Impact($this->x - $new_dir_x * 10, $this->y);
-                $this->speed += 5;
+                $this->speed += 15;
                 $game->aiOffset = random_int(-10, 10);
                 $bat->time = 10;
 
