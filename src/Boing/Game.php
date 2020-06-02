@@ -18,24 +18,23 @@ class Game implements DrawableInterface
     private int $fieldWidth;
     private int $fieldHeight;
     private ManualTimer $ballOutTimer;
-    private Screen $screen;
     private SoundManager $soundManager;
     private int $scoringPlayer;
 
     public function __construct(
-        Screen $screen,
+        int $fieldWidth,
+        int $fieldHeight,
         callable $control1,
         callable $control2
     )
     {
-        $this->fieldWidth = $screen->getWidth();
-        $this->fieldHeight = $screen->getHeight();
+        $this->fieldWidth = $fieldWidth;
+        $this->fieldHeight = $fieldHeight;
         $this->bats = [new Bat(0, $control1, $this), new Bat(1, $control2, $this)];
         $this->ball = new Ball(-1, $this->fieldWidth, $this->fieldHeight, $this);
         $this->impacts = [];
         $this->aiOffset = 0;
         $this->ballOutTimer = new ManualTimer();
-        $this->screen = $screen;
     }
 
     public function update(float $deltaTime): void
@@ -57,22 +56,22 @@ class Game implements DrawableInterface
     public function draw(Screen $screen)
     {
         $name = __DIR__.'/images/table.png';
-        $this->screen->drawImage($name, 0, 0, $this->fieldWidth, $this->fieldHeight);
+        $screen->drawImage($name, 0, 0, $this->fieldWidth, $this->fieldHeight);
 
         if ($this->ballOutTimer->isStarted()) {
             $name = __DIR__.'/images/effect'.(1 - $this->scoringPlayer).'.png';
-            $this->screen->drawImage($name, 0, 0, $this->fieldWidth, $this->fieldHeight);
+            $screen->drawImage($name, 0, 0, $this->fieldWidth, $this->fieldHeight);
         }
 
         $drawableObjects = array_merge($this->bats, [$this->ball], $this->impacts);
         foreach ($drawableObjects as $object) {
-            $object->draw($this->screen);
+            $object->draw($screen);
         }
 
-        $this->drawScores();
+        $this->drawScores($screen);
     }
 
-    private function drawScores(): void
+    private function drawScores(Screen $screen): void
     {
         for ($p = 0; $p < 2; $p++) {
             $score = sprintf("%02d", $this->bats[$p]->score());
@@ -83,7 +82,7 @@ class Game implements DrawableInterface
                 }
                 $image = "digit".$colour.$score[$i];
                 $name = __DIR__.'/images/'.$image.'.png';
-                $this->screen->drawImage($name, 255 + (160 * $p) + ($i * 55), 46, 75, 75);
+                $screen->drawImage($name, 255 + (160 * $p) + ($i * 55), 46, 75, 75);
             }
         }
     }
