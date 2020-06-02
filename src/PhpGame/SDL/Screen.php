@@ -3,6 +3,7 @@
 namespace PhpGame\SDL;
 
 use Boing\DrawableInterface;
+use PhpGame\Keyboard;
 
 class Screen
 {
@@ -22,7 +23,7 @@ class Screen
         $this->title = $title;
 
         \SDL_Init(SDL_INIT_VIDEO);
-        $windowsAttribute = \SDL_Window::SHOWN|\SDL_Window::RESIZABLE;
+        $windowsAttribute = \SDL_Window::SHOWN | \SDL_Window::RESIZABLE;
         $this->window = new \SDL_Window(
             $title,
             \SDL_Window::POS_UNDEFINED,
@@ -38,24 +39,21 @@ class Screen
         \SDL_RenderPresent($this->renderer);
     }
 
-    public function run(DrawableInterface $game)
+    public function run(DrawableInterface $game, Keyboard $keyboard)
     {
         $event = new \SDL_Event;
         $ticker = new Ticker();
-        while(true) {
+        while (true) {
             $deltaTime = $ticker->tick();
 
-            if(\SDL_PollEvent($event)) {
+            if (\SDL_PollEvent($event)) {
                 switch ($event->type) {
                     case SDL_QUIT:
                         return;
                         break;
                 }
             }
-
-            $numKeys = 0;
-            $state = \SDL_GetKeyboardState($numKeys, false);
-            $this->handleInput($state);
+            $keyboard->update();
 
             \SDL_RenderClear($this->renderer);
 
@@ -82,22 +80,8 @@ class Screen
             $this->textures[$name] = Texture::loadFromFile($name, $this->renderer);
         }
 
-        if (\SDL_RenderCopy($this->renderer, $this->textures[$name]->getContent(), NULL, $destinationRect) !== 0) {
+        if (\SDL_RenderCopy($this->renderer, $this->textures[$name]->getContent(), null, $destinationRect) !== 0) {
             echo \SDL_GetError(), PHP_EOL;
-        }
-    }
-
-    private function handleInput($state)
-    {
-        $this->input = new \stdClass();
-        if (isset($state[SDL_SCANCODE_UP])) {
-            $this->input->up = true;
-        }
-        if (isset($state[SDL_SCANCODE_DOWN])) {
-            $this->input->down = true;
-        }
-        if (isset($state[SDL_SCANCODE_SPACE])) {
-            $this->input->space = true;
         }
     }
 

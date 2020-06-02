@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace Boing;
 
 use PhpGame\SDL\Screen;
+use PhpGame\SoundManager;
 
 class Game implements DrawableInterface
 {
@@ -18,8 +19,8 @@ class Game implements DrawableInterface
     private int $fieldHeight;
     private ManualTimer $ballOutTimer;
     private Screen $screen;
+    private SoundManager $soundManager;
     private int $scoringPlayer;
-    private int $volume = 0;
 
     public function __construct(
         Screen $screen,
@@ -89,12 +90,17 @@ class Game implements DrawableInterface
 
     public function playSound($name, $count = 1)
     {
-        if ($this->volume === 0) {
+        if ($this->soundManager === null) {
+            return;
+        }
+
+        if ($this->soundManager->getVolume() === 0) {
             return;
         }
 
         $name .= random_int(0, $count - 1);
-//        $this->sounds->play($name);
+
+        $this->soundManager->play($name.'.ogg');
     }
 
     private function ballOut(float $deltaTime): void
@@ -124,5 +130,13 @@ class Game implements DrawableInterface
     public function getScoringPlayer(): int
     {
         return $this->scoringPlayer;
+    }
+
+    /**
+     * @param SoundManager $soundManager
+     */
+    public function setSoundManager(SoundManager $soundManager): void
+    {
+        $this->soundManager = $soundManager;
     }
 }

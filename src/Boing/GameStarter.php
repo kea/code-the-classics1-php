@@ -2,7 +2,9 @@
 
 namespace Boing;
 
+use PhpGame\Keyboard;
 use PhpGame\SDL\Screen;
+use PhpGame\SoundManager;
 
 define('MAX_AI_SPEED', 200);
 
@@ -10,18 +12,22 @@ class GameStarter implements DrawableInterface
 {
     private const MENU = 0;
     private const PLAY = 1;
+    private const GAME_OVER = 2;
 
     private int $state;
     private Screen $screen;
     private Game $game;
+    private SoundManager $soundManager;
+    private Keyboard $keyborad;
     private int $playersCount = 1;
-    private array $keyState;
+    private Keyboard $keyboard;
 
-    public function __construct(Screen $screen)
+    public function __construct(Screen $screen, SoundManager $soundManager, Keyboard $keyboard)
     {
-        $this->state = self::MENU;
-        $this->game = new \Boing\Game($screen, [$this, 'ai'], [$this, 'ai']);
         $this->screen = $screen;
+        $this->soundManager = $soundManager;
+        $this->startMenu();
+        $this->keyboard = $keyboard;
     }
 
     public function ai(Bat $bat): float
@@ -38,12 +44,12 @@ class GameStarter implements DrawableInterface
 
     public function player1Controller(Bat $bat): float
     {
-        if (isset($this->keyState[\SDL_SCANCODE_UP]) ||
-            isset($this->keyState[\SDL_SCANCODE_A])) {
+        if ($this->keyboard->getKey(\SDL_SCANCODE_UP) ||
+            $this->keyboard->getKey(\SDL_SCANCODE_A)) {
             return -150;
         }
-        if (isset($this->keyState[\SDL_SCANCODE_DOWN]) ||
-            isset($this->keyState[\SDL_SCANCODE_Z])) {
+        if ($this->keyboard->getKey(\SDL_SCANCODE_DOWN) ||
+            $this->keyboard->getKey(\SDL_SCANCODE_Z)) {
             return 150;
         }
 
@@ -52,10 +58,10 @@ class GameStarter implements DrawableInterface
 
     public function player2Controller(Bat $bat): float
     {
-        if (isset($this->keyState[\SDL_SCANCODE_K])) {
+        if ($this->keyboard->getKey(\SDL_SCANCODE_K)) {
             return -150;
         }
-        if (isset($this->keyState[\SDL_SCANCODE_M])) {
+        if ($this->keyboard->getKey(\SDL_SCANCODE_M)) {
             return 150;
         }
 
@@ -64,24 +70,36 @@ class GameStarter implements DrawableInterface
 
     public function update(float $deltaTime): void
     {
-        $this->game->update($deltaTime);
-        $numKeys = 0;
-        $keyState = array_flip(\SDL_GetKeyboardState($numKeys, false));
-        $this->keyState = $keyState;
-
+        if ($this->state === self::GAME_OVER) {
+            if (!$this->keyboard->getKeyDown(\SDL_SCANCODE_SPACE)) {
+                return;
+            }
+            $this->startMenu();
+            return;
+        }
         if ($this->state === self::MENU) {
-            if (isset($keyState[\SDL_SCANCODE_UP])) {
+            if ($this->keyboard->getKeyDown(\SDL_SCANCODE_UP)) {
                 $this->playersCount = 1;
+                $this->soundManager->play('up');
             }
-            if (isset($keyState[\SDL_SCANCODE_DOWN])) {
+            if ($this->keyboard->getKeyDown(\SDL_SCANCODE_DOWN)) {
                 $this->playersCount = 2;
+                $this->soundManager->play('down');
             }
-            if (isset($keyState[\SDL_SCANCODE_SPACE])) {
+            if ($this->keyboard->getKeyDown(\SDL_SCANCODE_SPACE)) {
                 $player2Controller = $this->playersCount === 2 ? [$this, 'player2Controller'] : [$this, 'ai'];
                 $this->game = new \Boing\Game($this->screen, [$this, 'player1Controller'], $player2Controller);
+                $this->game->setSoundManager($this->soundManager);
                 $this->state = self::PLAY;
             }
         }
+        if ($this->state === self::PLAY) {
+            if (max($this->game->bats[0]->score(), $this->game->bats[1]->score()) > 2) {
+                $this->state = self::GAME_OVER;
+            }
+        }
+
+        $this->game->update($deltaTime);
     }
 
     public function draw(Screen $screen)
@@ -90,5 +108,16 @@ class GameStarter implements DrawableInterface
         if ($this->state === self::MENU) {
             $this->screen->drawImage(__DIR__."/images/menu".($this->playersCount - 1).".png", 0, 0, 800, 480);
         }
+        if ($this->state === self::GAME_OVER) {
+            $this->screen->drawImage(__DIR__."/images/over.png", 0, 0, 800, 480);
+        }
+    }
+
+    private function startMenu(): void
+    {
+        $this->state = self::MENU;
+        $this->game = new \Boing\Game($this->screen, [$this, 'ai'], [$this, 'ai']);
+        $this->game->setSoundManager($this->soundManager);
+        $this->playersCount = 1;
     }
 }

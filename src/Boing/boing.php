@@ -2,8 +2,12 @@
 
 include __DIR__.'/../../vendor/autoload.php';
 
-$s = new \PhpGame\SDL\Screen(800, 480, 'Boing');
+$screen = new \PhpGame\SDL\Screen(800, 480, 'Boing');
+$sound = new \PhpGame\SoundManager(44100, MIX_DEFAULT_FORMAT, 2, 2048);
+$sound->setBaseAssetsPath(__DIR__."/sounds/");
 
-$gameStarter = new \Boing\GameStarter($s);
+$keyboard = new \PhpGame\Keyboard();
 
-$s->run($gameStarter);
+$gameStarter = new \Boing\GameStarter($screen, $sound, $keyboard);
+
+$screen->run($gameStarter, $keyboard);

@@ -10,8 +10,10 @@
         }
     ],
     "require": {
-        "php": "^7.4.*",
-        "ext-sdl": "*"
+        "php": "^7.4",
+        "ext-sdl": "*",
+        "ext-sdl_image": "*",
+        "ext-sdl_mixer": "*"
     },
     "autoload": {
         "psr-4": {
