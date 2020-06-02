@@ -6,7 +6,8 @@ class Screen
 {
     private int $width;
     private int $height;
-    private $window;
+    private \SDL_Window $window;
+    /** @var resource */
     private $renderer;
     /** @var array|Texture[] */
     private array $textures = [];
@@ -42,7 +43,7 @@ class Screen
         \SDL_Quit();
     }
 
-    public function drawImage(string $name, $posX, $posY, $width, $height): void
+    public function drawImage(string $name, int $posX, int $posY, int $width, int $height): void
     {
         $destinationRect = new \SDL_Rect($posX, $posY, $width, $height);
 

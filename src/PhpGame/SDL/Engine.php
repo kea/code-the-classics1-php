@@ -27,7 +27,6 @@ class Engine
                 switch ($event->type) {
                     case SDL_QUIT:
                         return;
-                        break;
                 }
             }
             $this->keyboard->update();

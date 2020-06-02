@@ -63,6 +63,9 @@ class Sprite
         return new \SDL_Rect($this->position->x(), $this->position->y(), $this->size->x(), $this->size->y());
     }
 
+    /**
+     * @param resource $renderer
+     */
     public function render($renderer): void
     {
         if (\SDL_RenderCopy($renderer, $this->texture->getContent(), NULL, $this->getBoundedRect()) !== 0) {

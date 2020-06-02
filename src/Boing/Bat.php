@@ -8,6 +8,7 @@ use PhpGame\SDL\Screen;
 class Bat implements DrawableInterface
 {
     private int $score = 0;
+    /** @var callable */
     private $moveFunction;
     private int $playerNumber;
     public float $time = .0;
@@ -47,7 +48,7 @@ class Bat implements DrawableInterface
     public function draw(Screen $screen): void
     {
         $name = __DIR__.'/images/'.$this->image.'.png';
-        $screen->drawImage($name, $this->x - 160/2, $this->y - 160/2, 160, 160);
+        $screen->drawImage($name, (int)($this->x - 160/2), (int)($this->y - 160/2), 160, 160);
     }
 
     public function incScore(): void

@@ -4,6 +4,7 @@ namespace Boing;
 
 class Animation
 {
+    /** @var array<string> */
     private array $images;
     private int $framePerSecond;
     private float $startTime;
@@ -13,9 +14,9 @@ class Animation
 
     /**
      * Animation constructor.
-     * @param array $images
-     * @param int   $framePerSecond
-     * @param bool  $loop
+     * @param array<string> $images
+     * @param int           $framePerSecond
+     * @param bool          $loop
      */
     public function __construct(array $images, int $framePerSecond = 12, bool $loop = false)
     {

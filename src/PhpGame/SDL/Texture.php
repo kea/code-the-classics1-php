@@ -6,6 +6,7 @@ use PhpGame\AssetLoadException;
 
 class Texture
 {
+    /** @var resource */
     private $SDLTexture;
 
     private function __construct()
@@ -21,10 +22,9 @@ class Texture
 
 
     /**
-     * @param string $imageFile
-     * @param        $renderer
+     * @param string   $imageFile
+     * @param resource $renderer
      * @return Texture
-     * @throws AssetLoadException
      */
     public static function loadFromFile(string $imageFile, $renderer): Texture
     {
@@ -35,6 +35,9 @@ class Texture
         return $texture;
     }
 
+    /**
+     * @return resource
+     */
     public function getContent()
     {
         return $this->SDLTexture;

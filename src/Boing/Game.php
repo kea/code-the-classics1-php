@@ -18,7 +18,7 @@ class Game implements DrawableInterface
     private int $fieldWidth;
     private int $fieldHeight;
     private ManualTimer $ballOutTimer;
-    private SoundManager $soundManager;
+    private ?SoundManager $soundManager;
     private int $scoringPlayer;
 
     public function __construct(
@@ -87,7 +87,7 @@ class Game implements DrawableInterface
         }
     }
 
-    public function playSound($name, $count = 1): void
+    public function playSound(string $name, int $count = 1): void
     {
         if ($this->soundManager === null) {
             return;

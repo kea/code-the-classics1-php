@@ -56,7 +56,7 @@ class Ball implements DrawableInterface
         }
     }
 
-    public function bounceToBat(float $originalX)
+    public function bounceToBat(float $originalX): void
     {
         $game = $this->gameToBeRemoved;
         if (abs($this->x - $this->fieldHalfWidth) >= 344 && abs($originalX - $this->fieldHalfWidth) < 344) {
@@ -103,9 +103,14 @@ class Ball implements DrawableInterface
     public function draw(Screen $screen): void
     {
         $name = __DIR__.'/images/ball.png';
-        $screen->drawImage($name, $this->x - 24/2, $this->y - 24/2, 24, 24);
+        $screen->drawImage($name, (int)($this->x - 24/2), (int)($this->y - 24/2), 24, 24);
     }
 
+    /**
+     * @param float $x
+     * @param float $y
+     * @return array<float>
+     */
     private function normalised(float $x, float $y): array
     {
         $length = hypot($x, $y);

@@ -4,19 +4,29 @@ namespace PhpGame;
 
 class SpriteGrid
 {
-    /** @var Sprite[] */
+    /** @var array<int, array<int, Sprite>> */
     private array $grid;
     /** @var SDL\Texture[] */
     private array $textures;
     private int $cellWidth = 70;
     private int $cellHeight = 70;
 
+    /**
+     * SpriteGrid constructor.
+     * @param array<string>                  $spriteNames
+     * @param array<int, array<int, string>> $grid
+     * @param resource                       $renderer
+     * @throws AssetLoadException
+     */
     public function __construct(array $spriteNames, array $grid, $renderer)
     {
         $this->loadTextures($spriteNames, $renderer);
         $this->setGrid($grid);
     }
 
+    /**
+     * @param resource $renderer
+     */
     public function render($renderer): void
     {
         foreach ($this->grid as $row) {
@@ -28,6 +38,9 @@ class SpriteGrid
         }
     }
 
+    /**
+     * @param array<int, array<int, string>> $grid
+     */
     public function setGrid(array $grid): void
     {
         $this->grid = [];
@@ -53,8 +66,8 @@ class SpriteGrid
     }
 
     /**
-     * @param array $texturesMap
-     * @param       $renderer
+     * @param array<string, string> $texturesMap
+     * @param resource              $renderer
      * @throws AssetLoadException
      */
     private function loadTextures(array $texturesMap, $renderer): void

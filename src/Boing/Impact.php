@@ -41,7 +41,13 @@ class Impact implements DrawableInterface
             return;
         }
 
-        $screen->drawImage($this->animation->getCurrentFrame(), $this->x - 75 / 2, $this->y - 75 / 2, 75, 75);
+        $screen->drawImage(
+            $this->animation->getCurrentFrame(),
+            (int)($this->x - 75 / 2),
+            (int)($this->y - 75 / 2),
+            75,
+            75
+        );
     }
 }
 

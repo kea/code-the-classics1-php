@@ -11,14 +11,14 @@ class ManualTimer
      */
     private $callBack;
 
-    public function start(float $time, callable $callBack = null)
+    public function start(float $time, callable $callBack = null): void
     {
         $this->timeLeft = $time;
         $this->isStarted = true;
         $this->callBack = $callBack;
     }
 
-    public function decreaseTime(float $timeElapsed)
+    public function decreaseTime(float $timeElapsed): void
     {
         $this->timeLeft -= $timeElapsed;
         if ($this->timeLeft < 0) {

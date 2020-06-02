@@ -4,11 +4,14 @@ namespace PhpGame;
 
 class Keyboard
 {
+    /** @var array<int> */
     private array $keys = [];
+    /** @var array<int> */
     private array $up = [];
+    /** @var array<int> */
     private array $down = [];
 
-    public function update()
+    public function update(): void
     {
         $numkeys = 0;
         $keys = array_flip(SDL_GetKeyboardState($numkeys, false));
@@ -23,7 +26,7 @@ class Keyboard
      * @param int $key
      * @return bool
      */
-    public function getKey(int $key)
+    public function getKey(int $key): bool
     {
         return isset($this->keys[$key]);
     }
@@ -34,7 +37,7 @@ class Keyboard
      * @param int $key
      * @return bool
      */
-    public function getKeyDown(int $key)
+    public function getKeyDown(int $key): bool
     {
         return isset($this->down[$key]);
     }
@@ -45,7 +48,7 @@ class Keyboard
      * @param int $key
      * @return bool
      */
-    public function getKeyUp(int $key)
+    public function getKeyUp(int $key): bool
     {
         return isset($this->up[$key]);
     }
