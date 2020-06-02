@@ -70,7 +70,7 @@ class Screen
         \SDL_RenderClear($this->renderer);
     }
 
-    public function render()
+    public function render(): void
     {
         \SDL_RenderPresent($this->renderer);
     }

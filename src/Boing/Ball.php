@@ -95,12 +95,12 @@ class Ball implements DrawableInterface
         }
     }
 
-    public function out()
+    public function out(): bool
     {
         return $this->x < 0 || $this->x > $this->fieldWidth;
     }
 
-    public function draw(Screen $screen)
+    public function draw(Screen $screen): void
     {
         $name = __DIR__.'/images/ball.png';
         $screen->drawImage($name, $this->x - 24/2, $this->y - 24/2, 24, 24);

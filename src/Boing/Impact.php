@@ -35,7 +35,7 @@ class Impact implements DrawableInterface
     {
     }
 
-    public function draw(Screen $screen)
+    public function draw(Screen $screen): void
     {
         if (!$this->animation->isRunning()) {
             return;

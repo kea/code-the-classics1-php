@@ -16,7 +16,7 @@ class Engine
         $this->keyboard = $keyboard;
     }
 
-    public function run(DrawableInterface $game)
+    public function run(DrawableInterface $game): void
     {
         $event = new \SDL_Event;
         $ticker = new Ticker();

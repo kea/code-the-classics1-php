@@ -103,7 +103,7 @@ class GameStarter implements DrawableInterface
         $this->game->update($deltaTime);
     }
 
-    public function draw(Screen $screen)
+    public function draw(Screen $screen): void
     {
         $this->game->draw($screen);
         if ($this->state === self::MENU) {

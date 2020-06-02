@@ -44,7 +44,7 @@ class Bat implements DrawableInterface
         $this->image = "bat".$this->playerNumber.$frame;
     }
 
-    public function draw(Screen $screen)
+    public function draw(Screen $screen): void
     {
         $name = __DIR__.'/images/'.$this->image.'.png';
         $screen->drawImage($name, $this->x - 160/2, $this->y - 160/2, 160, 160);

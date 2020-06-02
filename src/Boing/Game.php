@@ -53,7 +53,7 @@ class Game implements DrawableInterface
         $this->ballOut($deltaTime);
     }
 
-    public function draw(Screen $screen)
+    public function draw(Screen $screen): void
     {
         $name = __DIR__.'/images/table.png';
         $screen->drawImage($name, 0, 0, $this->fieldWidth, $this->fieldHeight);
@@ -87,7 +87,7 @@ class Game implements DrawableInterface
         }
     }
 
-    public function playSound($name, $count = 1)
+    public function playSound($name, $count = 1): void
     {
         if ($this->soundManager === null) {
             return;
