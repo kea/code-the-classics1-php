@@ -25,6 +25,7 @@ phpize
 ./configure
 make
 make install
+cd ..
 ```
 
 Install the Php-SDL-image extensions from source:
@@ -35,6 +36,7 @@ phpize
 ./configure
 make
 make install
+cd ..
 ```
 
 Install the Php-SDL-mixer extensions from source:
@@ -45,6 +47,7 @@ phpize
 ./configure
 make
 make install
+cd ..
 ```
 
 Enable the three extensions on your `php.ini` file or where your enable php extensions.
@@ -52,8 +55,8 @@ Enable the three extensions on your `php.ini` file or where your enable php exte
 Then you can clone this repo e run composer to dump autoload:
 
 ```bash
-git clone https://github.com/kea/code-the-classics-php.git
-cd php-sdl
+git clone https://github.com/kea/code-the-classics1-php.git
+cd code-the-classics1-php
 composer install
 ```
 
