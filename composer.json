@@ -16,10 +16,7 @@
         "ext-sdl_mixer": "*"
     },
     "autoload": {
-        "psr-4": {
-            "PhpGame\\": "src/PhpGame",
-            "Boing\\": "src/Boing"
-        }
+        "psr-0": { "": "src/" }
     },
     "require-dev": {
         "phpstan/phpstan": "^0.12.25"

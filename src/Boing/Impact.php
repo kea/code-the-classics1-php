@@ -2,6 +2,7 @@
 
 namespace Boing;
 
+use PhpGame\DrawableInterface;
 use PhpGame\SDL\Screen;
 
 class Impact implements DrawableInterface

@@ -1,6 +1,6 @@
 <?php
 
-namespace Boing;
+namespace PhpGame;
 
 use PhpGame\SDL\Screen;
 

@@ -2,7 +2,7 @@
 
 namespace PhpGame\SDL;
 
-use Boing\DrawableInterface;
+use PhpGame\DrawableInterface;
 use PhpGame\Keyboard;
 
 class Engine

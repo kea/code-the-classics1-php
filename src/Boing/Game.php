@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Boing;
 
+use PhpGame\DrawableInterface;
 use PhpGame\SDL\Screen;
 use PhpGame\SoundManager;
 

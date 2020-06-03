@@ -2,6 +2,7 @@
 
 namespace Boing;
 
+use PhpGame\DrawableInterface;
 use PhpGame\Keyboard;
 use PhpGame\SDL\Screen;
 use PhpGame\SoundManager;
