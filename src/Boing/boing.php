@@ -11,7 +11,7 @@ include __DIR__.'/../../vendor/autoload.php';
 $screen = new Screen(800, 480, 'Boing');
 
 $sound = new SoundManager(44100, MIX_DEFAULT_FORMAT, 2, 2048);
-$sound->setBaseAssetsPath(__DIR__."/sounds/");
+$sound->setBaseAssetsPath(__DIR__);
 
 $keyboard = new Keyboard();
 

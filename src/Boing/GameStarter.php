@@ -30,6 +30,9 @@ class GameStarter implements DrawableInterface
         $this->soundManager = $soundManager;
         $this->startMenu();
         $this->keyboard = $keyboard;
+
+        $soundManager->playMusic("theme.ogg");
+        $soundManager->setMusicVolume(0.3);
     }
 
     public function ai(Bat $bat): float
@@ -82,11 +85,11 @@ class GameStarter implements DrawableInterface
         if ($this->state === self::MENU) {
             if ($this->keyboard->getKeyDown(\SDL_SCANCODE_UP)) {
                 $this->playersCount = 1;
-                $this->soundManager->play('up');
+                $this->soundManager->playSound('up.ogg');
             }
             if ($this->keyboard->getKeyDown(\SDL_SCANCODE_DOWN)) {
                 $this->playersCount = 2;
-                $this->soundManager->play('down');
+                $this->soundManager->playSound('down.ogg');
             }
             if ($this->keyboard->getKeyDown(\SDL_SCANCODE_SPACE)) {
                 $player2Controller = $this->playersCount === 2 ? [$this, 'player2Controller'] : [$this, 'ai'];

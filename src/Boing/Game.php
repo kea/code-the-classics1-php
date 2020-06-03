@@ -94,13 +94,13 @@ class Game implements DrawableInterface
             return;
         }
 
-        if ($this->soundManager->getVolume() === 0) {
+        if ($this->soundManager->getMusicVolume() === 0) {
             return;
         }
 
         $name .= random_int(0, $count - 1);
 
-        $this->soundManager->play($name.'.ogg');
+        $this->soundManager->playSound($name.'.ogg');
     }
 
     private function ballOut(float $deltaTime): void
