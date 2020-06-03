@@ -1,13 +1,21 @@
 :warning: The assets are Creative Commons Attribution-NonCommercial- ShareAlike 3.0 Unported (CC BY-NC-SA 3.0) by [Code the classics Vol. 1](https://wireframe.raspberrypi.org/books/code-the-classics1) :warning: 
 
-# Boing!
+# Code the classics
 
-_Boing_ is a porting in PHP of the first game of [Code the classics Vol. 1](https://wireframe.raspberrypi.org/books/code-the-classics1) originally made in Python.
+This is a porting in PHP of the games of [Code the classics Vol. 1](https://wireframe.raspberrypi.org/books/code-the-classics1) originally made in Python.
 
 It's not a web game with the backend in PHP but a fully PHP game. 
 
 It is possible thanks to the [Php-SDL extension](https://github.com/Ponup/php-sdl).
 You need also two PHP extensions for [SDL_mixer](https://github.com/kea/php-sdl-mixer) (sound) and [SDL_image](https://github.com/kea/php-sdl-image) (multiple image format loader).
+
+# Porting status
+
+- Boing! [Ready, theme music TBD]
+- Cavern [WIP]
+- Infinite bunner [TBD]
+- Myriapod [TBD]
+- Substitute Soccer [TBD]
 
 ## Installation
 
