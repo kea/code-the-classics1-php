@@ -9,8 +9,8 @@ class Animation implements DrawableInterface
     /** @var array<string> */
     private array $images;
     private int $framePerSecond;
-    private float $elapsedTime;
-    private int $frames;
+    private float $elapsedTime = 0;
+    private int $framesCount;
     private bool $loop;
     private bool $isRunning = false;
 
@@ -23,7 +23,7 @@ class Animation implements DrawableInterface
     public function __construct(array $images, int $framePerSecond = 12, bool $loop = false)
     {
         $this->images = $images;
-        $this->frames = count($images);
+        $this->framesCount = count($images);
         $this->framePerSecond = $framePerSecond;
         $this->loop = $loop;
     }
@@ -38,13 +38,13 @@ class Animation implements DrawableInterface
     {
         $frames = floor($this->elapsedTime * $this->framePerSecond);
 
-        if (!$this->loop && $frames >= $this->frames) {
+        if (!$this->loop && $frames >= $this->framesCount) {
             $this->isRunning = false;
 
-            return $this->frames - 1;
+            return $this->framesCount - 1;
         }
 
-        return $frames % $this->framePerSecond;
+        return $frames % $this->framesCount;
     }
 
     public function isRunning(): bool
@@ -64,6 +64,5 @@ class Animation implements DrawableInterface
 
     public function draw(Screen $screen): void
     {
-        $screen->drawImage($this->getCurrentFrame(), 130, 280, 540, 90);
     }
 }
