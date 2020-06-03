@@ -1,13 +1,15 @@
 <?php
 
-namespace Boing;
+namespace PhpGame;
 
-class Animation
+use PhpGame\SDL\Screen;
+
+class Animation implements DrawableInterface
 {
     /** @var array<string> */
     private array $images;
     private int $framePerSecond;
-    private float $startTime;
+    private float $elapsedTime;
     private int $frames;
     private bool $loop;
     private bool $isRunning = false;
@@ -28,14 +30,13 @@ class Animation
 
     public function startAnimation(): void
     {
-        $this->startTime = microtime(true);
+        $this->elapsedTime = 0;
         $this->isRunning = true;
     }
 
     private function getCurrentFrameNumber(): int
     {
-        $elapsedTime = microtime(true) - $this->startTime;
-        $frames = floor($elapsedTime * $this->framePerSecond);
+        $frames = floor($this->elapsedTime * $this->framePerSecond);
 
         if (!$this->loop && $frames >= $this->frames) {
             $this->isRunning = false;
@@ -54,5 +55,15 @@ class Animation
     public function getCurrentFrame(): string
     {
         return $this->images[$this->getCurrentFrameNumber()];
+    }
+
+    public function update(float $deltaTime): void
+    {
+        $this->elapsedTime += $deltaTime;
+    }
+
+    public function draw(Screen $screen): void
+    {
+        $screen->drawImage($this->getCurrentFrame(), 130, 280, 540, 90);
     }
 }
