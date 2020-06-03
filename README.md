@@ -11,7 +11,7 @@ You need also two PHP extensions for [SDL_mixer](https://github.com/kea/php-sdl-
 
 # Porting status
 
-- Boing! [Ready, theme music TBD]
+- Boing! [Ready]
 - Cavern [WIP]
 - Infinite bunner [TBD]
 - Myriapod [TBD]
