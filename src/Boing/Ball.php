@@ -8,11 +8,12 @@ use PhpGame\SDL\Screen;
 
 class Ball implements DrawableInterface
 {
+    private const TOP_BOTTOM_DY_FROM_CENTER = 220;
     private float $x = 0;
     private float $y = 0;
     private float $dx = 0;
     private float $dy = 0;
-    private int $speed = 200;
+    private int $speed = 300;
 
     private int $fieldWidth;
     private int $fieldHalfWidth;
@@ -26,7 +27,6 @@ class Ball implements DrawableInterface
     public function __construct(float $dx, int $fieldWidth, int $fieldHeight, Game $gameToBeRemoved)
     {
         $this->dx = $dx;
-        $this->dy = random_int(-100, 100) / 100;
         $this->fieldWidth = $fieldWidth;
         $this->fieldHeight = $fieldHeight;
         $this->fieldHalfWidth = $fieldWidth / 2;
@@ -45,10 +45,10 @@ class Ball implements DrawableInterface
         $this->y += $this->dy * $deltaTime * $this->speed;
 
         $this->bounceToBat($originalX);
-        // The top and bottom of the arena are 220 pixels from the centre
-        if (abs($this->y - $this->fieldHalfHeight) > 220) {
+
+        if (abs($this->y - $this->fieldHalfHeight) > self::TOP_BOTTOM_DY_FROM_CENTER) {
             $this->dy = -$this->dy;
-            $this->y += $this->dy;
+            $this->y += $this->dy * $deltaTime * $this->speed;
 
             $game->impacts[] = new Impact($this->x, $this->y);
 
@@ -78,16 +78,16 @@ class Ball implements DrawableInterface
                 $this->dy = min(max($this->dy, -1), 1);
                 [$this->dx, $this->dy] = $this->normalised($this->dx, $this->dy);
                 $game->impacts[] = new Impact($this->x - $new_dir_x * 10, $this->y);
-                $this->speed += 15;
+                $this->speed += 60;
                 $game->aiOffset = random_int(-10, 10);
-                $bat->time = 10;
+                $bat->hit();
 
                 $game->playSound("hit", 5);  # play every time in addition to:
-                if ($this->speed <= 10) {
+                if ($this->speed <= 600) {
                     $game->playSound("hit_slow", 1);
-                } elseif ($this->speed <= 12) {
+                } elseif ($this->speed <= 720) {
                     $game->playSound("hit_medium", 1);
-                } elseif ($this->speed <= 16) {
+                } elseif ($this->speed <= 960) {
                     $game->playSound("hit_fast", 1);
                 } else {
                     $game->playSound("hit_veryfast", 1);
@@ -96,7 +96,7 @@ class Ball implements DrawableInterface
         }
     }
 
-    public function out(): bool
+    public function isOut(): bool
     {
         return $this->x < 0 || $this->x > $this->fieldWidth;
     }

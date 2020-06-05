@@ -9,6 +9,8 @@ use PhpGame\SoundManager;
 
 class Game implements DrawableInterface
 {
+    private const PLAY = 0;
+    private const GOAL = 1;
     /** @var array|Bat[] */
     public array $bats;
     public Ball $ball;
@@ -20,7 +22,8 @@ class Game implements DrawableInterface
     private int $fieldHeight;
     private ManualTimer $ballOutTimer;
     private ?SoundManager $soundManager;
-    private int $scoringPlayer;
+    private int $scoringPlayer = 0;
+    private int $status;
 
     public function __construct(
         int $fieldWidth,
@@ -31,11 +34,12 @@ class Game implements DrawableInterface
     {
         $this->fieldWidth = $fieldWidth;
         $this->fieldHeight = $fieldHeight;
-        $this->bats = [new Bat(0, $control1, $this), new Bat(1, $control2, $this)];
+        $this->bats = [new Bat(0, $control1), new Bat(1, $control2)];
         $this->ball = new Ball(-1, $this->fieldWidth, $this->fieldHeight, $this);
         $this->impacts = [];
         $this->aiOffset = 0;
         $this->ballOutTimer = new ManualTimer();
+        $this->status = self::PLAY;
     }
 
     public function update(float $deltaTime): void
@@ -58,8 +62,7 @@ class Game implements DrawableInterface
     {
         $name = __DIR__.'/images/table.png';
         $screen->drawImage($name, 0, 0, $this->fieldWidth, $this->fieldHeight);
-
-        if ($this->ballOutTimer->isStarted()) {
+        if ($this->status === self::GOAL) {
             $name = __DIR__.'/images/effect'.(1 - $this->scoringPlayer).'.png';
             $screen->drawImage($name, 0, 0, $this->fieldWidth, $this->fieldHeight);
         }
@@ -74,11 +77,11 @@ class Game implements DrawableInterface
 
     private function drawScores(Screen $screen): void
     {
-        for ($p = 0; $p < 2; $p++) {
-            $score = sprintf("%02d", $this->bats[$p]->score());
+        foreach ($this->bats as $p => $bat) {
+            $score = sprintf("%02d", $bat->getScore());
             for ($i = 0; $i < 2; $i++) {
                 $colour = "0";
-                if ($this->ballOutTimer->isStarted()) {
+                if ($bat->getStatus() === Bat::LOOSE) {
                     $colour = $p === 0 ? "2" : "1";
                 }
                 $image = "digit".$colour.$score[$i];
@@ -105,31 +108,31 @@ class Game implements DrawableInterface
 
     private function ballOut(float $deltaTime): void
     {
-        if (!$this->ball->out()) {
-            return;
-        }
-
-        if ($this->ballOutTimer->isStarted()) {
+        if ($this->status === self::GOAL) {
             $this->ballOutTimer->decreaseTime($deltaTime);
+
             return;
         }
 
-        $this->scoringPlayer = $this->ball->x() < $this->fieldWidth ? 1 : 0;
+        if (!$this->ball->isOut()) {
+            return;
+        }
 
-        $this->bats[$this->scoringPlayer]->incScore();
+        $this->status = self::GOAL;
+        $this->scoringPlayer = $this->ball->x() <= 0 ? 1 : 0;
+
+        $this->bats[$this->scoringPlayer]->scored();
+        $this->bats[1 - $this->scoringPlayer]->loose();
         $this->playSound("score_goal", 1);
 
         $newBall = function() {
+            $this->bats[1 - $this->scoringPlayer]->play();
             $direction = $this->scoringPlayer === 0 ? 1 : -1;
             $this->ball = new Ball($direction, $this->fieldWidth, $this->fieldHeight, $this);
+            $this->status = self::PLAY;
         };
 
-        $this->ballOutTimer->start(3, $newBall);
-    }
-
-    public function getScoringPlayer(): int
-    {
-        return $this->scoringPlayer;
+        $this->ballOutTimer->start(0.33, $newBall);
     }
 
     /**

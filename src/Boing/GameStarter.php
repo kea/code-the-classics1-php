@@ -7,13 +7,13 @@ use PhpGame\Keyboard;
 use PhpGame\SDL\Screen;
 use PhpGame\SoundManager;
 
-define('MAX_AI_SPEED', 200);
-
 class GameStarter implements DrawableInterface
 {
     private const MENU = 0;
     private const PLAY = 1;
     private const GAME_OVER = 2;
+    private const PLAYER_SPEED = 360;
+    private const MAX_AI_SPEED = 360;
 
     private int $state;
     private Game $game;
@@ -43,19 +43,20 @@ class GameStarter implements DrawableInterface
         $weight1 = min(1, $xDistance / ($this->height / 2));
         $weight2 = 1 - $weight1;
         $targetY = ($weight1 * $targetY1) + ($weight2 * $targetY2);
+        $dy = $targetY - $bat->y;
 
-        return min(MAX_AI_SPEED, max(-MAX_AI_SPEED, $targetY - $bat->y));
+        return min(self::MAX_AI_SPEED, max(-self::MAX_AI_SPEED, $dy * 60));
     }
 
     public function player1Controller(Bat $bat): float
     {
         if ($this->keyboard->getKey(\SDL_SCANCODE_UP) ||
             $this->keyboard->getKey(\SDL_SCANCODE_A)) {
-            return -150;
+            return -self::PLAYER_SPEED;
         }
         if ($this->keyboard->getKey(\SDL_SCANCODE_DOWN) ||
             $this->keyboard->getKey(\SDL_SCANCODE_Z)) {
-            return 150;
+            return self::PLAYER_SPEED;
         }
 
         return 0;
@@ -64,10 +65,10 @@ class GameStarter implements DrawableInterface
     public function player2Controller(Bat $bat): float
     {
         if ($this->keyboard->getKey(\SDL_SCANCODE_K)) {
-            return -150;
+            return -self::PLAYER_SPEED;
         }
         if ($this->keyboard->getKey(\SDL_SCANCODE_M)) {
-            return 150;
+            return self::PLAYER_SPEED;
         }
 
         return 0;
@@ -80,6 +81,7 @@ class GameStarter implements DrawableInterface
                 return;
             }
             $this->startMenu();
+
             return;
         }
         if ($this->state === self::MENU) {
@@ -98,10 +100,9 @@ class GameStarter implements DrawableInterface
                 $this->state = self::PLAY;
             }
         }
-        if ($this->state === self::PLAY) {
-            if (max($this->game->bats[0]->score(), $this->game->bats[1]->score()) > 2) {
-                $this->state = self::GAME_OVER;
-            }
+        if (($this->state === self::PLAY) &&
+            max($this->game->bats[0]->getScore(), $this->game->bats[1]->getScore()) > 9) {
+            $this->state = self::GAME_OVER;
         }
 
         $this->game->update($deltaTime);

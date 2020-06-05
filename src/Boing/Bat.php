@@ -8,57 +8,82 @@ use PhpGame\SDL\Screen;
 
 class Bat implements DrawableInterface
 {
+    public const PLAY = 0;
+    public const HIT = 1;
+    public const LOOSE = 2;
     private int $score = 0;
     /** @var callable */
     private $moveFunction;
     private int $playerNumber;
-    public float $time = .0;
+    public float $timer = -1;
     public float $y;
     public float $x;
-    private string $image = 'bat00';
-    private Game $game;
+    private int $status;
 
-    public function __construct(int $playerNumber, callable $control, Game $game)
+    public function __construct(int $playerNumber, callable $control)
     {
         $this->moveFunction = $control;
         $this->playerNumber = $playerNumber;
         $this->x = $playerNumber === 0 ? 40 : 760;
         $this->y = 240;
-
-        $this->game = $game;
+        $this->status = self::PLAY;
     }
 
     public function update(float $deltaTime): void
     {
-        if ($this->time > 0) {
-            $this->time -= $deltaTime;
+        if ($this->status === self::HIT) {
+            $this->timer -= $deltaTime;
+            if ($this->timer < 0) {
+                $this->status = self::PLAY;
+            }
         }
+
         $yMovement = ($this->moveFunction)($this) * $deltaTime;
         $this->y = min(400, max(80, $this->y + $yMovement));
-
-        $frame = 0;
-
-        $game = $this->game;
-        if ($game->ball->out()) {
-            $frame = $game->getScoringPlayer() === $this->playerNumber ? 1 : 2;
-        }
-
-        $this->image = "bat".$this->playerNumber.$frame;
     }
 
     public function draw(Screen $screen): void
     {
-        $name = __DIR__.'/images/'.$this->image.'.png';
+        $frame = 0;
+        if ($this->status === self::LOOSE) {
+            $frame = 2;
+        }
+        if ($this->status === self::HIT) {
+            $frame = 1;
+        }
+
+        $name = __DIR__.'/images/bat'.$this->playerNumber.$frame.'.png';
         $screen->drawImage($name, (int)($this->x - 160/2), (int)($this->y - 160/2), 160, 160);
     }
 
-    public function incScore(): void
+    public function scored(): void
     {
         $this->score++;
     }
 
-    public function score(): int
+    public function loose(): void
+    {
+        $this->status = self::LOOSE;
+    }
+
+    public function play(): void
+    {
+        $this->status = self::PLAY;
+    }
+
+    public function hit(): void
+    {
+        $this->status = self::HIT;
+        $this->timer = 0.167;
+    }
+
+    public function getScore(): int
     {
         return $this->score;
+    }
+
+    public function getStatus(): int
+    {
+        return $this->status;
     }
 }

@@ -21,7 +21,7 @@ class Ticker
         $this->lastTime = $currentTime;
         ++$this->frame;
         $this->elapsedTime += $this->deltaTime;
-        if ($this->frame === 60) {
+        if ($this->elapsedTime > 1) {
             $this->log();
             $this->elapsedTime = $this->frame = 0;
         }
@@ -31,6 +31,6 @@ class Ticker
 
     private function log(): void
     {
-        echo "\nFPS: ".round($this->frame / $this->elapsedTime);
+        echo "\nFPS: ".round($this->frame / $this->elapsedTime)." ".$this->elapsedTime;
     }
 }
