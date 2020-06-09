@@ -75,4 +75,11 @@ class Screen
     {
         \SDL_RenderPresent($this->renderer);
     }
+
+    public function setIcon(string $file): void
+    {
+        $icon = SDL_LoadBMP($file);
+        \SDL_SetWindowIcon($this->window, $icon);
+        \SDL_FreeSurface($icon);
+    }
 }
