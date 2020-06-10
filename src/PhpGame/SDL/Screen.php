@@ -29,7 +29,7 @@ class Screen
             $this->height,
             $windowsAttribute
         );
-        $this->renderer = \SDL_CreateRenderer($this->window, 0, SDL_RENDERER_ACCELERATED);
+        $this->renderer = \SDL_CreateRenderer($this->window, 0, 0);
 
         \SDL_SetRenderDrawColor($this->renderer, 0, 26, 33, 0);
         \SDL_RenderClear($this->renderer);
