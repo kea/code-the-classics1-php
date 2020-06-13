@@ -1,6 +1,6 @@
 <?php
 
-namespace PhpGame;
+namespace PhpGame\Input;
 
 class Keyboard
 {
