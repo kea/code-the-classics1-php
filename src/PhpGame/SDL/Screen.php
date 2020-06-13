@@ -7,8 +7,6 @@ class Screen
     private int $width;
     private int $height;
     private \SDL_Window $window;
-    /** @var resource */
-    private $renderer;
     /** @var array|Texture[] */
     private array $textures = [];
     private string $title;
@@ -29,31 +27,12 @@ class Screen
             $this->height,
             $windowsAttribute
         );
-        $this->renderer = \SDL_CreateRenderer($this->window, 0, 0);
-
-        \SDL_SetRenderDrawColor($this->renderer, 0, 26, 33, 0);
-        \SDL_RenderClear($this->renderer);
-        \SDL_RenderPresent($this->renderer);
     }
 
     public function __destruct()
     {
-        \SDL_DestroyRenderer($this->renderer);
         unset($this->window);
         \SDL_Quit();
-    }
-
-    public function drawImage(string $name, int $posX, int $posY, int $width, int $height): void
-    {
-        $destinationRect = new \SDL_Rect($posX, $posY, $width, $height);
-
-        if (!isset($this->textures[$name])) {
-            $this->textures[$name] = Texture::loadFromFile($name, $this->renderer);
-        }
-
-        if (\SDL_RenderCopy($this->renderer, $this->textures[$name]->getContent(), null, $destinationRect) !== 0) {
-            echo \SDL_GetError(), PHP_EOL;
-        }
     }
 
     public function getWidth(): int
@@ -66,20 +45,18 @@ class Screen
         return $this->height;
     }
 
-    public function clear(): void
-    {
-        \SDL_RenderClear($this->renderer);
-    }
-
-    public function render(): void
-    {
-        \SDL_RenderPresent($this->renderer);
-    }
-
     public function setIcon(string $file): void
     {
         $icon = SDL_LoadBMP($file);
         \SDL_SetWindowIcon($this->window, $icon);
         \SDL_FreeSurface($icon);
+    }
+
+    /**
+     * @return \SDL_Window
+     */
+    public function getWindow(): \SDL_Window
+    {
+        return $this->window;
     }
 }

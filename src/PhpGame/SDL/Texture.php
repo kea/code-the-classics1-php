@@ -2,8 +2,6 @@
 
 namespace PhpGame\SDL;
 
-use PhpGame\AssetLoadException;
-
 class Texture
 {
     /** @var resource */
@@ -23,14 +21,14 @@ class Texture
 
     /**
      * @param string   $imageFile
-     * @param resource $renderer
+     * @param Renderer $renderer
      * @return Texture
      */
-    public static function loadFromFile(string $imageFile, $renderer): Texture
+    public static function loadFromFile(string $imageFile, Renderer $renderer): Texture
     {
         $texture = new self();
 
-        $texture->SDLTexture = \IMG_LoadTexture($renderer, $imageFile);
+        $texture->SDLTexture = $renderer->loadTexture($imageFile);
 
         return $texture;
     }

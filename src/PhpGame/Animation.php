@@ -62,7 +62,7 @@ class Animation implements DrawableInterface
         $this->elapsedTime += $deltaTime;
     }
 
-    public function draw(Screen $screen): void
+    public function draw(\PhpGame\SDL\Renderer $renderer): void
     {
     }
 }

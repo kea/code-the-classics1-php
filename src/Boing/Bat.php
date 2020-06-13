@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace Boing;
 
 use PhpGame\DrawableInterface;
-use PhpGame\SDL\Screen;
+use PhpGame\SDL\Renderer;
 
 class Bat implements DrawableInterface
 {
@@ -42,7 +42,7 @@ class Bat implements DrawableInterface
         $this->y = min(400, max(80, $this->y + $yMovement));
     }
 
-    public function draw(Screen $screen): void
+    public function draw(Renderer $renderer): void
     {
         $frame = 0;
         if ($this->status === self::LOOSE) {
@@ -53,7 +53,7 @@ class Bat implements DrawableInterface
         }
 
         $name = __DIR__.'/images/bat'.$this->playerNumber.$frame.'.png';
-        $screen->drawImage($name, (int)($this->x - 160/2), (int)($this->y - 160/2), 160, 160);
+        $renderer->drawImage($name, (int)($this->x - 160/2), (int)($this->y - 160/2), 160, 160);
     }
 
     public function scored(): void

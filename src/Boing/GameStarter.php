@@ -3,9 +3,11 @@
 namespace Boing;
 
 use PhpGame\DrawableInterface;
-use PhpGame\Keyboard;
-use PhpGame\SDL\Screen;
+use PhpGame\Input\InputActions;
+use PhpGame\Input\Keyboard;
+use PhpGame\SDL\Renderer;
 use PhpGame\SoundManager;
+use PhpGame\Vector2Float;
 
 class GameStarter implements DrawableInterface
 {
@@ -19,17 +21,17 @@ class GameStarter implements DrawableInterface
     private Game $game;
     private SoundManager $soundManager;
     private int $playersCount = 1;
-    private Keyboard $keyboard;
+    private InputActions $inputActions;
     private int $width;
     private int $height;
 
-    public function __construct(int $width, int $height, SoundManager $soundManager, Keyboard $keyboard)
+    public function __construct(int $width, int $height, SoundManager $soundManager, InputActions $inputActions)
     {
         $this->width = $width;
         $this->height = $height;
         $this->soundManager = $soundManager;
         $this->startMenu();
-        $this->keyboard = $keyboard;
+        $this->inputActions = $inputActions;
 
         $soundManager->playMusic("theme.ogg");
         $soundManager->setMusicVolume(0.3);
@@ -50,34 +52,24 @@ class GameStarter implements DrawableInterface
 
     public function player1Controller(Bat $bat): float
     {
-        if ($this->keyboard->getKey(\SDL_SCANCODE_UP) ||
-            $this->keyboard->getKey(\SDL_SCANCODE_A)) {
-            return -self::PLAYER_SPEED;
-        }
-        if ($this->keyboard->getKey(\SDL_SCANCODE_DOWN) ||
-            $this->keyboard->getKey(\SDL_SCANCODE_Z)) {
-            return self::PLAYER_SPEED;
-        }
+        /** @var Vector2Float $move */
+        $move = $this->inputActions->getValueForAction('MoveP1');
 
-        return 0;
+        return $move->y() * self::PLAYER_SPEED;
     }
 
     public function player2Controller(Bat $bat): float
     {
-        if ($this->keyboard->getKey(\SDL_SCANCODE_K)) {
-            return -self::PLAYER_SPEED;
-        }
-        if ($this->keyboard->getKey(\SDL_SCANCODE_M)) {
-            return self::PLAYER_SPEED;
-        }
+        /** @var Vector2Float $move */
+        $move = $this->inputActions->getValueForAction('MoveP2');
 
-        return 0;
+        return $move->y() * self::PLAYER_SPEED;
     }
 
     public function update(float $deltaTime): void
     {
         if ($this->state === self::GAME_OVER) {
-            if (!$this->keyboard->getKeyDown(\SDL_SCANCODE_SPACE)) {
+            if (!$this->inputActions->getValueForAction('Fire')) {
                 return;
             }
             $this->startMenu();
@@ -85,15 +77,15 @@ class GameStarter implements DrawableInterface
             return;
         }
         if ($this->state === self::MENU) {
-            if ($this->keyboard->getKeyDown(\SDL_SCANCODE_UP)) {
+            if ($this->inputActions->getValueForAction('MenuUp')) {
                 $this->playersCount = 1;
                 $this->soundManager->playSound('up.ogg');
             }
-            if ($this->keyboard->getKeyDown(\SDL_SCANCODE_DOWN)) {
+            if ($this->inputActions->getValueForAction('MenuDown')) {
                 $this->playersCount = 2;
                 $this->soundManager->playSound('down.ogg');
             }
-            if ($this->keyboard->getKeyDown(\SDL_SCANCODE_SPACE)) {
+            if ($this->inputActions->getValueForAction('Fire')) {
                 $player2Controller = $this->playersCount === 2 ? [$this, 'player2Controller'] : [$this, 'ai'];
                 $this->game = new Game($this->width, $this->height, [$this, 'player1Controller'], $player2Controller);
                 $this->game->setSoundManager($this->soundManager);
@@ -108,14 +100,14 @@ class GameStarter implements DrawableInterface
         $this->game->update($deltaTime);
     }
 
-    public function draw(Screen $screen): void
+    public function draw(Renderer $renderer): void
     {
-        $this->game->draw($screen);
+        $this->game->draw($renderer);
         if ($this->state === self::MENU) {
-            $screen->drawImage(__DIR__."/images/menu".($this->playersCount - 1).".png", 0, 0, 800, 480);
+            $renderer->drawImage(__DIR__."/images/menu".($this->playersCount - 1).".png", 0, 0, 800, 480);
         }
         if ($this->state === self::GAME_OVER) {
-            $screen->drawImage(__DIR__."/images/over.png", 0, 0, 800, 480);
+            $renderer->drawImage(__DIR__."/images/over.png", 0, 0, 800, 480);
         }
     }
 

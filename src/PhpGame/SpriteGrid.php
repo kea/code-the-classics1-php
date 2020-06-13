@@ -2,6 +2,9 @@
 
 namespace PhpGame;
 
+use PhpGame\SDL\Renderer;
+use PhpGame\SDL\Texture;
+
 class SpriteGrid
 {
     /** @var array<int, array<int, Sprite>> */
@@ -15,19 +18,19 @@ class SpriteGrid
      * SpriteGrid constructor.
      * @param array<string>                  $spriteNames
      * @param array<int, array<int, string>> $grid
-     * @param resource                       $renderer
+     * @param Renderer                       $renderer
      * @throws AssetLoadException
      */
-    public function __construct(array $spriteNames, array $grid, $renderer)
+    public function __construct(array $spriteNames, array $grid, Renderer $renderer)
     {
         $this->loadTextures($spriteNames, $renderer);
         $this->setGrid($grid);
     }
 
     /**
-     * @param resource $renderer
+     * @param Renderer $renderer
      */
-    public function render($renderer): void
+    public function render(Renderer $renderer): void
     {
         foreach ($this->grid as $row) {
             foreach ($row as $cell) {
@@ -67,14 +70,13 @@ class SpriteGrid
 
     /**
      * @param array<string, string> $texturesMap
-     * @param resource              $renderer
-     * @throws AssetLoadException
+     * @param Renderer              $renderer
      */
-    private function loadTextures(array $texturesMap, $renderer): void
+    private function loadTextures(array $texturesMap, Renderer $renderer): void
     {
         $this->textures = [];
         foreach ($texturesMap as $textureName => $spriteFile) {
-            $this->textures[$textureName] = SDL\Texture::loadFromFile($spriteFile, $renderer);
+            $this->textures[$textureName] = Texture::loadFromFile($spriteFile, $renderer);
         }
     }
 }

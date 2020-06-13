@@ -2,13 +2,15 @@
 
 namespace PhpGame;
 
+use PhpGame\SDL\Renderer;
 use PhpGame\SDL\Texture;
 
 class Sprite
 {
     private Texture $texture;
-    private Vector2Int $size;
-    private Vector2Int $position;
+    private \SDL_Rect $boundedRect;
+    private \SDL_Point $pivot;
+    private \SDL_Point $position;
 
     /**
      * Sprite constructor.
@@ -21,8 +23,14 @@ class Sprite
     public function __construct(Texture $texture, int $width, int $height, int $x = 0, int $y = 0)
     {
         $this->texture = $texture;
-        $this->size = new Vector2Int($width, $height);
-        $this->position = new Vector2Int($x, $y);
+        $this->boundedRect = new \SDL_Rect($x, $y, $width, $height);
+    }
+
+    public static function fromImage(string $path, int $width, int $height, Renderer $renderer): self
+    {
+        $texture = Texture::loadFromFile($path, $renderer);
+
+        return new self($texture, $width, $height);
     }
 
     /**
@@ -30,7 +38,7 @@ class Sprite
      */
     public function getPosition(): Vector2Int
     {
-        return $this->position;
+        return new Vector2Int($this->boundedRect->x, $this->boundedRect->y);
     }
 
     /**
@@ -39,7 +47,8 @@ class Sprite
      */
     public function setPosition(int $x, int $y): void
     {
-        $this->position = new Vector2Int($x, $y);
+        $this->boundedRect->x = $x;
+        $this->boundedRect->y = $y;
     }
 
     /**
@@ -47,7 +56,7 @@ class Sprite
      */
     public function setPositionX(int $x): void
     {
-        $this->position = new Vector2Int($x, $this->position->y());
+        $this->boundedRect->x = $x;
     }
 
     /**
@@ -55,21 +64,11 @@ class Sprite
      */
     public function setPositionY(int $y): void
     {
-        $this->position = new Vector2Int($this->position->x(), $y);
+        $this->boundedRect->y = $y;
     }
 
-    private function getBoundedRect(): \SDL_Rect
+    public function render(Renderer $renderer): void
     {
-        return new \SDL_Rect($this->position->x(), $this->position->y(), $this->size->x(), $this->size->y());
-    }
-
-    /**
-     * @param resource $renderer
-     */
-    public function render($renderer): void
-    {
-        if (\SDL_RenderCopy($renderer, $this->texture->getContent(), NULL, $this->getBoundedRect()) !== 0) {
-            echo \SDL_GetError(), PHP_EOL;
-        }
+        $renderer->copy($this->texture, null, $this->boundedRect);
     }
 }

@@ -4,6 +4,7 @@ namespace Boing;
 
 use PhpGame\Animation;
 use PhpGame\DrawableInterface;
+use PhpGame\SDL\Renderer;
 use PhpGame\SDL\Screen;
 
 class Impact implements DrawableInterface
@@ -38,13 +39,13 @@ class Impact implements DrawableInterface
         $this->animation->update($deltaTime);
     }
 
-    public function draw(Screen $screen): void
+    public function draw(Renderer $renderer): void
     {
         if (!$this->animation->isRunning()) {
             return;
         }
 
-        $screen->drawImage(
+        $renderer->drawImage(
             $this->animation->getCurrentFrame(),
             (int)($this->x - 75 / 2),
             (int)($this->y - 75 / 2),

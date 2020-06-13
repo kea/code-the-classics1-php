@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace Boing;
 
 use PhpGame\DrawableInterface;
+use PhpGame\SDL\Renderer;
 use PhpGame\SDL\Screen;
 
 class Ball implements DrawableInterface
@@ -101,10 +102,13 @@ class Ball implements DrawableInterface
         return $this->x < 0 || $this->x > $this->fieldWidth;
     }
 
-    public function draw(Screen $screen): void
+    /**
+     * @param Renderer $renderer
+     */
+    public function draw(Renderer $renderer): void
     {
         $name = __DIR__.'/images/ball.png';
-        $screen->drawImage($name, (int)($this->x - 24/2), (int)($this->y - 24/2), 24, 24);
+        $renderer->drawImage($name, (int)($this->x - 24/2), (int)($this->y - 24/2), 24, 24);
     }
 
     /**

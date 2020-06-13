@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace Boing;
 
 use PhpGame\DrawableInterface;
-use PhpGame\SDL\Screen;
+use PhpGame\SDL\Renderer;
 use PhpGame\SoundManager;
 
 class Game implements DrawableInterface
@@ -58,24 +58,24 @@ class Game implements DrawableInterface
         $this->ballOut($deltaTime);
     }
 
-    public function draw(Screen $screen): void
+    public function draw(Renderer $renderer): void
     {
         $name = __DIR__.'/images/table.png';
-        $screen->drawImage($name, 0, 0, $this->fieldWidth, $this->fieldHeight);
+        $renderer->drawImage($name, 0, 0, $this->fieldWidth, $this->fieldHeight);
         if ($this->status === self::GOAL) {
             $name = __DIR__.'/images/effect'.(1 - $this->scoringPlayer).'.png';
-            $screen->drawImage($name, 0, 0, $this->fieldWidth, $this->fieldHeight);
+            $renderer->drawImage($name, 0, 0, $this->fieldWidth, $this->fieldHeight);
         }
 
         $drawableObjects = array_merge($this->bats, [$this->ball], $this->impacts);
         foreach ($drawableObjects as $object) {
-            $object->draw($screen);
+            $object->draw($renderer);
         }
 
-        $this->drawScores($screen);
+        $this->drawScores($renderer);
     }
 
-    private function drawScores(Screen $screen): void
+    private function drawScores(Renderer $renderer): void
     {
         foreach ($this->bats as $p => $bat) {
             $score = sprintf("%02d", $bat->getScore());
@@ -86,7 +86,7 @@ class Game implements DrawableInterface
                 }
                 $image = "digit".$colour.$score[$i];
                 $name = __DIR__.'/images/'.$image.'.png';
-                $screen->drawImage($name, 255 + (160 * $p) + ($i * 55), 46, 75, 75);
+                $renderer->drawImage($name, 255 + (160 * $p) + ($i * 55), 46, 75, 75);
             }
         }
     }
