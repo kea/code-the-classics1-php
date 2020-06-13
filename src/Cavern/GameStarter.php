@@ -4,7 +4,8 @@ namespace Cavern;
 
 use PhpGame\Animation;
 use PhpGame\DrawableInterface;
-use PhpGame\Input\Keyboard;
+use PhpGame\Input\InputActions;
+use PhpGame\SDL\Renderer;
 use PhpGame\SoundManager;
 
 class GameStarter implements DrawableInterface
@@ -16,18 +17,18 @@ class GameStarter implements DrawableInterface
     private int $state;
     private Game $game;
     private SoundManager $soundManager;
-    private Keyboard $keyboard;
+    private InputActions $inputActions;
     private int $width;
     private int $height;
     private ?Animation $menuAnimation = null;
 
-    public function __construct(int $width, int $height, SoundManager $soundManager, Keyboard $keyboard)
+    public function __construct(int $width, int $height, SoundManager $soundManager, InputActions $inputActions)
     {
         $this->width = $width;
         $this->height = $height;
         $this->soundManager = $soundManager;
         $this->startMenu();
-        $this->keyboard = $keyboard;
+        $this->inputActions = $inputActions;
         $this->game = new Game($this->width, $this->height);
         $this->game->setSoundManager($this->soundManager);
         $this->game->start();
@@ -36,7 +37,7 @@ class GameStarter implements DrawableInterface
     public function update(float $deltaTime): void
     {
         if ($this->state === self::GAME_OVER) {
-            if (!$this->keyboard->getKeyDown(\SDL_SCANCODE_SPACE)) {
+            if (!$this->inputActions->getValueForAction('Fire')) {
                 return;
             }
             $this->startMenu();
@@ -44,8 +45,8 @@ class GameStarter implements DrawableInterface
         }
         if ($this->state === self::MENU) {
             $this->updateMenu($deltaTime);
-            if ($this->keyboard->getKeyDown(\SDL_SCANCODE_SPACE)) {
-                $this->game = new Game($this->width, $this->height, new Player(new \SDL_Point(200, 200), 70, 70));
+            if ($this->inputActions->getKeyboard()->getKeyDown(\SDL_SCANCODE_SPACE)) {
+                $this->game = new Game($this->width, $this->height, new Player(new \SDL_Point(200, 200), 70, 70, $this->inputActions));
                 $this->game->setSoundManager($this->soundManager);
                 $this->game->start();
                 $this->state = self::PLAY;
@@ -60,7 +61,7 @@ class GameStarter implements DrawableInterface
         $this->game->update($deltaTime);
     }
 
-    public function draw(\PhpGame\SDL\Renderer $renderer): void
+    public function draw(Renderer $renderer): void
     {
         if ($this->state === self::PLAY) {
             $this->game->draw($renderer);

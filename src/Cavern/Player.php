@@ -3,6 +3,7 @@
 namespace Cavern;
 
 use PhpGame\DrawableInterface;
+use PhpGame\Input\InputActions;
 use PhpGame\SDL\Renderer;
 
 class Player extends GravityActor implements DrawableInterface
@@ -13,6 +14,13 @@ class Player extends GravityActor implements DrawableInterface
     private int $directionX;
     private float $fireTimer;
     private float $hurtTimer;
+    private InputActions $inputActions;
+
+    public function __construct(\SDL_Point $position, int $width, int $height, InputActions $inputActions)
+    {
+        parent::__construct($position, $width, $height);
+        $this->inputActions = $inputActions;
+    }
 
     public function reset()
     {
@@ -27,6 +35,8 @@ class Player extends GravityActor implements DrawableInterface
 
     public function update(float $deltaTime): void
     {
+        $direction = $this->inputActions->getValueForAction('Move');
+        $this->move($direction->x(), $direction->y(), 60, $deltaTime);
         parent::update($deltaTime);
     }
 

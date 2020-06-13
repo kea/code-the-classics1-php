@@ -4,18 +4,15 @@ namespace PhpGame\SDL;
 
 use PhpGame\DrawableInterface;
 use PhpGame\Input\InputActions;
-use PhpGame\Input\Keyboard;
 
 class Engine
 {
     private Renderer $renderer;
-    private Keyboard $keyboard;
     private InputActions $inputActions;
 
-    public function __construct(Renderer $screen, InputActions $inputActions, Keyboard $keyboard)
+    public function __construct(Renderer $screen, InputActions $inputActions)
     {
         $this->renderer = $screen;
-        $this->keyboard = $keyboard;
         $this->inputActions = $inputActions;
     }
 
@@ -32,9 +29,7 @@ class Engine
                         return;
                 }
             }
-            $this->keyboard->update();
-            //$this->>joystick->update();
-            $this->inputActions->updateByKeyboard($this->keyboard);
+            $this->inputActions->update();
 
             $this->renderer->clear();
             $game->update($deltaTime);

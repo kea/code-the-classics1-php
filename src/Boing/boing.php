@@ -23,7 +23,6 @@ $renderer = new Renderer($screen->getWindow());
 $sound = new SoundManager(44100, MIX_DEFAULT_FORMAT, 2, 2048);
 $sound->setBaseAssetsPath(__DIR__);
 
-$keyboard = new Keyboard();
 $inputActions = new InputActions(
     [
         'MoveP1' => new VectorAction([new ArrowKeysBinding(), new WASDKeysBinding()]),
@@ -42,10 +41,11 @@ $inputActions = new InputActions(
         'Fire' => new ButtonAction([new ButtonBinding([\SDL_SCANCODE_SPACE])]),
         'MenuUp' => new ButtonAction([new ButtonBinding([\SDL_SCANCODE_UP])]),
         'MenuDown' => new ButtonAction([new ButtonBinding([\SDL_SCANCODE_DOWN])]),
-    ]
+    ],
+    new Keyboard()
 );
 
 $gameStarter = new GameStarter($screen->getWidth(), $screen->getHeight(), $sound, $inputActions);
 
-$engine = new Engine($renderer, $inputActions, $keyboard);
+$engine = new Engine($renderer, $inputActions);
 $engine->run($gameStarter);

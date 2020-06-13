@@ -2,28 +2,40 @@
 
 namespace PhpGame\Input;
 
+use PhpGame\Vector2Float;
 use RuntimeException;
 
 class InputActions
 {
     private array $actions;
+    /**
+     * @var Keyboard
+     */
+    private Keyboard $keyboard;
 
     /**
      * InputActions constructor.
      * @param array|InputAction[] $actions
+     * @param Keyboard            $keyboard
      */
-    public function __construct(array $actions)
+    public function __construct(array $actions, Keyboard $keyboard)
     {
         $this->actions = $actions;
+        $this->keyboard = $keyboard;
     }
 
-    public function updateByKeyboard(Keyboard $keyboard): void
+    public function update(): void
     {
+        $this->keyboard->update();
         foreach ($this->actions as $bindings) {
-            $bindings->updateByKeyboard($keyboard);
+            $bindings->updateByKeyboard($this->keyboard);
         }
     }
 
+    /**
+     * @param $name
+     * @return mixed|bool|Vector2Float
+     */
     public function getValueForAction($name)
     {
         if (!isset($this->actions[$name])) {
@@ -31,6 +43,11 @@ class InputActions
         }
 
         return $this->actions[$name]->getValue();
+    }
+
+    public function getKeyboard(): Keyboard
+    {
+        return $this->keyboard;
     }
 }
 

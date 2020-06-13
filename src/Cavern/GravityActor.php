@@ -24,7 +24,5 @@ class GravityActor extends ColliderActor
         if ($this->position->y >= self::HEIGHT) {
             $this->position->y = 1;
         }
-
-        //$this->move();
     }
 }
