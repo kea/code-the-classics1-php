@@ -24,6 +24,7 @@ class ButtonAction implements InputAction
 
     public function updateByKeyboard(Keyboard $keyboard): void
     {
+        $this->value = false;
         foreach ($this->bindings as $binding) {
             $this->value = $binding->updateByKeyboard($keyboard, $this->value);
         }

@@ -17,7 +17,7 @@ class VectorAction implements InputAction
     public function __construct(array $bindings)
     {
         $this->bindings = $bindings;
-        $this->value = new Vector2Float(0, 0);
+        $this->value = new Vector2Float(.0, .0);
     }
 
     public function getValue(): Vector2Float
@@ -27,6 +27,7 @@ class VectorAction implements InputAction
 
     public function updateByKeyboard(Keyboard $keyboard): void
     {
+        $this->value = new Vector2Float(.0, .0);
         foreach ($this->bindings as $binding) {
             $this->value = $binding->updateByKeyboard($keyboard, $this->value);
         }
