@@ -7,6 +7,7 @@ use PhpGame\DrawableInterface;
 use PhpGame\Input\InputActions;
 use PhpGame\SDL\Renderer;
 use PhpGame\SoundManager;
+use PhpGame\Vector2Float;
 
 class GameStarter implements DrawableInterface
 {
@@ -46,10 +47,7 @@ class GameStarter implements DrawableInterface
         if ($this->state === self::MENU) {
             $this->updateMenu($deltaTime);
             if ($this->inputActions->getKeyboard()->getKeyDown(\SDL_SCANCODE_SPACE)) {
-                $this->game = new Game($this->width, $this->height, new Player(new \SDL_Point(200, 200), 70, 70, $this->inputActions));
-                $this->game->setSoundManager($this->soundManager);
-                $this->game->start();
-                $this->state = self::PLAY;
+                $this->startGame();
             }
         }
         if ($this->state === self::PLAY) {
@@ -89,8 +87,20 @@ class GameStarter implements DrawableInterface
         $this->menuAnimation->startAnimation();
     }
 
-    private function updateMenu(float $deltaTime)
+    private function updateMenu(float $deltaTime): void
     {
         $this->menuAnimation->update($deltaTime);
+    }
+
+    public function startGame(): void
+    {
+        $this->game = new Game(
+            $this->width,
+            $this->height,
+            new Player(new Vector2Float(200, 200), 70, 70, $this->inputActions)
+        );
+        $this->game->setSoundManager($this->soundManager);
+        $this->game->start();
+        $this->state = self::PLAY;
     }
 }

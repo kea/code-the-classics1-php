@@ -2,13 +2,15 @@
 
 namespace Cavern;
 
+use PhpGame\Vector2Float;
+
 class ColliderActor
 {
-    protected \SDL_Point $position;
+    protected Vector2Float $position;
     protected int $width;
     protected int $height;
 
-    public function __construct(\SDL_Point $position, int $width, int $height)
+    public function __construct(Vector2Float $position, int $width, int $height)
     {
         $this->position = $position;
         $this->width = $width;

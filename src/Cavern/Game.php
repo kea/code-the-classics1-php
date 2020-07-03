@@ -8,15 +8,17 @@ use PhpGame\DrawableInterface;
 use PhpGame\SDL\Renderer;
 use PhpGame\SDL\Screen;
 use PhpGame\SoundManager;
+use PhpGame\Vector2Float;
 
 class Game implements DrawableInterface
 {
     const LEVEL_X_OFFSET = 50;
     const GRID_BLOCK_SIZE = 25;
+    const NUM_COLUMNS = 28;
     private int $fieldWidth;
     private int $fieldHeight;
     private ?SoundManager $soundManager;
-    /** @var array|DrawableInterface[] */
+    /** @var array|Fruit[] */
     private array $fruits = [];
     /** @var array|DrawableInterface[] */
     private array $bolts = [];
@@ -56,9 +58,18 @@ class Game implements DrawableInterface
         $this->nextLevel();
     }
 
+    public function fireProbability(): float
+    {
+        return 0.001 + (0.0001 * min(100, $this->level));
+    }
+
+    public function maxEnemies(): int
+    {
+        return (int)min(($this->levels + 6) / 2, 8);
+    }
+
     public function update(float $deltaTime): void
     {
-        $this->detectCollision();
         $this->timer += $deltaTime;
 
         $updatablesContainer = $this->getUpdatableObjects();
@@ -69,36 +80,24 @@ class Game implements DrawableInterface
             }
         }
 
-        $this->fruits = array_filter($this->fruits, fn($fruit) => $fruit->isAlive());
-//        $this->bolts = array_filter($this->bolts, fn($bolt) => $bolt->isActive());
-//        $this->pops = array_filter($this->pops, fn($pop) => !$pop->animation->isStopped());
-//        $this->orbs = array_filter($this->orbs, fn($orb) => $orb->isActive());
+        if ($this->player) {
+            foreach ($this->fruits as $fruit) {
+                if (SDL_HasIntersection($this->player->getCollider(), $fruit->getCollider())) {
+                    $fruit->onCollision($this->player);
+                }
+            }
+        }
+
+        $this->fruits = array_filter($this->fruits, fn($fruit) => $fruit->isActive());
+        $this->bolts = array_filter($this->bolts, fn($bolt) => $bolt->isActive());
+        $this->pops = array_filter($this->pops, fn($pop) => $pop->isActive());
+        $this->orbs = array_filter($this->orbs, fn($orb) => $orb->isActive());
+        $this->enemies = array_filter($this->enemies, fn($enemy) => $enemy->isActive());
 
         $this->nextFruit += $deltaTime;
-        if ($this->nextFruit > 1.7) {
+        if (($this->nextFruit > 1.7) && (count($this->pendingEnemies) + count($this->enemies) > 0)) {
             $this->nextFruit -= 1.7;
-            // fruit come se piovesse
-        }
-    }
-
-    private function detectCollision()
-    {
-        if (!$this->player) {
-            return;
-        }
-
-        $player = $this->player;
-
-        foreach ($this->backgroundBlocks as $bgBlock) {
-            if (\SDL_HasIntersection($player->getCollider(), $bgBlock->getCollider())) {
-                $player->onCollision($bgBlock);
-            }
-        }
-        foreach ($this->fruits as $fruit) {
-            if (\SDL_HasIntersection($player->getCollider(), $fruit->getCollider())) {
-                $player->onCollision($fruit);
-                $fruit->onCollision($player);
-            }
+            $this->fruits[] = new Fruit(new Vector2Float(random_int(70, 730), random_int(75, 400)), 0, 0);
         }
     }
 
@@ -201,7 +200,7 @@ class Game implements DrawableInterface
             foreach ($cols as $charBlock) {
                 if ($charBlock !== ' ') {
                     $block = new Block(
-                        new \SDL_Point($x, $y * self::GRID_BLOCK_SIZE),
+                        new Vector2Float($x, $y * self::GRID_BLOCK_SIZE),
                         self::GRID_BLOCK_SIZE,
                         self::GRID_BLOCK_SIZE
                     );
@@ -211,6 +210,19 @@ class Game implements DrawableInterface
                 $x += self::GRID_BLOCK_SIZE;
             }
         }
+    }
+
+    private function getRobotSpawnX()
+    {
+        $r = random_int(0, self::NUM_COLUMNS);
+        for ($i = 0; $i < self::NUM_COLUMNS; ++$i) {
+            $gridX = ($r+$i) % self::NUM_COLUMNS;
+            if ($this->grid[0][$gridX] === ' ') {
+                return self::GRID_BLOCK_SIZE * $gridX + self::LEVEL_X_OFFSET + 12;
+            }
+        }
+
+        return WINDOW_WIDTH / 2;
     }
 
     private function createEnemies(): void
@@ -228,5 +240,6 @@ class Game implements DrawableInterface
             array_fill($strongEnemiesCount, $weakEnemiesCount, Robot::TYPE_NORMAL)
         );
         shuffle($this->pendingEnemies);
+        // playSound('level', 1);
     }
 }

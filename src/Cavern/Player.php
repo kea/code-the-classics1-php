@@ -5,18 +5,20 @@ namespace Cavern;
 use PhpGame\DrawableInterface;
 use PhpGame\Input\InputActions;
 use PhpGame\SDL\Renderer;
+use PhpGame\Vector2Float;
 
 class Player extends GravityActor implements DrawableInterface
 {
+    private const MAX_HEALTH = 3;
     private int $lives = 2;
-    private int $health = 3;
+    private int $health = self::MAX_HEALTH;
     private int $score = 0;
     private int $directionX;
     private float $fireTimer;
     private float $hurtTimer;
     private InputActions $inputActions;
 
-    public function __construct(\SDL_Point $position, int $width, int $height, InputActions $inputActions)
+    public function __construct(Vector2Float $position, int $width, int $height, InputActions $inputActions)
     {
         parent::__construct($position, $width, $height);
         $this->inputActions = $inputActions;
@@ -24,7 +26,7 @@ class Player extends GravityActor implements DrawableInterface
 
     public function reset()
     {
-        $this->position = new \SDL_Point(400, 100);
+        $this->position = new Vector2Float(400, 100);
         $this->velocityY = 0;
         $this->directionX = 1;
         $this->fireTimer = 0;
@@ -36,7 +38,7 @@ class Player extends GravityActor implements DrawableInterface
     public function update(float $deltaTime): void
     {
         $direction = $this->inputActions->getValueForAction('Move');
-        $this->move($direction->x(), $direction->y(), 60, $deltaTime);
+        $this->move($direction->x, $direction->y, 60, $deltaTime);
         parent::update($deltaTime);
     }
 
@@ -69,5 +71,20 @@ class Player extends GravityActor implements DrawableInterface
         } else {
             // $game->playSound("die");
         }
+    }
+
+    public function incHealth(): void
+    {
+        $this->health = min($this->health + 1, self::MAX_HEALTH);
+    }
+
+    public function incLives(): void
+    {
+        $this->lives++;
+    }
+
+    public function addScore(int $scoreToAdd): void
+    {
+        $this->score += $scoreToAdd;
     }
 }
