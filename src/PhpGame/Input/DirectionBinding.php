@@ -26,8 +26,8 @@ class DirectionBinding
 
     public function updateByKeyboard(Keyboard $keyboard, Vector2Float $direction)
     {
-        $dx = $direction->x();
-        $dy = $direction->y();
+        $dx = $direction->x;
+        $dy = $direction->y;
         if ($keyboard->getKey($this->keys[self::Up])) {
             $dy = --$dy < -1 ? -1 : $dy;
         }

@@ -2,6 +2,20 @@
 
 namespace PhpGame\SDL;
 
+use RuntimeException;
+use SDL_Rect;
+use SDL_Window;
+
+use function IMG_LoadTexture;
+use function SDL_CreateRenderer;
+use function SDL_DestroyRenderer;
+use function SDL_GetError;
+use function SDL_RenderClear;
+use function SDL_RenderCopy;
+use function SDL_RenderDrawRect;
+use function SDL_RenderPresent;
+use function SDL_SetRenderDrawColor;
+
 class Renderer
 {
     /** @var resource */
@@ -12,26 +26,26 @@ class Renderer
 
     /**
      * Render constructor.
-     * @param \SDL_Window $window
+     * @param SDL_Window $window
      */
-    public function __construct(\SDL_Window $window)
+    public function __construct(SDL_Window $window)
     {
-        $this->renderer = \SDL_CreateRenderer($window, 0, 0);
+        $this->renderer = SDL_CreateRenderer($window, 0, 0);
 
-        \SDL_SetRenderDrawColor($this->renderer, ...$this->clearColor);
-        \SDL_RenderClear($this->renderer);
-        \SDL_RenderPresent($this->renderer);
+        SDL_SetRenderDrawColor($this->renderer, ...$this->clearColor);
+        SDL_RenderClear($this->renderer);
+        SDL_RenderPresent($this->renderer);
     }
 
     public function __destruct()
     {
-        \SDL_DestroyRenderer($this->renderer);
+        SDL_DestroyRenderer($this->renderer);
     }
 
-    public function copy(Texture $texture, ?\SDL_Rect $sourceRect = null, ?\SDL_Rect $destinationRect = null)
+    public function copy(Texture $texture, ?SDL_Rect $sourceRect = null, ?SDL_Rect $destinationRect = null)
     {
-        if (\SDL_RenderCopy($this->renderer, $texture->getContent(), $sourceRect, $destinationRect) !== 0) {
-            throw new \RuntimeException(\SDL_GetError());
+        if (SDL_RenderCopy($this->renderer, $texture->getContent(), $sourceRect, $destinationRect) !== 0) {
+            throw new RuntimeException(SDL_GetError());
         }
     }
 
@@ -41,32 +55,42 @@ class Renderer
      */
     public function loadTexture(string $imageFile)
     {
-        return \IMG_LoadTexture($this->renderer, $imageFile);
+        return IMG_LoadTexture($this->renderer, $imageFile);
     }
 
     public function clear(): void
     {
-        \SDL_RenderClear($this->renderer);
+        SDL_RenderClear($this->renderer);
     }
 
     public function render(): void
     {
-        \SDL_RenderPresent($this->renderer);
+        SDL_RenderPresent($this->renderer);
     }
 
-    public function setClearColor(array $rgba)
+    public function setClearColor(array $rgba): void
     {
         $this->clearColor = $rgba;
     }
 
+    public function setDrawColor(array $rgba): void
+    {
+        SDL_SetRenderDrawColor($this->renderer, ...$rgba);
+    }
+
     public function drawImage(string $name, int $posX, int $posY, int $width, int $height): void
     {
-        $destinationRect = new \SDL_Rect($posX, $posY, $width, $height);
+        $destinationRect = new SDL_Rect($posX, $posY, $width, $height);
 
         if (!isset($this->textures[$name])) {
             $this->textures[$name] = Texture::loadFromFile($name, $this);
         }
 
         $this->copy($this->textures[$name], null, $destinationRect);
+    }
+
+    public function drawRectangle(SDL_Rect $rect): void
+    {
+        SDL_RenderDrawRect($this->renderer, $rect);
     }
 }

@@ -2,11 +2,18 @@
 
 namespace PhpGame\SDL;
 
+use SDL_Window;
+
+use function SDL_FreeSurface;
+use function SDL_Init;
+use function SDL_Quit;
+use function SDL_SetWindowIcon;
+
 class Screen
 {
     private int $width;
     private int $height;
-    private \SDL_Window $window;
+    private SDL_Window $window;
     /** @var array|Texture[] */
     private array $textures = [];
     private string $title;
@@ -17,12 +24,12 @@ class Screen
         $this->height = $height;
         $this->title = $title;
 
-        \SDL_Init(SDL_INIT_VIDEO);
-        $windowsAttribute = \SDL_Window::SHOWN | \SDL_Window::RESIZABLE;
-        $this->window = new \SDL_Window(
+        SDL_Init(SDL_INIT_VIDEO);
+        $windowsAttribute = SDL_Window::SHOWN;
+        $this->window = new SDL_Window(
             $title,
-            \SDL_Window::POS_UNDEFINED,
-            \SDL_Window::POS_UNDEFINED,
+            SDL_Window::POS_UNDEFINED,
+            SDL_Window::POS_UNDEFINED,
             $this->width,
             $this->height,
             $windowsAttribute
@@ -32,7 +39,7 @@ class Screen
     public function __destruct()
     {
         unset($this->window);
-        \SDL_Quit();
+        SDL_Quit();
     }
 
     public function getWidth(): int
@@ -48,14 +55,14 @@ class Screen
     public function setIcon(string $file): void
     {
         $icon = SDL_LoadBMP($file);
-        \SDL_SetWindowIcon($this->window, $icon);
-        \SDL_FreeSurface($icon);
+        SDL_SetWindowIcon($this->window, $icon);
+        SDL_FreeSurface($icon);
     }
 
     /**
-     * @return \SDL_Window
+     * @return SDL_Window
      */
-    public function getWindow(): \SDL_Window
+    public function getWindow(): SDL_Window
     {
         return $this->window;
     }

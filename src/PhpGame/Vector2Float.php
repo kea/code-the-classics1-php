@@ -4,8 +4,8 @@ namespace PhpGame;
 
 class Vector2Float
 {
-    private float $x;
-    private float $y;
+    public float $x;
+    public float $y;
 
     public function __construct(float $x, float $y)
     {
@@ -13,13 +13,35 @@ class Vector2Float
         $this->y = $y;
     }
 
-    public function x(): float
+    public function add(Vector2Float $addendum): self
     {
-        return $this->x;
+        $this->x += $addendum->x;
+        $this->y += $addendum->y;
+
+        return $this;
     }
 
-    public function y(): float
+    public function sub(Vector2Float $minuendum): self
     {
-        return $this->y;
+        $this->x -= $minuendum->x;
+        $this->y -= $minuendum->y;
+
+        return $this;
+    }
+
+    public function multiply(Vector2Float $multiplier): self
+    {
+        $this->x *= $multiplier->x;
+        $this->y *= $multiplier->y;
+
+        return $this;
+    }
+
+    public function multiplyFloat(float $multiplier): Vector2Float
+    {
+        $this->x *= $multiplier;
+        $this->y *= $multiplier;
+
+        return $this;
     }
 }

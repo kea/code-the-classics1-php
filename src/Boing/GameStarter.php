@@ -4,7 +4,6 @@ namespace Boing;
 
 use PhpGame\DrawableInterface;
 use PhpGame\Input\InputActions;
-use PhpGame\Input\Keyboard;
 use PhpGame\SDL\Renderer;
 use PhpGame\SoundManager;
 use PhpGame\Vector2Float;
@@ -55,7 +54,7 @@ class GameStarter implements DrawableInterface
         /** @var Vector2Float $move */
         $move = $this->inputActions->getValueForAction('MoveP1');
 
-        return $move->y() * self::PLAYER_SPEED;
+        return $move->y * self::PLAYER_SPEED;
     }
 
     public function player2Controller(Bat $bat): float
@@ -63,7 +62,7 @@ class GameStarter implements DrawableInterface
         /** @var Vector2Float $move */
         $move = $this->inputActions->getValueForAction('MoveP2');
 
-        return $move->y() * self::PLAYER_SPEED;
+        return $move->y * self::PLAYER_SPEED;
     }
 
     public function update(float $deltaTime): void
