@@ -12,11 +12,6 @@ use PhpGame\Vector2Float;
 
 class Game implements DrawableInterface
 {
-    const LEVEL_X_OFFSET = 50;
-    const GRID_BLOCK_SIZE = 25;
-    const NUM_COLUMNS = 28;
-    private int $fieldWidth;
-    private int $fieldHeight;
     private ?SoundManager $soundManager;
     /** @var array|Fruit[] */
     private array $fruits = [];
@@ -28,29 +23,18 @@ class Game implements DrawableInterface
     private array $pops = [];
     /** @var array|DrawableInterface[] */
     private array $orbs = [];
-    /** @var array|Block[] */
-    private array $backgroundBlocks;
 
     private ?Player $player = null;
-    private int $level;
-    private int $levelColor;
+    private Level $level;
     private array $pendingEnemies;
-    private $grid;
     private float $timer = 0;
     private array $levels;
     private float $nextFruit = 0;
 
-    public function __construct(
-        int $fieldWidth,
-        int $fieldHeight,
-        ?Player $player = null
-    ) {
-        $this->fieldWidth = $fieldWidth;
-        $this->fieldHeight = $fieldHeight;
-        $this->levelColor = -1;
-        $this->level = -1;
+    public function __construct(Level $level, ?Player $player = null)
+    {
         $this->player = $player;
-        $this->loadLevels();
+        $this->level = $level;
     }
 
     public function start()
@@ -60,12 +44,12 @@ class Game implements DrawableInterface
 
     public function fireProbability(): float
     {
-        return 0.001 + (0.0001 * min(100, $this->level));
+        return 0.001 + (0.0001 * min(100, $this->level->level));
     }
 
     public function maxEnemies(): int
     {
-        return (int)min(($this->levels + 6) / 2, 8);
+        return (int)min(($this->level->level + 6) / 2, 8);
     }
 
     public function update(float $deltaTime): void
@@ -81,6 +65,8 @@ class Game implements DrawableInterface
         }
 
         if ($this->player) {
+            $this->player->update($deltaTime);
+
             foreach ($this->fruits as $fruit) {
                 if (SDL_HasIntersection($this->player->getCollider(), $fruit->getCollider())) {
                     $fruit->onCollision($this->player);
@@ -97,15 +83,20 @@ class Game implements DrawableInterface
         $this->nextFruit += $deltaTime;
         if (($this->nextFruit > 1.7) && (count($this->pendingEnemies) + count($this->enemies) > 0)) {
             $this->nextFruit -= 1.7;
-            $this->fruits[] = new Fruit(new Vector2Float(random_int(70, 730), random_int(75, 400)), 0, 0);
+            $fruit = new Fruit(new Vector2Float(random_int(70, 730), random_int(75, 400)), 54, 54);
+            $fruit->setLevel($this->level);
+            $this->fruits[] = $fruit;
         }
     }
 
     public function draw(Renderer $renderer): void
     {
-        $this->drawBackground($renderer);
+        $this->level->draw($renderer);
 
         $updatablesContainer = $this->getUpdatableObjects();
+        if ($this->player) {
+            $updatablesContainer[] = [$this->player];
+        }
 
         foreach ($updatablesContainer as $updatables) {
             foreach ($updatables as $updatable) {
@@ -143,8 +134,6 @@ class Game implements DrawableInterface
 
     private function nextLevel(): void
     {
-        $this->levelColor = ($this->levelColor + 1) % 4;
-        ++$this->level;
         $this->timer = -1;
 
         if ($this->player) {
@@ -153,76 +142,13 @@ class Game implements DrawableInterface
 
         $this->fruits = [];
         $this->createEnemies();
-        $this->createBackground();
+        $this->level->buildNextLevel();
         $this->soundManager->playSound("level");
-    }
-
-    private function loadLevels(): void
-    {
-        $this->levels = json_decode(file_get_contents(__DIR__.'/levels/levels.json'), true, 512, JSON_THROW_ON_ERROR);
     }
 
     private function getUpdatableObjects(): array
     {
-        $updatablesContainer = [$this->fruits, $this->bolts, $this->pops, $this->orbs];
-        if ($this->player) {
-            $updatablesContainer[] = [$this->player];
-        }
-
-        return $updatablesContainer;
-    }
-
-
-    private function drawBackground(Renderer $renderer): void
-    {
-        $name = __DIR__.'/images/bg'.$this->levelColor.'.png';
-        $renderer->drawImage($name, 0, 0, $this->fieldWidth, $this->fieldHeight);
-
-        foreach ($this->backgroundBlocks as $block) {
-            $block->draw($renderer);
-        }
-    }
-
-    private function createBackground(): void
-    {
-        $this->grid = $this->levels[$this->level % count($this->levels)];
-        $this->grid = array_merge($this->grid, [$this->grid[0]]);
-
-        $this->backgroundBlocks = [];
-
-        $blockSprite = __DIR__.'/images/block'.($this->level % 4).'.png';
-        foreach ($this->grid as $y => $row) {
-            if (empty($row)) {
-                continue;
-            }
-            $cols = str_split($row, 1);
-            $x = self::LEVEL_X_OFFSET;
-            foreach ($cols as $charBlock) {
-                if ($charBlock !== ' ') {
-                    $block = new Block(
-                        new Vector2Float($x, $y * self::GRID_BLOCK_SIZE),
-                        self::GRID_BLOCK_SIZE,
-                        self::GRID_BLOCK_SIZE
-                    );
-                    $block->setImage($blockSprite);
-                    $this->backgroundBlocks[] = $block;
-                }
-                $x += self::GRID_BLOCK_SIZE;
-            }
-        }
-    }
-
-    private function getRobotSpawnX()
-    {
-        $r = random_int(0, self::NUM_COLUMNS);
-        for ($i = 0; $i < self::NUM_COLUMNS; ++$i) {
-            $gridX = ($r+$i) % self::NUM_COLUMNS;
-            if ($this->grid[0][$gridX] === ' ') {
-                return self::GRID_BLOCK_SIZE * $gridX + self::LEVEL_X_OFFSET + 12;
-            }
-        }
-
-        return WINDOW_WIDTH / 2;
+        return [$this->fruits, $this->bolts, $this->pops, $this->orbs];
     }
 
     private function createEnemies(): void
@@ -232,8 +158,8 @@ class Game implements DrawableInterface
         $this->pops = [];
         $this->orbs = [];
 
-        $enemiesCount = 10 + $this->level;
-        $strongEnemiesCount = 1 + (int)($this->level / 1.5);
+        $enemiesCount = 10 + $this->level->level;
+        $strongEnemiesCount = 1 + (int)($this->level->level / 1.5);
         $weakEnemiesCount = $enemiesCount - $strongEnemiesCount;
         $this->pendingEnemies = array_merge(
             array_fill(0, $strongEnemiesCount, Robot::TYPE_AGGRESSIVE),

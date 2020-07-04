@@ -24,7 +24,7 @@ class DirectionBinding
         }
     }
 
-    public function updateByKeyboard(Keyboard $keyboard, Vector2Float $direction)
+    public function updateByKeyboard(Keyboard $keyboard, Vector2Float $direction): Vector2Float
     {
         $dx = $direction->x;
         $dy = $direction->y;

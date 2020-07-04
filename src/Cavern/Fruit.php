@@ -44,7 +44,7 @@ class Fruit extends GravityActor
         return $this->timeToLive > 0;
     }
 
-    public function update(float $deltaTime)
+    public function update(float $deltaTime): void
     {
         parent::update($deltaTime);
 
@@ -58,7 +58,12 @@ class Fruit extends GravityActor
 
     public function getCollider(): \SDL_Rect
     {
-        return new \SDL_Rect($this->position->x + $this->width / 2, $this->position->y + $this->height / 2, 1, 1);
+        return new \SDL_Rect(
+            $this->position->x - $this->width / 2,
+            $this->position->y - $this->height,
+            $this->width - 5,
+            $this->height - 5
+        );
     }
 
     public function draw(Renderer $renderer): void
@@ -66,7 +71,14 @@ class Fruit extends GravityActor
         $animFrame = 0; //str([0, 1, 2, 1][(game.timer // 6) % 4])
         $name = __DIR__.'/images/fruit'.$this->type.$animFrame.'.png';
 
-        $renderer->drawImage($name, (int)($this->position->x - 70 / 2), (int)($this->position->y - 70 / 2), 54, 54);
+        $renderer->drawImage(
+            $name,
+            (int)($this->position->x - $this->width / 2),
+            (int)($this->position->y - $this->height),
+            $this->width,
+            $this->height
+        );
+        $renderer->drawRectangle($this->getCollider());
     }
 
     public function onCollision(ColliderActor $other): void

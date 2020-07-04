@@ -30,7 +30,8 @@ class GameStarter implements DrawableInterface
         $this->soundManager = $soundManager;
         $this->startMenu();
         $this->inputActions = $inputActions;
-        $this->game = new Game($this->width, $this->height);
+        $level = new Level($this->width, $this->height);
+        $this->game = new Game($level);
         $this->game->setSoundManager($this->soundManager);
         $this->game->start();
     }
@@ -94,11 +95,10 @@ class GameStarter implements DrawableInterface
 
     public function startGame(): void
     {
-        $this->game = new Game(
-            $this->width,
-            $this->height,
-            new Player(new Vector2Float(200, 200), 70, 70, $this->inputActions)
-        );
+        $level = new Level($this->width, $this->height);
+        $player = new Player(new Vector2Float(200, 200), 70, 70, $this->inputActions);
+        $player->setLevel($level);
+        $this->game = new Game($level, $player);
         $this->game->setSoundManager($this->soundManager);
         $this->game->start();
         $this->state = self::PLAY;

@@ -37,15 +37,22 @@ class Player extends GravityActor implements DrawableInterface
 
     public function update(float $deltaTime): void
     {
-        $direction = $this->inputActions->getValueForAction('Move');
-        $this->move($direction->x, $direction->y, 60, $deltaTime);
         parent::update($deltaTime);
+        $direction = $this->inputActions->getValueForAction('Move');
+        $this->move($direction->x, 0, 60 * 4, $deltaTime);
+
+        if ($direction->y < 0 && $this->velocityY === 0.0 && $this->isLanded) {
+            $this->velocityY = -16 * 60;
+            $this->isLanded = false;
+            // sound->play("jump");
+        }
     }
 
     public function draw(Renderer $renderer): void
     {
         $name = __DIR__.'/images/run00.png';
-        $renderer->drawImage($name, (int)($this->position->x - 70/2), (int)($this->position->y - 70/2), 70, 70);
+        $renderer->drawImage($name, (int)($this->position->x - 70 / 2), (int)($this->position->y - 70), 70, 70);
+        $renderer->drawRectangle($this->getCollider());
     }
 
     public function onCollision(ColliderActor $other): void

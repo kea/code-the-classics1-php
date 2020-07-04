@@ -9,6 +9,10 @@ class ColliderActor
     protected Vector2Float $position;
     protected int $width;
     protected int $height;
+    protected bool $collisionDetection = true;
+
+    protected $anchor = ["center", "center"];
+    private ?Level $level = null;
 
     public function __construct(Vector2Float $position, int $width, int $height)
     {
@@ -17,16 +21,52 @@ class ColliderActor
         $this->height = $height;
     }
 
-    public function move(float $dx, float $dy, float $speed, float $deltaTime)
+    public function setLevel(Level $level): void
     {
-        $frameSpeed = $speed * $deltaTime;
+        $this->level = $level;
+    }
 
-        $this->position->x = $this->position->x + $dx * $frameSpeed;
-        $this->position->y = $this->position->y + $dy * $frameSpeed;
+    public function disableCollisionDetection(): void
+    {
+        $this->collisionDetection = true;
+    }
+
+    public function move(float $dx, float $dy, float $speed, float $deltaTime): bool
+    {
+        $frameSpeed = (int)$speed * $deltaTime;
+        $newPosition = clone $this->position;
+
+        for ($i = 0; $i < $frameSpeed; ++$i) {
+            $newPosition->add(new Vector2Float($dx, $dy));
+
+            if ($newPosition->x < 70 || $newPosition->x > 730) {
+                return true;
+            }
+
+            if ($this->level === null) {
+                continue;
+            }
+
+            if ((($dy > 0 && Level::blockStartAt($newPosition->y)) ||
+                    ($dx > 0 && Level::blockStartAt($newPosition->x)) ||
+                    ($dx < 0 && Level::blockEndAt($newPosition->x)))
+                && $this->level->blockAt($newPosition->x, $newPosition->y)) {
+                return true;
+            }
+        }
+
+        $this->position = $newPosition;
+
+        return false;
     }
 
     public function getCollider(): \SDL_Rect
     {
-        return new \SDL_Rect($this->position->x, $this->position->y, $this->width, $this->height);
+        return new \SDL_Rect(
+            $this->position->x - $this->width / 2,
+            $this->position->y - $this->height,
+            $this->width,
+            $this->height
+        );
     }
 }
