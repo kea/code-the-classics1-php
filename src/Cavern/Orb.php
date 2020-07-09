@@ -5,6 +5,7 @@ namespace Cavern;
 use PhpGame\DrawableInterface;
 use PhpGame\SDL\Renderer;
 use PhpGame\Vector2Float;
+use PhpGame\Vector2Int;
 
 class Orb extends ColliderActor implements DrawableInterface
 {
@@ -16,11 +17,15 @@ class Orb extends ColliderActor implements DrawableInterface
     private $trappedEnemyType;
     private string $image = 'orb0';
     private bool $isActive = true;
+    private PopCollection $pops;
+    private FruitCollection $fruits;
 
-    public function __construct(Vector2Float $position, int $width, int $height, float $direction)
+    public function __construct(Vector2Float $position, int $width, int $height, float $direction, PopCollection $pops, FruitCollection $fruits)
     {
         parent::__construct($position, $width, $height);
         $this->direction = $direction;
+        $this->pops = $pops;
+        $this->fruits = $fruits;
     }
 
     public function update(float $deltaTime): void
@@ -50,11 +55,11 @@ class Orb extends ColliderActor implements DrawableInterface
 
     private function pop()
     {
-/*        game.pops.append(Pop(self.pos, 1));
-        if (self.trapped_enemy_type != None) {
-            game.fruits.append(Fruit(self.pos, self.trapped_enemy_type))
+        $this->pops->add(new Pop($this->position, new Vector2Int(70, 70), Pop::TYPE_ORB));
+        if ($this->trappedEnemyType !== null) {
+            $this->fruits->add(new Fruit($this->position, $this->width, $this->height, $this->pops, $this->trappedEnemyType));
         }
-        game.play_sound("pop", 4);*/
+        //game.play_sound("pop", 4);
         $this->isActive = false;
     }
 

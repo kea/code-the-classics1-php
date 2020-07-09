@@ -1,8 +1,6 @@
 <?php
 
-
 namespace Cavern;
-
 
 use PhpGame\SDL\Renderer;
 use PhpGame\Vector2Float;

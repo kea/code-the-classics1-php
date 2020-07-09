@@ -13,8 +13,6 @@ use PhpGame\Vector2Float;
 class Game implements DrawableInterface
 {
     private ?SoundManager $soundManager;
-    /** @var array|Fruit[] */
-    private array $fruits = [];
     /** @var array|DrawableInterface[] */
     private array $bolts = [];
     /** @var array|DrawableInterface[] */
@@ -27,13 +25,20 @@ class Game implements DrawableInterface
     private float $nextFruit = 0;
     private OrbCollection $orbs;
     private PopCollection $pops;
+    private FruitCollection $fruits;
 
-    public function __construct(Level $level, ?Player $player = null, ?OrbCollection $orbs = null)
-    {
+    public function __construct(
+        Level $level,
+        OrbCollection $orbs,
+        FruitCollection $fruits,
+        PopCollection $pops,
+        ?Player $player = null
+    ) {
         $this->player = $player;
         $this->level = $level;
-        $this->orbs = $orbs ?? new OrbCollection();
-        $this->pops = new PopCollection();
+        $this->orbs = $orbs;
+        $this->fruits = $fruits;
+        $this->pops = $pops;
     }
 
     public function start()
@@ -73,7 +78,7 @@ class Game implements DrawableInterface
             }
         }
 
-        $this->fruits = array_filter($this->fruits, fn($fruit) => $fruit->isActive());
+        $this->fruits->removeNotActive();
         $this->bolts = array_filter($this->bolts, fn($bolt) => $bolt->isActive());
         $this->pops->removeNotActive();
         $this->orbs->removeNotActive();
@@ -84,7 +89,7 @@ class Game implements DrawableInterface
             $this->nextFruit -= 1.7;
             $fruit = new Fruit(new Vector2Float(random_int(70, 730), random_int(75, 400)), 54, 54, $this->pops);
             $fruit->setLevel($this->level);
-            $this->fruits[] = $fruit;
+            $this->fruits->add($fruit);
         }
     }
 
@@ -139,7 +144,7 @@ class Game implements DrawableInterface
             $this->player->reset();
         }
 
-        $this->fruits = [];
+        $this->fruits->reset();
         $this->createEnemies();
         $this->level->buildNextLevel();
         $this->soundManager->playSound("level");

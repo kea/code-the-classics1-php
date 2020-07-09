@@ -33,7 +33,12 @@ class GameStarter implements DrawableInterface
         $this->startMenu();
         $this->inputActions = $inputActions;
         $level = new Level($this->width, $this->height);
-        $this->game = new Game($level);
+
+        $fruits = new FruitCollection();
+        $pops = new PopCollection();
+        $orbs = new OrbCollection($fruits, $pops);
+
+        $this->game = new Game($level, $orbs, $fruits, $pops);
         $this->game->setSoundManager($this->soundManager);
         $this->game->start();
     }
@@ -97,11 +102,13 @@ class GameStarter implements DrawableInterface
 
     public function startGame(): void
     {
-        $orbCollection = new OrbCollection();
-        $player = new Player(new Vector2Float(200, 200), 70, 70, $this->inputActions, $orbCollection);
+        $fruits = new FruitCollection();
+        $pops = new PopCollection();
+        $orbs = new OrbCollection($fruits, $pops);
+        $player = new Player(new Vector2Float(200, 200), 70, 70, $this->inputActions, $orbs);
         $level = new Level($this->width, $this->height);
         $player->setLevel($level);
-        $this->game = new Game($level, $player, $orbCollection);
+        $this->game = new Game($level, $orbs, $fruits, $pops, $player);
         $this->game->setSoundManager($this->soundManager);
         $this->game->start();
         $this->state = self::PLAY;
