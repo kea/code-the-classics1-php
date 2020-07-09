@@ -12,7 +12,7 @@ use PHPUnit\Framework\TestCase;
 class InputActionsTest extends TestCase
 {
     /** @test */
-    public function keypressedTest()
+    public function keyPressedTest()
     {
         $keyboard = $this->createMock(Keyboard::class);
         $keyboard->method('getKey')->willReturnOnConsecutiveCalls(false, true);
@@ -41,6 +41,5 @@ class InputActionsTest extends TestCase
 
         $inputActions->update();
         $this->assertFalse($inputActions->getValueForAction('Move'));
-
     }
 }

@@ -2,7 +2,7 @@
 
 namespace PhpGame;
 
-use PhpGame\SDL\Screen;
+use PhpGame\SDL\Renderer;
 
 class Animation implements DrawableInterface
 {
@@ -62,7 +62,7 @@ class Animation implements DrawableInterface
         $this->elapsedTime += $deltaTime;
     }
 
-    public function draw(\PhpGame\SDL\Renderer $renderer): void
+    public function draw(Renderer $renderer): void
     {
     }
 }

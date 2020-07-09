@@ -9,6 +9,8 @@ use PhpGame\SDL\Renderer;
 use PhpGame\SoundManager;
 use PhpGame\Vector2Float;
 
+use const SDL_SCANCODE_SPACE;
+
 class GameStarter implements DrawableInterface
 {
     private const MENU = 0;
@@ -47,7 +49,7 @@ class GameStarter implements DrawableInterface
         }
         if ($this->state === self::MENU) {
             $this->updateMenu($deltaTime);
-            if ($this->inputActions->getKeyboard()->getKeyDown(\SDL_SCANCODE_SPACE)) {
+            if ($this->inputActions->getKeyboard()->getKeyDown(SDL_SCANCODE_SPACE)) {
                 $this->startGame();
             }
         }
@@ -95,10 +97,11 @@ class GameStarter implements DrawableInterface
 
     public function startGame(): void
     {
+        $orbCollection = new OrbCollection();
+        $player = new Player(new Vector2Float(200, 200), 70, 70, $this->inputActions, $orbCollection);
         $level = new Level($this->width, $this->height);
-        $player = new Player(new Vector2Float(200, 200), 70, 70, $this->inputActions);
         $player->setLevel($level);
-        $this->game = new Game($level, $player);
+        $this->game = new Game($level, $player, $orbCollection);
         $this->game->setSoundManager($this->soundManager);
         $this->game->start();
         $this->state = self::PLAY;

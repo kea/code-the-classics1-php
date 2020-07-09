@@ -5,7 +5,7 @@ namespace Cavern;
 class GravityActor extends ColliderActor
 {
     private const MAX_FALL_SPEED = 10 * 60;
-    const HEIGHT = 400;
+    protected const HEIGHT = 480;
     protected float $velocityY  = .0;
     protected bool $isLanded = false;
 

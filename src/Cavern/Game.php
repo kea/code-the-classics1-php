@@ -21,20 +21,19 @@ class Game implements DrawableInterface
     private array $enemies = [];
     /** @var array|DrawableInterface[] */
     private array $pops = [];
-    /** @var array|DrawableInterface[] */
-    private array $orbs = [];
 
     private ?Player $player = null;
     private Level $level;
     private array $pendingEnemies;
     private float $timer = 0;
-    private array $levels;
     private float $nextFruit = 0;
+    private OrbCollection $orbs;
 
-    public function __construct(Level $level, ?Player $player = null)
+    public function __construct(Level $level, ?Player $player = null, ?OrbCollection $orbCollection = null)
     {
         $this->player = $player;
         $this->level = $level;
+        $this->orbs = $orbCollection ?? new OrbCollection();
     }
 
     public function start()
@@ -77,7 +76,7 @@ class Game implements DrawableInterface
         $this->fruits = array_filter($this->fruits, fn($fruit) => $fruit->isActive());
         $this->bolts = array_filter($this->bolts, fn($bolt) => $bolt->isActive());
         $this->pops = array_filter($this->pops, fn($pop) => $pop->isActive());
-        $this->orbs = array_filter($this->orbs, fn($orb) => $orb->isActive());
+        $this->orbs->removeNotActive();
         $this->enemies = array_filter($this->enemies, fn($enemy) => $enemy->isActive());
 
         $this->nextFruit += $deltaTime;
@@ -156,7 +155,7 @@ class Game implements DrawableInterface
         $this->bolts = [];
         $this->enemies = [];
         $this->pops = [];
-        $this->orbs = [];
+        $this->orbs->reset();
 
         $enemiesCount = 10 + $this->level->level;
         $strongEnemiesCount = 1 + (int)($this->level->level / 1.5);
