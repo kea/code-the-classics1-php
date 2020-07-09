@@ -19,8 +19,6 @@ class Game implements DrawableInterface
     private array $bolts = [];
     /** @var array|DrawableInterface[] */
     private array $enemies = [];
-    /** @var array|DrawableInterface[] */
-    private array $pops = [];
 
     private ?Player $player = null;
     private Level $level;
@@ -28,12 +26,14 @@ class Game implements DrawableInterface
     private float $timer = 0;
     private float $nextFruit = 0;
     private OrbCollection $orbs;
+    private PopCollection $pops;
 
-    public function __construct(Level $level, ?Player $player = null, ?OrbCollection $orbCollection = null)
+    public function __construct(Level $level, ?Player $player = null, ?OrbCollection $orbs = null)
     {
         $this->player = $player;
         $this->level = $level;
-        $this->orbs = $orbCollection ?? new OrbCollection();
+        $this->orbs = $orbs ?? new OrbCollection();
+        $this->pops = new PopCollection();
     }
 
     public function start()
@@ -75,14 +75,14 @@ class Game implements DrawableInterface
 
         $this->fruits = array_filter($this->fruits, fn($fruit) => $fruit->isActive());
         $this->bolts = array_filter($this->bolts, fn($bolt) => $bolt->isActive());
-        $this->pops = array_filter($this->pops, fn($pop) => $pop->isActive());
+        $this->pops->removeNotActive();
         $this->orbs->removeNotActive();
         $this->enemies = array_filter($this->enemies, fn($enemy) => $enemy->isActive());
 
         $this->nextFruit += $deltaTime;
         if (($this->nextFruit > 1.7) && (count($this->pendingEnemies) + count($this->enemies) > 0)) {
             $this->nextFruit -= 1.7;
-            $fruit = new Fruit(new Vector2Float(random_int(70, 730), random_int(75, 400)), 54, 54);
+            $fruit = new Fruit(new Vector2Float(random_int(70, 730), random_int(75, 400)), 54, 54, $this->pops);
             $fruit->setLevel($this->level);
             $this->fruits[] = $fruit;
         }
@@ -154,7 +154,7 @@ class Game implements DrawableInterface
     {
         $this->bolts = [];
         $this->enemies = [];
-        $this->pops = [];
+        $this->pops->reset();
         $this->orbs->reset();
 
         $enemiesCount = 10 + $this->level->level;

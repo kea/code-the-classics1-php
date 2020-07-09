@@ -6,6 +6,7 @@ namespace Cavern;
 
 use PhpGame\SDL\Renderer;
 use PhpGame\Vector2Float;
+use PhpGame\Vector2Int;
 
 class Fruit extends GravityActor
 {
@@ -16,11 +17,13 @@ class Fruit extends GravityActor
     public const EXTRA_LIFE = 4;
     private int $type;
     private float $timeToLive;
+    private PopCollection $pops;
 
     public function __construct(
         Vector2Float $position,
         int $width,
         int $height,
+        PopCollection $pops,
         int $trappedEnemyType = Robot::TYPE_NORMAL
     ) {
         parent::__construct($position, $width, $height);
@@ -37,9 +40,10 @@ class Fruit extends GravityActor
         }
 
         $this->timeToLive = 8.3;
+        $this->pops = $pops;
     }
 
-    public function isActive()
+    public function isActive(): bool
     {
         return $this->timeToLive > 0;
     }
@@ -51,8 +55,7 @@ class Fruit extends GravityActor
         $this->timeToLive -= $deltaTime;
 
         if ($this->timeToLive < 0) {
-            // @todo Pop
-            //game.pops.append(Pop((self.x, self.y - 27), 0))
+            $this->pop();
         }
     }
 
@@ -98,5 +101,12 @@ class Fruit extends GravityActor
             //game.play_sound("score");
         }
         $this->timeToLive = 0;
+        $this->pop();
+    }
+
+    public function pop(): void
+    {
+        echo "Add pop";
+        $this->pops->add(new Pop($this->position, new Vector2Int($this->width, $this->height), Pop::TYPE_FRUIT));
     }
 }

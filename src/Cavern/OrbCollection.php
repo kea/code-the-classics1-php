@@ -27,9 +27,9 @@ class OrbCollection implements IteratorAggregate
         return new Orb(new Vector2Float($x, $y), 70, 70, $direction);
     }
 
-    public function add(Orb $org): void
+    public function add(Orb $orb): void
     {
-        $this->orbs[] = $org;
+        $this->orbs[] = $orb;
     }
 
     public function removeNotActive(): void
