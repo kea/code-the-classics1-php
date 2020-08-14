@@ -50,8 +50,14 @@ class OrbCollection implements IteratorAggregate
         $this->orbs = array_filter($this->orbs, fn($orb) => $orb->isActive());
     }
 
-    public function getIterator()
+    /** @return ArrayIterator<Bolt> */
+    public function getIterator(): ArrayIterator
     {
         return new ArrayIterator($this->orbs);
+    }
+
+    public function hasTrappedEnemies(): bool
+    {
+        return count(array_filter($this->orbs, fn($orb) => $orb->hasTrappedEnemy())) !== 0;
     }
 }

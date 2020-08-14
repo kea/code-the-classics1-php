@@ -11,8 +11,8 @@ class ColliderActor
     protected int $height;
     protected bool $collisionDetection = true;
 
-    protected $anchor = ["center", "center"];
-    private ?Level $level = null;
+    protected array $anchor = ["center", "center"];
+    protected ?Level $level = null;
 
     public function __construct(Vector2Float $position, int $width, int $height)
     {
@@ -24,6 +24,20 @@ class ColliderActor
     public function setLevel(Level $level): void
     {
         $this->level = $level;
+    }
+
+    public function top(): float
+    {
+        $dy = $this->dxFromTop();
+
+        return $this->position->y + $dy;
+    }
+
+    public function bottom(): float
+    {
+        $dy = $this->height - $this->dxFromTop();
+
+        return $this->position->y + $dy;
     }
 
     public function disableCollisionDetection(): void
@@ -68,5 +82,24 @@ class ColliderActor
             $this->width,
             $this->height
         );
+    }
+
+    /**
+     * @return float|int
+     */
+    public function dxFromTop()
+    {
+        switch ($this->anchor[1]) {
+            case 'center':
+                $dy = $this->height / 2;
+                break;
+            case 'bottom':
+                $dy = $this->height;
+                break;
+            default:
+                $dy = 0;
+        }
+
+        return $dy;
     }
 }

@@ -13,19 +13,17 @@ use PhpGame\Vector2Float;
 class Game implements DrawableInterface
 {
     private ?SoundManager $soundManager;
-    /** @var array|DrawableInterface[] */
-    private array $bolts = [];
-    /** @var array|DrawableInterface[] */
-    private array $enemies = [];
-
     private ?Player $player = null;
     private Level $level;
     private array $pendingEnemies;
     private float $timer = 0;
-    private float $nextFruit = 0;
+    private float $nextFruitTimer = 0;
+    private float $nextEnemyTimer = 0;
     private OrbCollection $orbs;
     private PopCollection $pops;
     private FruitCollection $fruits;
+    private BoltCollection $bolts;
+    private RobotCollection $enemies;
 
     public function __construct(
         Level $level,
@@ -39,16 +37,13 @@ class Game implements DrawableInterface
         $this->orbs = $orbs;
         $this->fruits = $fruits;
         $this->pops = $pops;
+        $this->bolts = new BoltCollection();
+        $this->enemies = new RobotCollection();
     }
 
     public function start()
     {
         $this->nextLevel();
-    }
-
-    public function fireProbability(): float
-    {
-        return 0.001 + (0.0001 * min(100, $this->level->level));
     }
 
     public function maxEnemies(): int
@@ -76,20 +71,60 @@ class Game implements DrawableInterface
                     $fruit->onCollision($this->player);
                 }
             }
+
+            foreach ($this->bolts as $bolt) {
+                foreach ($this->orbs as $orb) {
+                    if (SDL_HasIntersection($bolt->getCollider(), $orb->getCollider())) {
+                        $bolt->onCollision($orb);
+                        continue;
+                    }
+                }
+                if (SDL_HasIntersection($bolt->getCollider(), $this->player->getCollider())) {
+                    $bolt->onCollision($this->player);
+                    $this->player->onCollision($bolt);
+                }
+            }
+        }
+
+        foreach ($this->orbs as $orb) {
+            foreach ($this->enemies as $enemy) {
+                if (SDL_HasIntersection($orb->getCollider(), $enemy->getCollider())) {
+                    $enemy->onCollision($orb);
+                    $orb->onCollision($enemy);
+                    continue 2;
+                }
+            }
         }
 
         $this->fruits->removeNotActive();
-        $this->bolts = array_filter($this->bolts, fn($bolt) => $bolt->isActive());
+        $this->bolts->removeNotActive();
         $this->pops->removeNotActive();
         $this->orbs->removeNotActive();
-        $this->enemies = array_filter($this->enemies, fn($enemy) => $enemy->isActive());
+        $this->enemies->removeNotActive();
 
-        $this->nextFruit += $deltaTime;
-        if (($this->nextFruit > 1.7) && (count($this->pendingEnemies) + count($this->enemies) > 0)) {
-            $this->nextFruit -= 1.7;
+        $this->nextFruitTimer += $deltaTime;
+        if (($this->nextFruitTimer > 1.7) && (count($this->pendingEnemies) > 0 || !$this->enemies->isEmpty())) {
+            $this->nextFruitTimer -= 1.7;
             $fruit = new Fruit(new Vector2Float(random_int(70, 730), random_int(75, 400)), 54, 54, $this->pops);
             $fruit->setLevel($this->level);
             $this->fruits->add($fruit);
+        }
+
+        $this->nextEnemyTimer += $deltaTime;
+        if ($this->nextEnemyTimer >= 1.35 && count($this->pendingEnemies) > 0 && count($this->enemies) < $this->maxEnemies()) {
+            $this->nextEnemyTimer -= 1.35;
+            $robotType = array_pop($this->pendingEnemies);
+            $pos = new Vector2Float($this->level->getRobotSpawnX(), -30);
+            $this->enemies->add(new Robot($pos, 60, 60, $robotType, $this->orbs, $this->bolts, $this->player));
+        }
+
+        if ((count($this->pendingEnemies) === 0)
+            && $this->fruits->isEmpty()
+            && $this->enemies->isEmpty()
+            && $this->pops->isEmpty()
+            && $this->orbs->hasTrappedEnemies())
+        {
+            $this->nextLevel();
         }
     }
 
@@ -152,13 +187,13 @@ class Game implements DrawableInterface
 
     private function getUpdatableObjects(): array
     {
-        return [$this->fruits, $this->bolts, $this->pops, $this->orbs];
+        return [$this->fruits, $this->bolts, $this->pops, $this->orbs, $this->enemies];
     }
 
     private function createEnemies(): void
     {
-        $this->bolts = [];
-        $this->enemies = [];
+        $this->bolts->reset();
+        $this->enemies->reset();
         $this->pops->reset();
         $this->orbs->reset();
 

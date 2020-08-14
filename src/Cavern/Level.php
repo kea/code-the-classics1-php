@@ -7,9 +7,9 @@ use PhpGame\Vector2Float;
 
 class Level
 {
-    const LEVEL_X_OFFSET = 50;
-    const GRID_BLOCK_SIZE = 25;
-    const NUM_COLUMNS = 28;
+    private const LEVEL_X_OFFSET = 50;
+    private const GRID_BLOCK_SIZE = 25;
+    private const NUM_COLUMNS = 28;
 
     private array $levels;
     public int $level = -1;
@@ -93,7 +93,7 @@ class Level
         return false;
     }
 
-    private function getRobotSpawnX()
+    public function getRobotSpawnX()
     {
         $r = random_int(0, self::NUM_COLUMNS);
         for ($i = 0; $i < self::NUM_COLUMNS; ++$i) {

@@ -30,4 +30,9 @@ class PopCollection implements IteratorAggregate
     {
         return new ArrayIterator($this->pops);
     }
+
+    public function isEmpty(): bool
+    {
+        return empty($this->pops);
+    }
 }

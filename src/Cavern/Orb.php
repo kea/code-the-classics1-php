@@ -10,20 +10,26 @@ use PhpGame\Vector2Int;
 class Orb extends ColliderActor implements DrawableInterface
 {
     private const MAX_TIMER = 250 / 60;
-    private int $direction;
+    private int $directionX;
     public float $blownTime = 0.1;
     private bool $floating = false;
     private float $timer = .0;
-    private $trappedEnemyType;
+    private int $trappedEnemyType = Robot::TYPE_NONE;
     private string $image = 'orb0';
     private bool $isActive = true;
     private PopCollection $pops;
     private FruitCollection $fruits;
 
-    public function __construct(Vector2Float $position, int $width, int $height, float $direction, PopCollection $pops, FruitCollection $fruits)
-    {
+    public function __construct(
+        Vector2Float $position,
+        int $width,
+        int $height,
+        float $directionX,
+        PopCollection $pops,
+        FruitCollection $fruits
+    ) {
         parent::__construct($position, $width, $height);
-        $this->direction = $direction;
+        $this->directionX = $directionX;
         $this->pops = $pops;
         $this->fruits = $fruits;
     }
@@ -34,7 +40,7 @@ class Orb extends ColliderActor implements DrawableInterface
 
         if ($this->floating) {
             $this->move(0, -1, random_int(1, 2) * 60, $deltaTime);
-        } elseif ($this->move($this->direction, 0, 4 * 60, $deltaTime)) {
+        } elseif ($this->move($this->directionX, 0, 4 * 60, $deltaTime)) {
             $this->floating = true;
         }
 
@@ -46,7 +52,7 @@ class Orb extends ColliderActor implements DrawableInterface
         }
         if ($this->timer < 0.15) {
             $this->image = "orb".(floor($this->timer * 20) % 3);
-        } elseif ($this->trappedEnemyType !== null) {
+        } elseif ($this->hasTrappedEnemy()) {
             $this->image = "trap".$this->trappedEnemyType.(floor($this->timer * 15) % 8);
         } else {
             $this->image = "orb".round(3 + (floor(($this->timer - 0.15) * 7.5) % 4));
@@ -56,8 +62,10 @@ class Orb extends ColliderActor implements DrawableInterface
     private function pop()
     {
         $this->pops->add(new Pop($this->position, new Vector2Int(70, 70), Pop::TYPE_ORB));
-        if ($this->trappedEnemyType !== null) {
-            $this->fruits->add(new Fruit($this->position, $this->width, $this->height, $this->pops, $this->trappedEnemyType));
+        if ($this->hasTrappedEnemy()) {
+            $this->fruits->add(
+                new Fruit($this->position, $this->width, $this->height, $this->pops, $this->trappedEnemyType)
+            );
         }
         //game.play_sound("pop", 4);
         $this->isActive = false;
@@ -80,5 +88,19 @@ class Orb extends ColliderActor implements DrawableInterface
             $this->height
         );
 //        $renderer->drawRectangle($this->getCollider());
+    }
+
+    public function hasTrappedEnemy(): bool
+    {
+        return $this->trappedEnemyType !== Robot::TYPE_NONE;
+    }
+
+    public function onCollision(ColliderActor $other): void
+    {
+        if ($this->isActive && $other instanceof Robot && !$this->hasTrappedEnemy()) {
+            $this->floating = true;
+            $this->trappedEnemyType = $other->getType();
+            //$this->play_sound("trap", 4);
+        }
     }
 }

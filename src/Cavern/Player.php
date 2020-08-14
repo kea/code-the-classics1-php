@@ -123,6 +123,11 @@ class Player extends GravityActor implements DrawableInterface
 
         return;
 
+        /** @todo Bolt collision */
+        if ($other instanceof Bolt) {
+
+        }
+
         if (!$this->collidePoint($other->position) || $this->hurtTimer > 0) {
             return;
         }

@@ -26,8 +26,13 @@ class FruitCollection implements IteratorAggregate
         $this->fruits = array_filter($this->fruits, fn($fruit) => $fruit->isActive());
     }
 
-    public function getIterator()
+    public function getIterator(): ArrayIterator
     {
         return new ArrayIterator($this->fruits);
+    }
+
+    public function isEmpty(): bool
+    {
+        return empty($this->fruits);
     }
 }
