@@ -25,18 +25,7 @@ class Fruit extends GravityActor
         int $trappedEnemyType = Robot::TYPE_NORMAL
     ) {
         parent::__construct($position, $width, $height);
-        if ($trappedEnemyType === Robot::TYPE_NORMAL) {
-            $this->type = array_rand([self::APPLE, self::RASPBERRY, self::LEMON]);
-        } else {
-            $types = array_fill(0, 10, self::APPLE);
-            $types += array_fill(10, 10, self::RASPBERRY);
-            $types += array_fill(20, 10, self::LEMON);
-            $types += array_fill(30, 9, self::EXTRA_HEALTH);
-            $types[] = self::EXTRA_LIFE;
-
-            $this->type = array_rand($types);
-        }
-
+        $this->type = $this->randomType($trappedEnemyType);
         $this->timeToLive = 8.3;
         $this->pops = $pops;
     }
@@ -104,7 +93,27 @@ class Fruit extends GravityActor
 
     public function pop(): void
     {
-        echo "Add pop";
         $this->pops->add(new Pop($this->position, new Vector2Int($this->width, $this->height), Pop::TYPE_FRUIT));
+    }
+
+    private function randomType(int $trappedEnemyType): int
+    {
+        $maxRange = $trappedEnemyType === Robot::TYPE_NORMAL ? 29 : 39;
+
+        $typeProbability = random_int(0, $maxRange);
+        if ($typeProbability < 10) {
+            return self::APPLE;
+        }
+        if ($typeProbability < 20) {
+            return self::RASPBERRY;
+        }
+        if ($typeProbability < 30) {
+            return self::LEMON;
+        }
+        if ($typeProbability < 39) {
+            return self::EXTRA_HEALTH;
+        }
+
+        return self::EXTRA_LIFE;
     }
 }
