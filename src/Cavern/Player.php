@@ -116,11 +116,6 @@ class Player extends GravityActor implements DrawableInterface
 
     public function onCollision(ColliderActor $other): void
     {
-        if ($other instanceof Block) {
-            $this->velocityY = 0;
-            $this->isLanded = true;
-        }
-
         return;
 
         /** @todo Bolt collision */

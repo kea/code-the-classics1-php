@@ -9,7 +9,6 @@ class ColliderActor
     protected Vector2Float $position;
     protected int $width;
     protected int $height;
-    protected bool $collisionDetection = true;
 
     protected array $anchor = ["center", "center"];
     protected ?Level $level = null;
@@ -38,11 +37,6 @@ class ColliderActor
         $dy = $this->height - $this->dxFromTop();
 
         return $this->position->y + $dy;
-    }
-
-    public function disableCollisionDetection(): void
-    {
-        $this->collisionDetection = true;
     }
 
     public function move(float $dx, float $dy, float $speed, float $deltaTime): bool

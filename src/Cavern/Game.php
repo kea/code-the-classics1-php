@@ -115,14 +115,15 @@ class Game implements DrawableInterface
             $this->nextEnemyTimer -= 1.35;
             $robotType = array_pop($this->pendingEnemies);
             $pos = new Vector2Float($this->level->getRobotSpawnX(), -30);
-            $this->enemies->add(new Robot($pos, 60, 60, $robotType, $this->orbs, $this->bolts, $this->player));
+            $robot = new Robot($pos, 60, 60, $robotType, $this->orbs, $this->bolts, $this->level, $this->player);
+            $this->enemies->add($robot);
         }
 
         if ((count($this->pendingEnemies) === 0)
             && $this->fruits->isEmpty()
             && $this->enemies->isEmpty()
             && $this->pops->isEmpty()
-            && $this->orbs->hasTrappedEnemies())
+            && !$this->orbs->hasTrappedEnemies())
         {
             $this->nextLevel();
         }

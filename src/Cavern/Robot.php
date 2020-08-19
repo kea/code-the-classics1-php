@@ -29,6 +29,7 @@ class Robot extends GravityActor
         int $type,
         OrbCollection $orbs,
         BoltCollection $bolts,
+        Level $level,
         ?Player $player
     ) {
         parent::__construct($position, $width, $height);
@@ -37,6 +38,7 @@ class Robot extends GravityActor
         $this->orbs = $orbs;
         $this->player = $player;
         $this->bolts = $bolts;
+        $this->setLevel($level);
         $this->update(0);
     }
 
