@@ -110,7 +110,13 @@ class Player extends GravityActor implements DrawableInterface
     public function draw(Renderer $renderer): void
     {
         $name = __DIR__.'/images/'.$this->image.'.png';
-        $renderer->drawImage($name, (int)($this->position->x - 70 / 2), (int)($this->position->y - 70), 70, 70);
+        $renderer->drawImage(
+            $name,
+            (int)($this->position->x - $this->width / 2),
+            (int)($this->position->y - $this->height),
+            $this->width,
+            $this->height
+        );
         $renderer->drawRectangle($this->getCollider());
     }
 

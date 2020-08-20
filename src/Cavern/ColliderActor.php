@@ -27,9 +27,7 @@ class ColliderActor
 
     public function top(): float
     {
-        $dy = $this->dxFromTop();
-
-        return $this->position->y + $dy;
+        return $this->position->y - $this->dxFromTop();
     }
 
     public function bottom(): float

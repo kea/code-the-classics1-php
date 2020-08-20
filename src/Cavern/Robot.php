@@ -54,46 +54,22 @@ class Robot extends GravityActor
             $this->changeDirTimer = 0;
         }
 
-        if ($this->changeDirTimer <= 0) {
-            $directions = [-1, 1];
-            if ($this->player) {
-                $directions[] = $this->sign($this->player->position->x - $this->position->x);
-            }
-            $this->directionX = $directions[random_int(0, count($directions) - 1)];
-            $this->changeDirTimer = random_int(100, 250);
-        }
+        $this->changeDirection();
+        $this->shotAtOrb();
 
-        if ($this->type === self::TYPE_AGGRESSIVE && $this->fireTimer >= 24 * 60) {
-            foreach ($this->orbs as $orb) {
-                if ($orb->position->y >= $this->top() &&
-                    $orb->position->y < $this->bottom() &&
-                    abs($orb->position->x - $this->position->x) < 200
-                ) {
-                    $this->directionX = $this->sign($orb->position->x - $this->position->x);
-                    $this->fireTimer = 0;
-                    break;
-                }
-            }
-        }
-
-        if ($this->fireTimer >= 12 * 60) {
+        if ($this->fireTimer >= 12 / 60) {
             $fireProbability = $this->fireProbability();
-            if ($this->player && $this->top() < $this->player->bottom() && $this->bottom() > $this->player->top()) {
+            if ($this->player && ($this->top() < $this->player->bottom()) && ($this->bottom() > $this->player->top())) {
                 $fireProbability *= 10;
             }
-            if (mt_rand() < $fireProbability) {
+            if ((random_int(0, 1000) / 1000) < $fireProbability) {
                 $this->fireTimer = 0;
                 //$this->play_sound("laser", 4);
             }
-        } elseif ($this->fireTimer === 8) {
-            $this->bolts->add(
-                new Bolt(
-                    new Vector2Float($this->position->x + $this->directionX * 20, $this->position->y - 38),
-                    48,
-                    30,
-                    $this->directionX
-                )
-            );
+        } elseif (($this->fireTimer >= 8 / 60) && ($this->fireTimer <= 9 / 60)) { // @todo wait shooting animation to finish
+            $this->fireTimer = 9 / 60; // @todo remove when the shooting is triggered by animation
+            $position = new Vector2Float($this->position->x + $this->directionX * 20, $this->position->y - 38);
+            $this->bolts->add(new Bolt($position, 48, 30, $this->directionX));
         }
     }
 
@@ -127,7 +103,7 @@ class Robot extends GravityActor
             $this->width,
             $this->height
         );
-//        $renderer->drawRectangle($this->getCollider());
+        $renderer->drawRectangle($this->getCollider());
     }
 
     public function isActive(): bool
@@ -138,5 +114,37 @@ class Robot extends GravityActor
     public function getType(): int
     {
         return $this->type;
+    }
+
+    private function shotAtOrb(): void
+    {
+        if ($this->type !== self::TYPE_AGGRESSIVE || $this->fireTimer < 24 * 60) {
+            return;
+        }
+
+        foreach ($this->orbs as $orb) {
+            if ($orb->position->y >= $this->top() &&
+                $orb->position->y < $this->bottom() &&
+                abs($orb->position->x - $this->position->x) < 200
+            ) {
+                $this->directionX = $this->sign($orb->position->x - $this->position->x);
+                $this->fireTimer = 0;
+                break;
+            }
+        }
+    }
+
+    private function changeDirection(): void
+    {
+        if ($this->changeDirTimer > 0) {
+            return;
+        }
+
+        $directions = [-1, 1];
+        if ($this->player) {
+            $directions[] = $this->sign($this->player->position->x - $this->position->x);
+        }
+        $this->directionX = $directions[random_int(0, count($directions) - 1)];
+        $this->changeDirTimer = random_int(100, 250);
     }
 }
