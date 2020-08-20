@@ -76,6 +76,7 @@ class Game implements DrawableInterface
                 foreach ($this->orbs as $orb) {
                     if (SDL_HasIntersection($bolt->getCollider(), $orb->getCollider())) {
                         $bolt->onCollision($orb);
+                        $orb->onCollision($bolt);
                         continue;
                     }
                 }

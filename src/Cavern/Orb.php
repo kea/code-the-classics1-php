@@ -59,7 +59,7 @@ class Orb extends ColliderActor implements DrawableInterface
         }
     }
 
-    private function pop()
+    private function pop(): void
     {
         $this->pops->add(new Pop($this->position, new Vector2Int(70, 70), Pop::TYPE_ORB));
         if ($this->hasTrappedEnemy()) {
@@ -97,10 +97,16 @@ class Orb extends ColliderActor implements DrawableInterface
 
     public function onCollision(ColliderActor $other): void
     {
-        if ($this->isActive && $other instanceof Robot && !$this->hasTrappedEnemy()) {
+        if (!$this->isActive || $this->hasTrappedEnemy()) {
+            return;
+        }
+        if ($other instanceof Robot) {
             $this->floating = true;
             $this->trappedEnemyType = $other->getType();
             //$this->play_sound("trap", 4);
+        }
+        if ($other instanceof Bolt) {
+            $this->pop();
         }
     }
 }
