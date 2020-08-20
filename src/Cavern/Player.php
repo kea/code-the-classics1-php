@@ -12,10 +12,10 @@ use PhpGame\Vector2Float;
 class Player extends GravityActor implements DrawableInterface
 {
     private const MAX_HEALTH = 3;
+    private const SPEED = 60 * 4;
     private int $lives = 2;
     private int $health = self::MAX_HEALTH;
     private int $score = 0;
-    private float $directionX;
     private float $timer = .0;
     private float $fireTimer = .0;
     private float $hurtTimer = .0;
@@ -51,6 +51,7 @@ class Player extends GravityActor implements DrawableInterface
     {
         $direction = new Vector2Float(.0, .0);
         $this->timer += $deltaTime;
+        $this->collisionDetection = $this->health > 0;
         parent::update($deltaTime);
 
         $this->fireTimer -= $deltaTime;
@@ -61,18 +62,13 @@ class Player extends GravityActor implements DrawableInterface
         }
 
         if ($this->hurtTimer > 1.7) {
-            if ($this->health > 0) {
-                $this->move($this->directionX, 0, 60 * 4, $deltaTime);
-            } elseif ($this->position > self::HEIGHT * 1.5) {
-                --$this->lives;
-                $this->reset();
-            }
+            $this->beenHurt($deltaTime);
         } else {
             $direction = $this->inputActions->getValueForAction('Move');
             if ($direction->x !== .0) {
                 $this->directionX = $direction->x;
                 if ($this->fireTimer < 0.17) {
-                    $this->move($direction->x, 0, 60 * 4, $deltaTime);
+                    $this->move($direction->x, 0, self::SPEED, $deltaTime);
                 }
             }
 
@@ -122,26 +118,35 @@ class Player extends GravityActor implements DrawableInterface
 
     public function onCollision(ColliderActor $other): void
     {
-        return;
-
-        /** @todo Bolt collision */
-        if ($other instanceof Bolt) {
-
-        }
-
-        if (!$this->collidePoint($other->position) || $this->hurtTimer > 0) {
+        if ($this->hurtTimer > 0) {
             return;
         }
 
-        $this->hurtTimer = 200 / 60;
-        --$this->health;
-        $this->velocityY -= 12 / 60;
-        $this->landed = false;
-        $this->directionX = $other->directionX;
+        if ($other instanceof Bolt) {
+            $this->hurtTimer = 200 / 60;
+            --$this->health;
+            $this->velocityY -= 12 * 60;
+            $this->isLanded = false;
+            $this->directionX = $other->directionX;
+            if ($this->health > 0) {
+                // $game->playSound("ouch", 4);
+            } else {
+                // $game->playSound("die");
+            }
+        }
+    }
+
+    private function beenHurt(float $deltaTime): void
+    {
         if ($this->health > 0) {
-            // $game->playSound("ouch", 4);
-        } else {
-            // $game->playSound("die");
+            $this->move($this->directionX, 0, self::SPEED, $deltaTime);
+
+            return;
+        }
+
+        if ($this->top() >= self::SCREEN_HEIGHT * 1.5) {
+            --$this->lives;
+            $this->reset();
         }
     }
 

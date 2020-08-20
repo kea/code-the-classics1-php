@@ -181,7 +181,7 @@ class Game implements DrawableInterface
             $this->player->reset();
         }
 
-        $this->fruits->reset();
+        $this->fruits->newLevel($this->level);
         $this->createEnemies();
         $this->level->buildNextLevel();
         $this->soundManager->playSound("level");

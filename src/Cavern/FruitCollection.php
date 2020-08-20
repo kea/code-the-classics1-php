@@ -4,16 +4,27 @@ namespace Cavern;
 
 use ArrayIterator;
 use IteratorAggregate;
+use PhpGame\Vector2Float;
 
 class FruitCollection implements IteratorAggregate
 {
     /** @var Fruit[] */
     private array $fruits = [];
+    private Level $level;
 
-    public function reset(): void
+    public function newLevel(Level $level): void
     {
         unset($this->fruits);
         $this->fruits = [];
+        $this->level = $level;
+    }
+
+    public function createFruit(Vector2Float $position, PopCollection $pops, ?int $trappedEnemyType): Fruit
+    {
+        $fruit = new Fruit($position, 54, 54, $pops, $trappedEnemyType);
+        $fruit->setLevel($this->level);
+
+        return $fruit;
     }
 
     public function add(Fruit $fruit): void

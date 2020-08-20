@@ -10,7 +10,6 @@ use PhpGame\Vector2Int;
 class Orb extends ColliderActor implements DrawableInterface
 {
     private const MAX_TIMER = 250 / 60;
-    private int $directionX;
     public float $blownTime = 0.1;
     private bool $floating = false;
     private float $timer = .0;
@@ -63,9 +62,8 @@ class Orb extends ColliderActor implements DrawableInterface
     {
         $this->pops->add(new Pop($this->position, new Vector2Int(70, 70), Pop::TYPE_ORB));
         if ($this->hasTrappedEnemy()) {
-            $this->fruits->add(
-                new Fruit($this->position, $this->width, $this->height, $this->pops, $this->trappedEnemyType)
-            );
+            $fruit = $this->fruits->createFruit($this->position, $this->pops, $this->trappedEnemyType);
+            $this->fruits->add($fruit);
         }
         //game.play_sound("pop", 4);
         $this->isActive = false;
@@ -97,13 +95,13 @@ class Orb extends ColliderActor implements DrawableInterface
 
     public function onCollision(ColliderActor $other): void
     {
-        if (!$this->isActive || $this->hasTrappedEnemy()) {
+        if (!$this->isActive) {
             return;
         }
-        if ($other instanceof Robot) {
+        if ($other instanceof Robot && !$this->hasTrappedEnemy()) {
             $this->floating = true;
             $this->trappedEnemyType = $other->getType();
-            //$this->play_sound("trap", 4);
+            //$this->playSound("trap", 4);
         }
         if ($other instanceof Bolt) {
             $this->pop();

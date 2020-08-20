@@ -8,7 +8,6 @@ use PhpGame\Vector2Float;
 class Bolt extends GravityActor
 {
     private const SPEED = 7 * 60;
-    private int $directionX;
     private bool $isActive = true;
     private float $timer = .0;
 

@@ -13,7 +13,6 @@ class Robot extends GravityActor
 
     private int $type;
     private int $speed;
-    private int $directionX = 1;
     private bool $alive = true;
     private float $changeDirTimer = .0;
     private float $fireTimer = 100.0;

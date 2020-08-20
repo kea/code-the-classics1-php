@@ -7,8 +7,10 @@ use PhpGame\Vector2Float;
 class ColliderActor
 {
     protected Vector2Float $position;
+    protected float $directionX = 1.0;
     protected int $width;
     protected int $height;
+    protected bool $collisionDetection = true;
 
     protected array $anchor = ["center", "center"];
     protected ?Level $level = null;
