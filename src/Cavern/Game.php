@@ -137,7 +137,6 @@ class Game implements DrawableInterface
 
         $updatablesContainer = $this->getUpdatableObjects();
         if ($this->player) {
-            $this->statusBar->draw($renderer, $this->player, $this->level);
             $updatablesContainer[] = [$this->player];
         }
 
@@ -145,6 +144,10 @@ class Game implements DrawableInterface
             foreach ($updatables as $updatable) {
                 $updatable->draw($renderer);
             }
+        }
+
+        if (!$this->isGameOver()) {
+            $this->statusBar->draw($renderer, $this->player, $this->level);
         }
     }
 
@@ -206,5 +209,10 @@ class Game implements DrawableInterface
         );
         shuffle($this->pendingEnemies);
         // playSound('level', 1);
+    }
+
+    public function isGameOver(): bool
+    {
+        return $this->player === null || $this->player->getLives() < 0;
     }
 }

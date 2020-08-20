@@ -59,9 +59,9 @@ class GameStarter implements DrawableInterface
             }
         }
         if ($this->state === self::PLAY) {
-            //if ($this->game->player->life() < 0) {
-            //    $this->state = self::GAME_OVER;
-            //}
+            if ($this->game->isGameOver()) {
+                $this->state = self::GAME_OVER;
+            }
         }
 
         $this->game->update($deltaTime);
