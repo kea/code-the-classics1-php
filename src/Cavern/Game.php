@@ -6,7 +6,6 @@ namespace Cavern;
 
 use PhpGame\DrawableInterface;
 use PhpGame\SDL\Renderer;
-use PhpGame\SDL\Screen;
 use PhpGame\SoundManager;
 use PhpGame\Vector2Float;
 
@@ -24,6 +23,7 @@ class Game implements DrawableInterface
     private FruitCollection $fruits;
     private BoltCollection $bolts;
     private RobotCollection $enemies;
+    private StatusBar $statusBar;
 
     public function __construct(
         Level $level,
@@ -39,6 +39,7 @@ class Game implements DrawableInterface
         $this->pops = $pops;
         $this->bolts = new BoltCollection();
         $this->enemies = new RobotCollection();
+        $this->statusBar = new StatusBar();
     }
 
     public function start()
@@ -136,6 +137,7 @@ class Game implements DrawableInterface
 
         $updatablesContainer = $this->getUpdatableObjects();
         if ($this->player) {
+            $this->statusBar->draw($renderer, $this->player, $this->level);
             $updatablesContainer[] = [$this->player];
         }
 
@@ -144,10 +146,6 @@ class Game implements DrawableInterface
                 $updatable->draw($renderer);
             }
         }
-    }
-
-    private function drawScores(Screen $screen): void
-    {
     }
 
     public function playSound(string $name, int $count = 1): void

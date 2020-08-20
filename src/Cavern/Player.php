@@ -155,14 +155,29 @@ class Player extends GravityActor implements DrawableInterface
         $this->health = min($this->health + 1, self::MAX_HEALTH);
     }
 
+    public function getHealth(): int
+    {
+        return $this->health;
+    }
+
     public function incLives(): void
     {
         $this->lives++;
     }
 
+    public function getLives(): int
+    {
+        return $this->lives;
+    }
+
     public function addScore(int $scoreToAdd): void
     {
         $this->score += $scoreToAdd;
+    }
+
+    public function getScore(): int
+    {
+        return $this->score;
     }
 
     private function chooseImage(float $dx): void
