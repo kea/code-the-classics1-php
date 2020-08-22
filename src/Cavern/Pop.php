@@ -52,9 +52,7 @@ class Pop implements DrawableInterface
         $renderer->drawImage(
             $name,
             (int)($this->position->x - $this->dimension->x() / 2),
-            (int)($this->position->y - $this->dimension->y()),
-            $this->dimension->x(),
-            $this->dimension->y()
+            (int)($this->position->y - $this->dimension->y())
         );
     }
 

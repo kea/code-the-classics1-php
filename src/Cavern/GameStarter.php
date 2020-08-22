@@ -73,11 +73,11 @@ class GameStarter implements DrawableInterface
             $this->game->draw($renderer);
         }
         if ($this->state === self::MENU) {
-            $renderer->drawImage(__DIR__."/images/title.png", 0, 0, 800, 480);
-            $renderer->drawImage($this->menuAnimation->getCurrentFrame(), 130, 280, 540, 90);
+            $renderer->drawImage(__DIR__."/images/title.png", 0, 0);
+            $renderer->drawImage($this->menuAnimation->getCurrentFrame(), 130, 280);
         }
         if ($this->state === self::GAME_OVER) {
-            $renderer->drawImage(__DIR__."/images/over.png", 0, 0, 800, 480);
+            $renderer->drawImage(__DIR__."/images/over.png", 0, 0);
         }
     }
 

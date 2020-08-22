@@ -43,9 +43,7 @@ class Bolt extends GravityActor
         $renderer->drawImage(
             $name,
             (int)($this->position->x - $this->width / 2),
-            (int)($this->position->y - $this->height),
-            $this->width,
-            $this->height
+            (int)($this->position->y - $this->height)
         );
         $renderer->drawRectangle($this->getCollider());
     }

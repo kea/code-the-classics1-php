@@ -22,6 +22,6 @@ class Block extends ColliderActor implements DrawableInterface
 
     public function draw(Renderer $renderer): void
     {
-        $renderer->drawImage($this->image, $this->position->x, $this->position->y, $this->width, $this->height);
+        $renderer->drawImage($this->image, $this->position->x, $this->position->y);
     }
 }

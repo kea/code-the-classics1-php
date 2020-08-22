@@ -39,7 +39,7 @@ class Level
     public function draw(Renderer $renderer): void
     {
         $name = __DIR__.'/images/bg'.$this->levelColor.'.png';
-        $renderer->drawImage($name, 0, 0, $this->fieldWidth, $this->fieldHeight);
+        $renderer->drawImage($name, 0, 0);
 
         foreach ($this->backgroundBlocks as $block) {
             $block->draw($renderer);

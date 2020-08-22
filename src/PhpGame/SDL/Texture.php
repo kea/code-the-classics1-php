@@ -6,6 +6,8 @@ class Texture
 {
     /** @var resource */
     private $SDLTexture;
+    private int $width = 0;
+    private int $height = 0;
 
     private function __construct()
     {
@@ -29,6 +31,7 @@ class Texture
         $texture = new self();
 
         $texture->SDLTexture = $renderer->loadTexture($imageFile);
+        [$texture->width, $texture->height] = $renderer->getSizeOfTexture($texture->SDLTexture);
 
         return $texture;
     }
@@ -39,5 +42,15 @@ class Texture
     public function getContent()
     {
         return $this->SDLTexture;
+    }
+
+    public function getWidth(): int
+    {
+        return $this->width;
+    }
+
+    public function getHeight(): int
+    {
+        return $this->height;
     }
 }

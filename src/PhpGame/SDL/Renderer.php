@@ -10,6 +10,7 @@ use function IMG_LoadTexture;
 use function SDL_CreateRenderer;
 use function SDL_DestroyRenderer;
 use function SDL_GetError;
+use function SDL_QueryTexture;
 use function SDL_RenderClear;
 use function SDL_RenderCopy;
 use function SDL_RenderDrawRect;
@@ -78,13 +79,18 @@ class Renderer
         SDL_SetRenderDrawColor($this->renderer, ...$rgba);
     }
 
-    public function drawImage(string $name, int $posX, int $posY, int $width, int $height): void
+    public function drawImage(string $name, int $posX, int $posY, ?int $width = null, ?int $height = null): void
     {
-        $destinationRect = new SDL_Rect($posX, $posY, $width, $height);
-
         if (!isset($this->textures[$name])) {
             $this->textures[$name] = Texture::loadFromFile($name, $this);
         }
+
+        $destinationRect = new SDL_Rect(
+            $posX,
+            $posY,
+            $width ?? $this->textures[$name]->getWidth(),
+            $height ?? $this->textures[$name]->getHeight()
+        );
 
         $this->copy($this->textures[$name], null, $destinationRect);
     }
@@ -92,5 +98,17 @@ class Renderer
     public function drawRectangle(SDL_Rect $rect): void
     {
         SDL_RenderDrawRect($this->renderer, $rect);
+    }
+
+    /**
+     * @param resource $SDLTexture
+     * @return int[] [$width, $height]
+     */
+    public function getSizeOfTexture($SDLTexture): array
+    {
+        $width = $height = $notImportant = 0;
+        SDL_QueryTexture($SDLTexture, $notImportant, $notImportant, $width, $height);
+
+        return [$width, $height];
     }
 }
