@@ -88,19 +88,17 @@ class Robot extends GravityActor
     {
         $directionIdx = $this->directionX > 0 ? "1" : "0";
         $image = "robot".$this->type.$directionIdx;
-        if ($this->fireTimer < 12 *  60) {
-            $image .= 5 + floor($this->fireTimer / (4 * 60));
+        if ($this->fireTimer < 12 / 60) {
+            $image .= 5 + floor($this->fireTimer / (4 / 60));
         } else {
-            $image .= 1 + (floor($this->lifeTimer / (4 *  60)) % 4);
+            $image .= 1 + (floor($this->lifeTimer / (4 / 60)) % 4);
         }
         $name = __DIR__.'/images/'.$image.'.png';
 
         $renderer->drawImage(
             $name,
             (int)($this->position->x - $this->width / 2),
-            (int)($this->position->y - $this->height),
-            $this->width,
-            $this->height
+            (int)($this->position->y - $this->height)
         );
         $renderer->drawRectangle($this->getCollider());
     }
