@@ -4,41 +4,30 @@ namespace Cavern;
 
 use PhpGame\DrawableInterface;
 use PhpGame\SDL\Renderer;
-use PhpGame\Vector2Float;
-use PhpGame\Vector2Int;
 
 class Pop implements DrawableInterface
 {
     public const TYPE_FRUIT = 0;
     public const TYPE_ORB = 1;
-    private Vector2Float $position;
-    private Vector2Int $dimension;
-    private string $image = 'blank';
     private int $type;
     private float $timer = .0;
     private bool $isActive = true;
+    private \Cavern\Sprite\Pop $sprite;
 
-    /**
-     * Pop constructor.
-     * @param Vector2Float $position
-     * @param Vector2Int   $dimension
-     * @param int          $type
-     */
-    public function __construct(Vector2Float $position, Vector2Int $dimension, int $type)
+    public function __construct(\Cavern\Sprite\Pop $sprite, int $type)
     {
-        $this->position = $position;
-        $this->dimension = $dimension;
         $this->type = $type;
+        $this->sprite = $sprite;
     }
 
     public function update(float $deltaTime): void
     {
-        if (!$this->isActive || floor($this->timer * 30) > 5) {
+        if (!$this->isActive || $this->timer * 30 > 5) {
             $this->isActive = false;
             return;
         }
         $this->timer += $deltaTime;
-        $this->image = "pop".$this->type.floor($this->timer * 30);
+        $this->sprite->updateImage($this->timer, $this->type);
     }
 
     public function draw(Renderer $renderer): void
@@ -46,14 +35,7 @@ class Pop implements DrawableInterface
         if (!$this->isActive) {
             return;
         }
-
-        $name = __DIR__.'/images/'.$this->image.'.png';
-
-        $renderer->drawImage(
-            $name,
-            (int)($this->position->x - $this->dimension->x() / 2),
-            (int)($this->position->y - $this->dimension->y())
-        );
+        $this->sprite->render($renderer);
     }
 
     public function isActive(): bool

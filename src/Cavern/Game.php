@@ -7,6 +7,7 @@ namespace Cavern;
 use PhpGame\DrawableInterface;
 use PhpGame\SDL\Renderer;
 use PhpGame\SoundManager;
+use PhpGame\TextureRepository;
 use PhpGame\Vector2Float;
 
 class Game implements DrawableInterface
@@ -24,12 +25,14 @@ class Game implements DrawableInterface
     private BoltCollection $bolts;
     private RobotCollection $enemies;
     private StatusBar $statusBar;
+    private TextureRepository $textureRepository;
 
     public function __construct(
         Level $level,
         OrbCollection $orbs,
         FruitCollection $fruits,
         PopCollection $pops,
+        TextureRepository $textureRepository,
         ?Player $player = null
     ) {
         $this->player = $player;
@@ -37,12 +40,13 @@ class Game implements DrawableInterface
         $this->orbs = $orbs;
         $this->fruits = $fruits;
         $this->pops = $pops;
-        $this->bolts = new BoltCollection();
+        $this->bolts = new BoltCollection(new \Cavern\Sprite\Bolt($textureRepository));
         $this->enemies = new RobotCollection();
         $this->statusBar = new StatusBar();
+        $this->textureRepository = $textureRepository;
     }
 
-    public function start()
+    public function start(): void
     {
         $this->nextLevel();
     }
@@ -107,7 +111,7 @@ class Game implements DrawableInterface
         $this->nextFruitTimer += $deltaTime;
         if (($this->nextFruitTimer > 1.7) && (count($this->pendingEnemies) > 0 || !$this->enemies->isEmpty())) {
             $this->nextFruitTimer -= 1.7;
-            $fruit = new Fruit(new Vector2Float(random_int(70, 730), random_int(75, 400)), 54, 54, $this->pops);
+            $fruit = $this->fruits->createFruit(new Vector2Float(random_int(70, 730), random_int(75, 400)), $this->pops);
             $fruit->setLevel($this->level);
             $this->fruits->add($fruit);
         }
@@ -117,7 +121,9 @@ class Game implements DrawableInterface
             $this->nextEnemyTimer -= 1.35;
             $robotType = array_pop($this->pendingEnemies);
             $pos = new Vector2Float($this->level->getRobotSpawnX(), -30);
-            $robot = new Robot($pos, 60, 60, $robotType, $this->orbs, $this->bolts, $this->level, $this->player);
+            $sprite = new \Cavern\Sprite\Robot($this->textureRepository);
+            $sprite->setPosition($pos);
+            $robot = new Robot($sprite, $robotType, $this->orbs, $this->bolts, $this->level, $this->player);
             $this->enemies->add($robot);
         }
 

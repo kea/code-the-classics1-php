@@ -20,7 +20,6 @@ class Texture
         }
     }
 
-
     /**
      * @param string   $imageFile
      * @param Renderer $renderer
@@ -30,8 +29,9 @@ class Texture
     {
         $texture = new self();
 
-        $texture->SDLTexture = $renderer->loadTexture($imageFile);
-        [$texture->width, $texture->height] = $renderer->getSizeOfTexture($texture->SDLTexture);
+        $texture->SDLTexture = IMG_LoadTexture($renderer->getSDLRenderer(), $imageFile);
+        $notImportant = 0;
+        SDL_QueryTexture($texture->SDLTexture, $notImportant, $notImportant, $texture->width, $texture->height);
 
         return $texture;
     }

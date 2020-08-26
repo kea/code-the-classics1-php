@@ -6,7 +6,6 @@ use RuntimeException;
 use SDL_Rect;
 use SDL_Window;
 
-use function IMG_LoadTexture;
 use function SDL_CreateRenderer;
 use function SDL_DestroyRenderer;
 use function SDL_GetError;
@@ -43,20 +42,11 @@ class Renderer
         SDL_DestroyRenderer($this->renderer);
     }
 
-    public function copy(Texture $texture, ?SDL_Rect $sourceRect = null, ?SDL_Rect $destinationRect = null)
+    public function copy(Texture $texture, ?SDL_Rect $sourceRect = null, ?SDL_Rect $destinationRect = null): void
     {
         if (SDL_RenderCopy($this->renderer, $texture->getContent(), $sourceRect, $destinationRect) !== 0) {
             throw new RuntimeException(SDL_GetError());
         }
-    }
-
-    /**
-     * @param string $imageFile
-     * @return resource
-     */
-    public function loadTexture(string $imageFile)
-    {
-        return IMG_LoadTexture($this->renderer, $imageFile);
     }
 
     public function clear(): void
@@ -101,15 +91,9 @@ class Renderer
         SDL_RenderDrawRect($this->renderer, $rect);
     }
 
-    /**
-     * @param resource $SDLTexture
-     * @return int[] [$width, $height]
-     */
-    public function getSizeOfTexture($SDLTexture): array
+    /** @return resource */
+    public function getSDLRenderer()
     {
-        $width = $height = $notImportant = 0;
-        SDL_QueryTexture($SDLTexture, $notImportant, $notImportant, $width, $height);
-
-        return [$width, $height];
+        return $this->renderer;
     }
 }

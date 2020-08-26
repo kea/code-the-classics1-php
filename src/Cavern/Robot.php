@@ -2,6 +2,7 @@
 
 namespace Cavern;
 
+use Cavern\Sprite\Robot as SpriteRobot;
 use PhpGame\SDL\Renderer;
 use PhpGame\Vector2Float;
 
@@ -22,23 +23,22 @@ class Robot extends GravityActor
     private ?Player $player;
 
     public function __construct(
-        Vector2Float $position,
-        int $width,
-        int $height,
+        SpriteRobot $sprite,
         int $type,
         OrbCollection $orbs,
         BoltCollection $bolts,
         Level $level,
         ?Player $player
     ) {
-        parent::__construct($position, $width, $height);
+        parent::__construct($sprite);
         $this->type = $type;
-        $this->speed = random_int(1, 3);
+        $this->speed = random_int(1 * 60, 3 * 60);
         $this->orbs = $orbs;
         $this->player = $player;
         $this->bolts = $bolts;
         $this->setLevel($level);
         $this->update(0);
+        $this->sprite = $sprite;
     }
 
     public function update(float $deltaTime): void
@@ -58,7 +58,9 @@ class Robot extends GravityActor
 
         if ($this->fireTimer >= 12 / 60) {
             $fireProbability = $this->fireProbability();
-            if ($this->player && ($this->top() < $this->player->bottom()) && ($this->bottom() > $this->player->top())) {
+            if ($this->player
+                && ($this->sprite->top() < $this->player->sprite->bottom())
+                && ($this->sprite->bottom() > $this->player->sprite->top())) {
                 $fireProbability *= 10;
             }
             if ((random_int(0, 1000) / 1000) < $fireProbability) {
@@ -67,9 +69,13 @@ class Robot extends GravityActor
             }
         } elseif (($this->fireTimer >= 8 / 60) && ($this->fireTimer <= 9 / 60)) { // @todo wait shooting animation to finish
             $this->fireTimer = 9 / 60; // @todo remove when the shooting is triggered by animation
-            $position = new Vector2Float($this->position->x + $this->directionX * 20, $this->position->y - 38);
-            $this->bolts->add(new Bolt($position, 48, 30, $this->directionX));
+            $position = new Vector2Float(
+                $this->getPosition()->x + $this->directionX * 20, $this->getPosition()->y - 38
+            );
+            $this->bolts->add($this->bolts->create($position, $this->directionX));
         }
+
+        $this->sprite->updateImage($this->directionX, $this->type, $this->fireTimer, $this->lifeTimer);
     }
 
     public function onCollision(ColliderActor $other): void
@@ -86,20 +92,7 @@ class Robot extends GravityActor
 
     public function draw(Renderer $renderer): void
     {
-        $directionIdx = $this->directionX > 0 ? "1" : "0";
-        $image = "robot".$this->type.$directionIdx;
-        if ($this->fireTimer < 12 / 60) {
-            $image .= 5 + floor($this->fireTimer / (4 / 60));
-        } else {
-            $image .= 1 + (floor($this->lifeTimer / (4 / 60)) % 4);
-        }
-        $name = __DIR__.'/images/'.$image.'.png';
-
-        $renderer->drawImage(
-            $name,
-            (int)($this->position->x - $this->width / 2),
-            (int)($this->position->y - $this->height)
-        );
+        $this->sprite->render($renderer);
         $renderer->drawRectangle($this->getCollider());
     }
 
@@ -120,11 +113,11 @@ class Robot extends GravityActor
         }
 
         foreach ($this->orbs as $orb) {
-            if ($orb->position->y >= $this->top() &&
-                $orb->position->y < $this->bottom() &&
-                abs($orb->position->x - $this->position->x) < 200
+            if ($orb->position->y >= $this->sprite->top() &&
+                $orb->position->y < $this->sprite->bottom() &&
+                abs($orb->position->x - $this->getPosition()->x) < 200
             ) {
-                $this->directionX = $this->sign($orb->position->x - $this->position->x);
+                $this->directionX = $this->sign($orb->getPosition()->x - $this->getPosition()->x);
                 $this->fireTimer = 0;
                 break;
             }
@@ -139,7 +132,7 @@ class Robot extends GravityActor
 
         $directions = [-1, 1];
         if ($this->player) {
-            $directions[] = $this->sign($this->player->position->x - $this->position->x);
+            $directions[] = $this->sign($this->player->getPosition()->x - $this->getPosition()->x);
         }
         $this->directionX = $directions[random_int(0, count($directions) - 1)];
         $this->changeDirTimer = random_int(100, 250);

@@ -7,6 +7,7 @@ use PhpGame\DrawableInterface;
 use PhpGame\Input\InputActions;
 use PhpGame\SDL\Renderer;
 use PhpGame\SoundManager;
+use PhpGame\TextureRepository;
 use PhpGame\Vector2Float;
 
 use const SDL_SCANCODE_SPACE;
@@ -24,23 +25,30 @@ class GameStarter implements DrawableInterface
     private int $width;
     private int $height;
     private ?Animation $menuAnimation = null;
+    private TextureRepository $textureRepository;
 
-    public function __construct(int $width, int $height, SoundManager $soundManager, InputActions $inputActions)
-    {
+    public function __construct(
+        int $width,
+        int $height,
+        SoundManager $soundManager,
+        InputActions $inputActions,
+        TextureRepository $textureRepository
+    ) {
         $this->width = $width;
         $this->height = $height;
         $this->soundManager = $soundManager;
         $this->startMenu();
         $this->inputActions = $inputActions;
-        $level = new Level($this->width, $this->height);
+        $level = new Level($this->width, $this->height, $textureRepository);
 
-        $fruits = new FruitCollection();
-        $pops = new PopCollection();
-        $orbs = new OrbCollection($fruits, $pops);
+        $fruits = new FruitCollection(new \Cavern\Sprite\Fruit($textureRepository));
+        $pops = new PopCollection(new \Cavern\Sprite\Pop($textureRepository));
+        $orbs = new OrbCollection(new \Cavern\Sprite\Orb($textureRepository), $fruits, $pops);
 
-        $this->game = new Game($level, $orbs, $fruits, $pops);
+        $this->game = new Game($level, $orbs, $fruits, $pops, $textureRepository);
         $this->game->setSoundManager($this->soundManager);
         $this->game->start();
+        $this->textureRepository = $textureRepository;
     }
 
     public function update(float $deltaTime): void
@@ -50,6 +58,7 @@ class GameStarter implements DrawableInterface
                 return;
             }
             $this->startMenu();
+
             return;
         }
         if ($this->state === self::MENU) {
@@ -102,13 +111,19 @@ class GameStarter implements DrawableInterface
 
     public function startGame(): void
     {
-        $fruits = new FruitCollection();
-        $pops = new PopCollection();
-        $orbs = new OrbCollection($fruits, $pops);
-        $player = new Player(new Vector2Float(200, 200), 70, 70, $this->inputActions, $orbs);
-        $level = new Level($this->width, $this->height);
+        $playerSprite = new \Cavern\Sprite\Player($this->textureRepository);
+        $playerSprite->setPosition(new Vector2Float(200, 200));
+        $fruitSprite = new \Cavern\Sprite\Fruit($this->textureRepository);
+        $popSprite = new \Cavern\Sprite\Pop($this->textureRepository);
+        $orbSprite = new \Cavern\Sprite\Orb($this->textureRepository);
+
+        $fruits = new FruitCollection($fruitSprite);
+        $pops = new PopCollection($popSprite);
+        $orbs = new OrbCollection($orbSprite, $fruits, $pops);
+        $player = new Player($playerSprite, $this->inputActions, $orbs);
+        $level = new Level($this->width, $this->height, $this->textureRepository);
         $player->setLevel($level);
-        $this->game = new Game($level, $orbs, $fruits, $pops, $player);
+        $this->game = new Game($level, $orbs, $fruits, $pops, $this->textureRepository, $player);
         $this->game->setSoundManager($this->soundManager);
         $this->game->start();
         $this->state = self::PLAY;

@@ -8,8 +8,8 @@ use PhpGame\SDL\Texture;
 class Sprite
 {
     private Texture $texture;
-    private \SDL_Rect $boundedRect;
-    private Transform $transform;
+    protected \SDL_Rect $boundedRect;
+    protected Transform $transform;
     private Anchor $anchor;
 
     /**
@@ -21,7 +21,7 @@ class Sprite
     public function __construct(Texture $texture, int $x = 0, int $y = 0)
     {
         $this->texture = $texture;
-        $this->anchor = new Anchor(Anchor::CENTER, Anchor::CENTER);
+        $this->anchor = Anchor::CenterCenter();
         $this->transform = new Transform(new Vector2Float($x, $y));
         $this->updateBoundedRect();
     }
@@ -38,10 +38,9 @@ class Sprite
         return $this->transform->getPosition();
     }
 
-    public function setPosition(int $x, int $y): void
+    public function setPosition(Vector2Float $position): void
     {
-        $this->transform->getPosition()->x = $x;
-        $this->transform->getPosition()->y = $y;
+        $this->transform->setPosition($position);
         $this->updateBoundedRect();
     }
 
@@ -78,4 +77,33 @@ class Sprite
         $this->anchor = $anchor;
         $this->updateBoundedRect();
     }
+
+    public function top(): float
+    {
+        return $this->boundedRect->y;
+    }
+
+    public function bottom(): float
+    {
+        return $this->boundedRect->y + $this->boundedRect->h;
+    }
+
+    public function getBoundedRect(): \SDL_Rect
+    {
+        return $this->boundedRect;
+    }
+
+    protected function updateTexture(Texture $texture): void
+    {
+        $this->texture = $texture;
+        $this->updateBoundedRect();
+    }
+
+    public function __clone()
+    {
+        $this->boundedRect = clone $this->boundedRect;
+        $this->transform = clone $this->transform;
+        $this->anchor = clone $this->anchor;
+    }
 }
+

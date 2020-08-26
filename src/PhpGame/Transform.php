@@ -29,4 +29,9 @@ class Transform
     {
         return $this->position;
     }
+
+    public function setPosition(Vector2Float $position): void
+    {
+        $this->position = $position;
+    }
 }

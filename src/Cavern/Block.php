@@ -7,13 +7,6 @@ use PhpGame\SDL\Renderer;
 
 class Block extends ColliderActor implements DrawableInterface
 {
-    private string $image;
-
-    public function setImage(string $blockSprite): void
-    {
-        $this->image = $blockSprite;
-    }
-
     public function update(float $deltaTime): void
     {
         /** @todo remove update */
@@ -22,6 +15,6 @@ class Block extends ColliderActor implements DrawableInterface
 
     public function draw(Renderer $renderer): void
     {
-        $renderer->drawImage($this->image, $this->position->x, $this->position->y);
+        $this->sprite->render($renderer);
     }
 }

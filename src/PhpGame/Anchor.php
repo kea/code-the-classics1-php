@@ -56,6 +56,21 @@ class Anchor
         $this->y = self::ANCHORS_RELATIVE_POSITION['y'][$anchorVertical];
     }
 
+    public static function CenterCenter(): Anchor
+    {
+        return new Anchor(self::CENTER, self::CENTER);
+    }
+
+    public static function CenterBottom(): Anchor
+    {
+        return new Anchor(self::CENTER, self::BOTTOM);
+    }
+
+    public static function LeftTop(): Anchor
+    {
+        return new Anchor(self::LEFT, self::TOP);
+    }
+
     public function getBoundedRect(float $posX, float $posY, int $width, int $height): \SDL_Rect
     {
         return new \SDL_Rect($posX - $width * $this->x, $posY - $height * $this->y, $width, $height);

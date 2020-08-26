@@ -2,9 +2,8 @@
 
 namespace Cavern;
 
+use Cavern\Sprite\Fruit as SpriteFruit;
 use PhpGame\SDL\Renderer;
-use PhpGame\Vector2Float;
-use PhpGame\Vector2Int;
 
 class Fruit extends GravityActor
 {
@@ -18,13 +17,11 @@ class Fruit extends GravityActor
     private PopCollection $pops;
 
     public function __construct(
-        Vector2Float $position,
-        int $width,
-        int $height,
+        SpriteFruit $sprite,
         PopCollection $pops,
         int $trappedEnemyType = Robot::TYPE_NORMAL
     ) {
-        parent::__construct($position, $width, $height);
+        parent::__construct($sprite);
         $this->type = $this->randomType($trappedEnemyType);
         $this->timeToLive = 8.3;
         $this->pops = $pops;
@@ -44,28 +41,12 @@ class Fruit extends GravityActor
         if ($this->timeToLive < 0) {
             $this->pop();
         }
-    }
-
-    public function getCollider(): \SDL_Rect
-    {
-        return new \SDL_Rect(
-            $this->position->x - $this->width / 2,
-            $this->position->y - $this->height,
-            $this->width - 5,
-            $this->height - 5
-        );
+        $this->sprite->updateImage($this->timeToLive, $this->type);
     }
 
     public function draw(Renderer $renderer): void
     {
-        $animFrame = 0; //str([0, 1, 2, 1][(game.timer // 6) % 4])
-        $name = __DIR__.'/images/fruit'.$this->type.$animFrame.'.png';
-
-        $renderer->drawImage(
-            $name,
-            (int)($this->position->x - $this->width / 2),
-            (int)($this->position->y - $this->height)
-        );
+        $this->sprite->render($renderer);
         $renderer->drawRectangle($this->getCollider());
     }
 
@@ -91,7 +72,7 @@ class Fruit extends GravityActor
 
     public function pop(): void
     {
-        $this->pops->add(new Pop($this->position, new Vector2Int($this->width, $this->height), Pop::TYPE_FRUIT));
+        $this->pops->add($this->pops->createPop($this->getPosition(), Pop::TYPE_FRUIT));
     }
 
     private function randomType(int $trappedEnemyType): int

@@ -2,7 +2,10 @@
 
 namespace Cavern;
 
+use PhpGame\Anchor;
 use PhpGame\SDL\Renderer;
+use PhpGame\Sprite;
+use PhpGame\TextureRepository;
 use PhpGame\Vector2Float;
 
 class Level
@@ -18,12 +21,14 @@ class Level
     private int $levelColor = -1;
     private int $fieldWidth;
     private int $fieldHeight;
+    private TextureRepository $textureRepository;
 
-    public function __construct(int $fieldWidth, int $fieldHeight)
+    public function __construct(int $fieldWidth, int $fieldHeight, TextureRepository $textureRepository)
     {
         $this->levels = json_decode(file_get_contents(__DIR__.'/levels/levels.json'), true, 512, JSON_THROW_ON_ERROR);
         $this->fieldWidth = $fieldWidth;
         $this->fieldHeight = $fieldHeight;
+        $this->textureRepository = $textureRepository;
     }
 
     public static function blockStartAt(float $pos): bool
@@ -46,7 +51,7 @@ class Level
         }
     }
 
-    public function buildNextLevel()
+    public function buildNextLevel(): void
     {
         $this->levelColor = ($this->levelColor + 1) % 4;
         ++$this->level;
@@ -60,7 +65,9 @@ class Level
 
         $this->backgroundBlocks = [];
 
-        $blockSprite = __DIR__.'/images/block'.($this->level % 4).'.png';
+        $blockSpriteName = __DIR__.'/images/block'.($this->level % 4).'.png';
+        $blockSpriteTexture = $this->textureRepository[$blockSpriteName];
+
         foreach ($this->grid as $y => $row) {
             if (empty($row)) {
                 continue;
@@ -69,12 +76,10 @@ class Level
             $x = self::LEVEL_X_OFFSET;
             foreach ($cols as $charBlock) {
                 if ($charBlock !== ' ') {
-                    $block = new Block(
-                        new Vector2Float($x, $y * self::GRID_BLOCK_SIZE),
-                        self::GRID_BLOCK_SIZE,
-                        self::GRID_BLOCK_SIZE
-                    );
-                    $block->setImage($blockSprite);
+                    $sprite = new Sprite($blockSpriteTexture);
+                    $sprite->setAnchor(Anchor::LeftTop());
+                    $block = new Block($sprite);
+                    $block->setPosition(new Vector2Float($x, $y * self::GRID_BLOCK_SIZE));
                     $this->backgroundBlocks[] = $block;
                 }
                 $x += self::GRID_BLOCK_SIZE;
@@ -82,7 +87,7 @@ class Level
         }
     }
 
-    public function blockAt(float $x, float $y)
+    public function blockAt(float $x, float $y): bool
     {
         $gridX = (int)(($x - self::LEVEL_X_OFFSET) / self::GRID_BLOCK_SIZE);
         $gridY = (int)($y / self::GRID_BLOCK_SIZE);

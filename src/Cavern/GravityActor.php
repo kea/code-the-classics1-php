@@ -9,7 +9,7 @@ class GravityActor extends ColliderActor
     protected float $velocityY  = .0;
     protected bool $isLanded = false;
 
-    public function sign(float $number)
+    public function sign(float $number): int
     {
         return $number < 0 ? -1 : 1;
     }
@@ -19,7 +19,7 @@ class GravityActor extends ColliderActor
         $this->velocityY = min($this->velocityY + 60, self::MAX_FALL_SPEED);
 
         if (!$this->collisionDetection) {
-            $this->position->y += $this->velocityY * $deltaTime;
+            $this->getPosition()->y += $this->velocityY * $deltaTime;
 
             return;
         }
@@ -31,8 +31,8 @@ class GravityActor extends ColliderActor
             return;
         }
 
-        if ($this->position->y >= self::SCREEN_HEIGHT) {
-            $this->position->y = 1;
+        if ($this->getPosition()->y >= self::SCREEN_HEIGHT) {
+            $this->getPosition()->y = 1;
         }
     }
 }

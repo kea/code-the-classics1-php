@@ -2,24 +2,21 @@
 
 namespace Cavern;
 
+use PhpGame\Sprite;
 use PhpGame\Vector2Float;
+use SDL_Rect;
 
 class ColliderActor
 {
-    protected Vector2Float $position;
     protected float $directionX = 1.0;
-    protected int $width;
-    protected int $height;
     protected bool $collisionDetection = true;
+    protected Sprite $sprite;
 
-    protected array $anchor = ["center", "center"];
     protected ?Level $level = null;
 
-    public function __construct(Vector2Float $position, int $width, int $height)
+    public function __construct(Sprite $sprite)
     {
-        $this->position = $position;
-        $this->width = $width;
-        $this->height = $height;
+        $this->sprite = $sprite;
     }
 
     public function setLevel(Level $level): void
@@ -27,22 +24,10 @@ class ColliderActor
         $this->level = $level;
     }
 
-    public function top(): float
-    {
-        return $this->position->y - $this->dxFromTop();
-    }
-
-    public function bottom(): float
-    {
-        $dy = $this->height - $this->dxFromTop();
-
-        return $this->position->y + $dy;
-    }
-
     public function move(float $dx, float $dy, float $speed, float $deltaTime): bool
     {
         $frameSpeed = (int)$speed * $deltaTime;
-        $newPosition = clone $this->position;
+        $newPosition = clone $this->getPosition();
 
         for ($i = 0; $i < $frameSpeed; ++$i) {
             $newPosition->add(new Vector2Float($dx, $dy));
@@ -63,37 +48,23 @@ class ColliderActor
             }
         }
 
-        $this->position = $newPosition;
+        $this->sprite->setPosition($newPosition);
 
         return false;
     }
 
-    public function getCollider(): \SDL_Rect
+    public function getCollider(): SDL_Rect
     {
-        return new \SDL_Rect(
-            $this->position->x - $this->width / 2,
-            $this->position->y - $this->height,
-            $this->width,
-            $this->height
-        );
+        return $this->sprite->getBoundedRect();
     }
 
-    /**
-     * @return float|int
-     */
-    public function dxFromTop()
+    public function getPosition(): Vector2Float
     {
-        switch ($this->anchor[1]) {
-            case 'center':
-                $dy = $this->height / 2;
-                break;
-            case 'bottom':
-                $dy = $this->height;
-                break;
-            default:
-                $dy = 0;
-        }
+        return $this->sprite->getPosition();
+    }
 
-        return $dy;
+    public function setPosition(Vector2Float $position): void
+    {
+        $this->sprite->setPosition($position);
     }
 }

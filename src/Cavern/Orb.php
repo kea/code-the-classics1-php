@@ -1,11 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Cavern;
 
 use PhpGame\DrawableInterface;
 use PhpGame\SDL\Renderer;
-use PhpGame\Vector2Float;
-use PhpGame\Vector2Int;
 
 class Orb extends ColliderActor implements DrawableInterface
 {
@@ -14,20 +14,17 @@ class Orb extends ColliderActor implements DrawableInterface
     private bool $floating = false;
     private float $timer = .0;
     private int $trappedEnemyType = Robot::TYPE_NONE;
-    private string $image = 'orb0';
     private bool $isActive = true;
     private PopCollection $pops;
     private FruitCollection $fruits;
 
     public function __construct(
-        Vector2Float $position,
-        int $width,
-        int $height,
+        Sprite\Orb $sprite,
         float $directionX,
         PopCollection $pops,
         FruitCollection $fruits
     ) {
-        parent::__construct($position, $width, $height);
+        parent::__construct($sprite);
         $this->directionX = $directionX;
         $this->pops = $pops;
         $this->fruits = $fruits;
@@ -46,23 +43,17 @@ class Orb extends ColliderActor implements DrawableInterface
         if ($this->timer >= $this->blownTime) {
             $this->floating = true;
         }
-        if ($this->timer >= self::MAX_TIMER || $this->position->y <= -40) {
+        if ($this->timer >= self::MAX_TIMER || $this->getPosition()->y <= -40) {
             $this->pop();
         }
-        if ($this->timer < 0.15) {
-            $this->image = "orb".(floor($this->timer * 20) % 3);
-        } elseif ($this->hasTrappedEnemy()) {
-            $this->image = "trap".$this->trappedEnemyType.(floor($this->timer * 15) % 8);
-        } else {
-            $this->image = "orb".round(3 + (floor(($this->timer - 0.15) * 7.5) % 4));
-        }
+        $this->sprite->updateImage($this->timer, $this->trappedEnemyType);
     }
 
     private function pop(): void
     {
-        $this->pops->add(new Pop($this->position, new Vector2Int(70, 70), Pop::TYPE_ORB));
+        $this->pops->add($this->pops->createPop($this->getPosition(), Pop::TYPE_ORB));
         if ($this->hasTrappedEnemy()) {
-            $fruit = $this->fruits->createFruit($this->position, $this->pops, $this->trappedEnemyType);
+            $fruit = $this->fruits->createFruit($this->getPosition(), $this->pops, $this->trappedEnemyType);
             $this->fruits->add($fruit);
         }
         //game.play_sound("pop", 4);
@@ -76,14 +67,8 @@ class Orb extends ColliderActor implements DrawableInterface
 
     public function draw(Renderer $renderer): void
     {
-        $name = __DIR__.'/images/'.$this->image.'.png';
-
-        $renderer->drawImage(
-            $name,
-            (int)($this->position->x - $this->width / 2),
-            (int)($this->position->y - $this->height)
-        );
-//        $renderer->drawRectangle($this->getCollider());
+        $this->sprite->render($renderer);
+        $renderer->drawRectangle($this->getCollider());
     }
 
     public function hasTrappedEnemy(): bool

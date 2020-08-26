@@ -3,9 +3,10 @@
 namespace Cavern;
 
 use ArrayIterator;
+use Countable;
 use IteratorAggregate;
 
-class RobotCollection implements IteratorAggregate, \Countable
+class RobotCollection implements IteratorAggregate, Countable
 {
     /** @var Robot[] */
     private array $robots = [];

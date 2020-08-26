@@ -20,26 +20,23 @@ class Player extends GravityActor implements DrawableInterface
     private float $fireTimer = .0;
     private float $hurtTimer = .0;
     private InputActions $inputActions;
-    private string $image = 'blank';
     private OrbCollection $orbs;
     private bool $fireDown = false;
     private ?Orb $blowingOrb = null;
 
     public function __construct(
-        Vector2Float $position,
-        int $width,
-        int $height,
+        Sprite\Player $sprite,
         InputActions $inputActions,
         OrbCollection $orbCollection
     ) {
-        parent::__construct($position, $width, $height);
+        parent::__construct($sprite);
         $this->inputActions = $inputActions;
         $this->orbs = $orbCollection;
     }
 
-    public function reset()
+    public function reset(): void
     {
-        $this->position = new Vector2Float(400, 100);
+        $this->setPosition(new Vector2Float(400, 100));
         $this->velocityY = 0;
         $this->directionX = 1;
         $this->fireTimer = 0;
@@ -73,8 +70,8 @@ class Player extends GravityActor implements DrawableInterface
             }
 
             if ($this->fireTimer <= 0 && $this->fireButtonPressed()) {
-                $x = min(730, max(70, $this->position->x + $this->directionX * 38));
-                $y = $this->position->y;
+                $x = min(730, max(70, $this->getPosition()->x + $this->directionX * 38));
+                $y = $this->getPosition()->y - 30;
 
                 $this->blowingOrb = $this->orbs->createOrb($x, $y, $this->directionX);
                 if ($this->blowingOrb !== null) {
@@ -100,17 +97,19 @@ class Player extends GravityActor implements DrawableInterface
             }
         }
 
-        $this->chooseImage($direction->x);
+        $this->sprite->updateImage(
+            $direction->x,
+            $this->directionX,
+            $this->timer,
+            $this->hurtTimer,
+            $this->fireTimer,
+            $this->health
+        );
     }
 
     public function draw(Renderer $renderer): void
     {
-        $name = __DIR__.'/images/'.$this->image.'.png';
-        $renderer->drawImage(
-            $name,
-            (int)($this->position->x - $this->width / 2),
-            (int)($this->position->y - $this->height)
-        );
+        $this->sprite->render($renderer);
         $renderer->drawRectangle($this->getCollider());
     }
 
@@ -142,7 +141,7 @@ class Player extends GravityActor implements DrawableInterface
             return;
         }
 
-        if ($this->top() >= self::SCREEN_HEIGHT * 1.5) {
+        if ($this->sprite->top() >= self::SCREEN_HEIGHT * 1.5) {
             --$this->lives;
             $this->reset();
         }
@@ -176,28 +175,6 @@ class Player extends GravityActor implements DrawableInterface
     public function getScore(): int
     {
         return $this->score;
-    }
-
-    private function chooseImage(float $dx): void
-    {
-        $image = "blank";
-        if ($this->hurtTimer <= 0 || round($this->hurtTimer * 60) % 2 === 1) {
-            $dirIndex = $this->directionX > 0 ? "1" : "0";
-            if ($this->hurtTimer > 1.7) {
-                if ($this->health > 0) {
-                    $image = "recoil".$dirIndex;
-                } else {
-                    $image = "fall".((int)($this->timer * 12.5) % 2);
-                }
-            } elseif ($this->fireTimer > .0) {
-                $image = "blow".$dirIndex;
-            } elseif ($dx === 0.0) {
-                $image = "still";
-            } else {
-                $image = "run".$dirIndex.((int)($this->timer * 7.5) % 4);
-            }
-        }
-        $this->image = $image;
     }
 
     private function fireButtonPressed(): bool

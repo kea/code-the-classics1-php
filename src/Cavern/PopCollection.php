@@ -4,11 +4,27 @@ namespace Cavern;
 
 use ArrayIterator;
 use IteratorAggregate;
+use PhpGame\Vector2Float;
 
 class PopCollection implements IteratorAggregate
 {
     /** @var Pop[] */
     private array $pops = [];
+
+    private \Cavern\Sprite\Pop $sprite;
+
+    public function __construct(\Cavern\Sprite\Pop $sprite)
+    {
+        $this->sprite = $sprite;
+    }
+
+    public function createPop(Vector2Float $position, $type): Pop
+    {
+        $sprite = clone $this->sprite;
+        $sprite->setPosition($position);
+
+        return new Pop($sprite, $type);
+    }
 
     public function reset(): void
     {

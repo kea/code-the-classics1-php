@@ -1,9 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Cavern;
 
 use PhpGame\SDL\Renderer;
-use PhpGame\Vector2Float;
 
 class Bolt extends GravityActor
 {
@@ -11,9 +12,9 @@ class Bolt extends GravityActor
     private bool $isActive = true;
     private float $timer = .0;
 
-    public function __construct(Vector2Float $position, int $width, int $height, int $directionX)
+    public function __construct(Sprite\Bolt $sprite, int $directionX)
     {
-        parent::__construct($position, $width, $height);
+        parent::__construct($sprite);
         $this->directionX = $directionX;
     }
 
@@ -28,6 +29,8 @@ class Bolt extends GravityActor
         if ($this->move($this->directionX, .0, self::SPEED, $deltaTime)) {
             $this->isActive = false;
         }
+
+        $this->sprite->updateImage($this->timer, $this->directionX);
     }
 
     public function draw(Renderer $renderer): void
@@ -36,15 +39,7 @@ class Bolt extends GravityActor
             return;
         }
 
-        $directionIdx = $this->directionX > 0 ? "1" : "0";
-        $animFrame = floor($this->timer / 4) % 2;
-        $name = __DIR__.'/images/bolt'.$directionIdx.$animFrame.'.png';
-
-        $renderer->drawImage(
-            $name,
-            (int)($this->position->x - $this->width / 2),
-            (int)($this->position->y - $this->height)
-        );
+        $this->sprite->render($renderer);
         $renderer->drawRectangle($this->getCollider());
     }
 

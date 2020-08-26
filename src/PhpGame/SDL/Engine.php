@@ -4,6 +4,10 @@ namespace PhpGame\SDL;
 
 use PhpGame\DrawableInterface;
 use PhpGame\Input\InputActions;
+use SDL_Event;
+
+use function SDL_Delay;
+use function SDL_PollEvent;
 
 class Engine
 {
@@ -18,12 +22,12 @@ class Engine
 
     public function run(DrawableInterface $game): void
     {
-        $event = new \SDL_Event;
+        $event = new SDL_Event();
         $ticker = new Ticker();
         while (true) {
             $deltaTime = $ticker->tick();
 
-            if (\SDL_PollEvent($event)) {
+            if (SDL_PollEvent($event)) {
                 switch ($event->type) {
                     case SDL_QUIT:
                         return;
@@ -36,7 +40,7 @@ class Engine
             $game->draw($this->renderer);
 
             $this->renderer->render();
-            \SDL_Delay(10);
+            SDL_Delay(10);
         }
     }
 }

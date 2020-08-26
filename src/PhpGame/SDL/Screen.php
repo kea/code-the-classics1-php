@@ -14,8 +14,6 @@ class Screen
     private int $width;
     private int $height;
     private SDL_Window $window;
-    /** @var array|Texture[] */
-    private array $textures = [];
     private string $title;
 
     public function __construct(int $width, int $height, string $title = 'PhpGame')
