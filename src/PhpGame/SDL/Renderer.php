@@ -61,6 +61,7 @@ class Renderer
 
     public function clear(): void
     {
+        SDL_SetRenderDrawColor($this->renderer, ...$this->clearColor);
         SDL_RenderClear($this->renderer);
     }
 

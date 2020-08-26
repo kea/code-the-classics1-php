@@ -9,66 +9,73 @@ class Sprite
 {
     private Texture $texture;
     private \SDL_Rect $boundedRect;
-    private \SDL_Point $pivot;
-    private \SDL_Point $position;
+    private Transform $transform;
+    private Anchor $anchor;
 
     /**
      * Sprite constructor.
      * @param Texture $texture
-     * @param int     $width
-     * @param int     $height
      * @param int     $x
      * @param int     $y
      */
-    public function __construct(Texture $texture, int $width, int $height, int $x = 0, int $y = 0)
+    public function __construct(Texture $texture, int $x = 0, int $y = 0)
     {
         $this->texture = $texture;
-        $this->boundedRect = new \SDL_Rect($x, $y, $width, $height);
+        $this->anchor = new Anchor(Anchor::CENTER, Anchor::CENTER);
+        $this->transform = new Transform(new Vector2Float($x, $y));
+        $this->updateBoundedRect();
     }
 
-    public static function fromImage(string $path, int $width, int $height, Renderer $renderer): self
+    public static function fromImage(string $path, Renderer $renderer): self
     {
         $texture = Texture::loadFromFile($path, $renderer);
 
-        return new self($texture, $width, $height);
+        return new self($texture);
     }
 
-    /**
-     * @return Vector2Int
-     */
-    public function getPosition(): Vector2Int
+    public function getPosition(): Vector2Float
     {
-        return new Vector2Int($this->boundedRect->x, $this->boundedRect->y);
+        return $this->transform->getPosition();
     }
 
-    /**
-     * @param int $x
-     * @param int $y
-     */
     public function setPosition(int $x, int $y): void
     {
-        $this->boundedRect->x = $x;
-        $this->boundedRect->y = $y;
-    }
-
-    /**
-     * @param int $x
-     */
-    public function setPositionX(int $x): void
-    {
-        $this->boundedRect->x = $x;
-    }
-
-    /**
-     * @param int $y
-     */
-    public function setPositionY(int $y): void
-    {
-        $this->boundedRect->y = $y;
+        $this->transform->getPosition()->x = $x;
+        $this->transform->getPosition()->y = $y;
+        $this->updateBoundedRect();
     }
 
     public function render(Renderer $renderer): void
     {
         $renderer->copy($this->texture, null, $this->boundedRect);
+//        $renderer->setDrawColor([90, 96, 93, 0]);
+//        $renderer->drawRectangle($this->boundedRect);
+    }
+
+    public function distanceFromTop(): float
+    {
+        $anchorRelativePercentage = ['top' => .0, 'center' => 0.5, 'middle' => 0.5, 'bottom' => 1.0];
+        $height = $this->texture->getHeight() * $this->transform->getScale()->y;
+
+        return $height * $anchorRelativePercentage[$this->anchor[1]];
+    }
+
+    private function updateBoundedRect(): void
+    {
+        $width = $this->texture->getWidth() * $this->transform->getScale()->x;
+        $height = $this->texture->getHeight() * $this->transform->getScale()->y;
+
+        $this->boundedRect = $this->anchor->getBoundedRect(
+            $this->transform->getPosition()->x,
+            $this->transform->getPosition()->y,
+            $width,
+            $height
+        );
+    }
+
+    public function setAnchor(Anchor $anchor): void
+    {
+        $this->anchor = $anchor;
+        $this->updateBoundedRect();
     }
 }

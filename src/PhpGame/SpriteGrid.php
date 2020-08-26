@@ -46,6 +46,7 @@ class SpriteGrid
      */
     public function setGrid(array $grid): void
     {
+        $anchorLeftTop = new Anchor(Anchor::LEFT, Anchor::TOP);
         $this->grid = [];
         foreach ($grid as $y => $row) {
             foreach ($row as $x => $textureName) {
@@ -59,11 +60,10 @@ class SpriteGrid
 
                 $this->grid[$x][$y] = new Sprite(
                     $this->textures[$textureName],
-                    $this->cellWidth,
-                    $this->cellHeight,
                     $x * $this->cellWidth,
                     $y * $this->cellHeight
                 );
+                $this->grid[$x][$y]->setAnchor($anchorLeftTop);
             }
         }
     }
