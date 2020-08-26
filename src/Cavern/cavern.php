@@ -31,7 +31,7 @@ $inputActions = new InputActions(
     new Keyboard()
 );
 
-$textureRepository = new TextureRepository($renderer);
+$textureRepository = new TextureRepository($renderer, __DIR__.DIRECTORY_SEPARATOR.'images');
 $gameStarter = new GameStarter($screen->getWidth(), $screen->getHeight(), $sound, $inputActions, $textureRepository);
 
 $engine = new Engine($renderer, $inputActions);

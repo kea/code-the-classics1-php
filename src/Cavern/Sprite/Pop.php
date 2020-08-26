@@ -10,13 +10,12 @@ use PhpGame\TextureRepository;
 
 class Pop extends Sprite
 {
-    private string $image = 'pop00';
+    private string $image = 'pop00.png';
     private TextureRepository $textureRepository;
 
     public function __construct(TextureRepository $textureRepository)
     {
-        $fullPath = __DIR__.'/../images/'.$this->image.'.png';
-        parent::__construct($textureRepository[$fullPath]);
+        parent::__construct($textureRepository[$this->image]);
         $this->textureRepository = $textureRepository;
         $this->setAnchor(Anchor::CenterBottom());
     }
@@ -25,7 +24,7 @@ class Pop extends Sprite
     {
         $frame = floor($timer * 30) < 5 ? floor($timer * 30) : 4;
         $image = "pop".$type.$frame;
-        $this->image = __DIR__.'/../images/'.$image.'.png';
+        $this->image = $image.'.png';
         $this->updateTexture($this->textureRepository[$this->image]);
     }
 }

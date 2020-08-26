@@ -10,13 +10,12 @@ use PhpGame\TextureRepository;
 
 class Fruit extends Sprite
 {
-    private string $image = 'fruit00';
+    private string $image = 'fruit00.png';
     private TextureRepository $textureRepository;
 
     public function __construct(TextureRepository $textureRepository)
     {
-        $fullPath = __DIR__.'/../images/'.$this->image.'.png';
-        parent::__construct($textureRepository[$fullPath]);
+        parent::__construct($textureRepository[$this->image]);
         $this->textureRepository = $textureRepository;
         $this->setAnchor(Anchor::CenterBottom());
     }
@@ -31,7 +30,7 @@ class Fruit extends Sprite
         $animFrame = $frames[floor($timer * 10) % 4];
         $image = 'fruit'.$type.$animFrame;
 
-        $this->image = __DIR__.'/../images/'.$image.'.png';
+        $this->image = $image.'.png';
         $this->updateTexture($this->textureRepository[$this->image]);
     }
 }

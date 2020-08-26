@@ -10,12 +10,11 @@ use PhpGame\TextureRepository;
 
 class Player extends Sprite
 {
-    private string $image = 'still';
+    private string $image = 'still.png';
     private TextureRepository $textureRepository;
 
     public function __construct(TextureRepository $textureRepository)
     {
-        $this->image = __DIR__.'/../images/'.$this->image.'.png';
         parent::__construct($textureRepository[$this->image]);
         $this->textureRepository = $textureRepository;
         $this->setAnchor(Anchor::CenterBottom());
@@ -24,7 +23,7 @@ class Player extends Sprite
     public function updateImage(float $dx, float $directionX, float $timer, float $hurtTimer, float $fireTimer, int $health): void
     {
         $image = $this->chooseImage($dx, $directionX, $timer, $hurtTimer, $fireTimer, $health);
-        $this->image = __DIR__.'/../images/'.$image.'.png';
+        $this->image = $image.'.png';
         $this->updateTexture($this->textureRepository[$this->image]);
     }
 

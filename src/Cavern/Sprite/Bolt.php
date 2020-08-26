@@ -14,7 +14,7 @@ class Bolt extends Sprite
 
     public function __construct(TextureRepository $textureRepository)
     {
-        $fullPath = __DIR__.'/../images/'.$this->image.'.png';
+        $fullPath = $this->image.'.png';
         parent::__construct($textureRepository[$fullPath]);
         $this->textureRepository = $textureRepository;
     }
@@ -24,7 +24,7 @@ class Bolt extends Sprite
         $directionIdx = $directionX > 0 ? "1" : "0";
         $animFrame = floor($timer / 4) % 2;
         $image = 'bolt'.$directionIdx.$animFrame;
-        $this->image = __DIR__.'/../images/'.$image.'.png';
+        $this->image = $image.'.png';
         $this->updateTexture($this->textureRepository[$this->image]);
     }
 }

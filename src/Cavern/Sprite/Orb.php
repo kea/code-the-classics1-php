@@ -10,13 +10,12 @@ use PhpGame\TextureRepository;
 
 class Orb extends Sprite
 {
-    private string $image = 'orb0';
+    private string $image = 'orb0.png';
     private TextureRepository $textureRepository;
 
     public function __construct(TextureRepository $textureRepository)
     {
-        $fullPath = __DIR__.'/../images/'.$this->image.'.png';
-        parent::__construct($textureRepository[$fullPath]);
+        parent::__construct($textureRepository[$this->image]);
         $this->textureRepository = $textureRepository;
     }
 
@@ -30,7 +29,7 @@ class Orb extends Sprite
             $image = "orb".round(3 + (floor(($timer - 0.15) * 7.5) % 4));
         }
 
-        $this->image = __DIR__.'/../images/'.$image.'.png';
+        $this->image = $image.'.png';
         $this->updateTexture($this->textureRepository[$this->image]);
     }
 }

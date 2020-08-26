@@ -65,7 +65,7 @@ class Level
 
         $this->backgroundBlocks = [];
 
-        $blockSpriteName = __DIR__.'/images/block'.($this->level % 4).'.png';
+        $blockSpriteName = 'block'.($this->level % 4).'.png';
         $blockSpriteTexture = $this->textureRepository[$blockSpriteName];
 
         foreach ($this->grid as $y => $row) {

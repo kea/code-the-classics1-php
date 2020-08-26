@@ -11,22 +11,19 @@ class TextureRepository implements \ArrayAccess
 {
     private array $textures = [];
     private Renderer $renderer;
+    private string $basePath;
 
-    public function __construct(Renderer $renderer, $input = [])
+    public function __construct(Renderer $renderer, string $basePath)
     {
-        foreach ($input as $item) {
-            if (!$item instanceof Texture) {
-                throw new \InvalidArgumentException("Only ".Texture::class." is allowed");
-            }
-            $this->textures[] = $item;
-        }
         $this->renderer = $renderer;
+        $this->basePath = rtrim($basePath, DIRECTORY_SEPARATOR).DIRECTORY_SEPARATOR;
     }
 
     public function offsetGet($index)
     {
         if (!isset($this->textures[$index])) {
-            $this->textures[$index] = Texture::loadFromFile($index, $this->renderer);
+            $fullPath = $this->basePath.$index;
+            $this->textures[$index] = Texture::loadFromFile($fullPath, $this->renderer);
         }
 
         return $this->textures[$index];
