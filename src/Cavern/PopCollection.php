@@ -11,9 +11,9 @@ class PopCollection implements IteratorAggregate
     /** @var Pop[] */
     private array $pops = [];
 
-    private \Cavern\Sprite\Pop $sprite;
+    private \Cavern\Animator\Pop $sprite;
 
-    public function __construct(\Cavern\Sprite\Pop $sprite)
+    public function __construct(\Cavern\Animator\Pop $sprite)
     {
         $this->sprite = $sprite;
     }

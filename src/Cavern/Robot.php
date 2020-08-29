@@ -2,7 +2,7 @@
 
 namespace Cavern;
 
-use Cavern\Sprite\Robot as SpriteRobot;
+use Cavern\Animator\Robot as SpriteRobot;
 use PhpGame\SDL\Renderer;
 use PhpGame\Vector2Float;
 
@@ -75,7 +75,11 @@ class Robot extends GravityActor
             $this->bolts->add($this->bolts->create($position, $this->directionX));
         }
 
-        $this->sprite->updateImage($this->directionX, $this->type, $this->fireTimer, $this->lifeTimer);
+        $this->sprite->setFloat('directionX', $this->directionX);
+        $this->sprite->setFloat('lifeTimer', $this->lifeTimer);
+        $this->sprite->setFloat('fireTimer', $this->fireTimer);
+        $this->sprite->setInt('type', $this->type);
+        $this->sprite->update($deltaTime);
     }
 
     public function onCollision(ColliderActor $other): void

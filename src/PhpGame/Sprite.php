@@ -93,7 +93,7 @@ class Sprite
         return $this->boundedRect;
     }
 
-    protected function updateTexture(Texture $texture): void
+    public function updateTexture(Texture $texture): void
     {
         $this->texture = $texture;
         $this->updateBoundedRect();

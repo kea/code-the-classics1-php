@@ -40,7 +40,7 @@ class Game implements DrawableInterface
         $this->orbs = $orbs;
         $this->fruits = $fruits;
         $this->pops = $pops;
-        $this->bolts = new BoltCollection(new \Cavern\Sprite\Bolt($textureRepository));
+        $this->bolts = new BoltCollection(new \Cavern\Animator\Bolt($textureRepository));
         $this->enemies = new RobotCollection();
         $this->statusBar = new StatusBar();
         $this->textureRepository = $textureRepository;
@@ -121,7 +121,7 @@ class Game implements DrawableInterface
             $this->nextEnemyTimer -= 1.35;
             $robotType = array_pop($this->pendingEnemies);
             $pos = new Vector2Float($this->level->getRobotSpawnX(), -30);
-            $sprite = new \Cavern\Sprite\Robot($this->textureRepository);
+            $sprite = new \Cavern\Animator\Robot($this->textureRepository);
             $sprite->setPosition($pos);
             $robot = new Robot($sprite, $robotType, $this->orbs, $this->bolts, $this->level, $this->player);
             $this->enemies->add($robot);

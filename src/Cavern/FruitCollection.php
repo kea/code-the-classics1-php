@@ -14,7 +14,7 @@ class FruitCollection implements IteratorAggregate
     private Level $level;
     private Sprite $sprite;
 
-    public function __construct(\Cavern\Sprite\Fruit $sprite)
+    public function __construct(\Cavern\Animator\Fruit $sprite)
     {
         $this->sprite = $sprite;
     }

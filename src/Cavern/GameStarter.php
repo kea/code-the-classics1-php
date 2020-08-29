@@ -41,9 +41,9 @@ class GameStarter implements DrawableInterface
         $this->inputActions = $inputActions;
         $level = new Level($this->width, $this->height, $textureRepository);
 
-        $fruits = new FruitCollection(new \Cavern\Sprite\Fruit($textureRepository));
-        $pops = new PopCollection(new \Cavern\Sprite\Pop($textureRepository));
-        $orbs = new OrbCollection(new \Cavern\Sprite\Orb($textureRepository), $fruits, $pops);
+        $fruits = new FruitCollection(new \Cavern\Animator\Fruit($textureRepository));
+        $pops = new PopCollection(new \Cavern\Animator\Pop($textureRepository));
+        $orbs = new OrbCollection(new \Cavern\Animator\Orb($textureRepository), $fruits, $pops);
 
         $this->game = new Game($level, $orbs, $fruits, $pops, $textureRepository);
         $this->game->setSoundManager($this->soundManager);
@@ -111,11 +111,11 @@ class GameStarter implements DrawableInterface
 
     public function startGame(): void
     {
-        $playerSprite = new \Cavern\Sprite\Player($this->textureRepository);
+        $playerSprite = new \Cavern\Animator\Player($this->textureRepository);
         $playerSprite->setPosition(new Vector2Float(200, 200));
-        $fruitSprite = new \Cavern\Sprite\Fruit($this->textureRepository);
-        $popSprite = new \Cavern\Sprite\Pop($this->textureRepository);
-        $orbSprite = new \Cavern\Sprite\Orb($this->textureRepository);
+        $fruitSprite = new \Cavern\Animator\Fruit($this->textureRepository);
+        $popSprite = new \Cavern\Animator\Pop($this->textureRepository);
+        $orbSprite = new \Cavern\Animator\Orb($this->textureRepository);
 
         $fruits = new FruitCollection($fruitSprite);
         $pops = new PopCollection($popSprite);

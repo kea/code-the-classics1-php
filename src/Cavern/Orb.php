@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace Cavern;
 
+use PhpGame\Animator;
 use PhpGame\DrawableInterface;
 use PhpGame\SDL\Renderer;
+use PhpGame\Sprite;
 
 class Orb extends ColliderActor implements DrawableInterface
 {
@@ -17,9 +19,10 @@ class Orb extends ColliderActor implements DrawableInterface
     private bool $isActive = true;
     private PopCollection $pops;
     private FruitCollection $fruits;
+    private Animator $animator;
 
     public function __construct(
-        Sprite\Orb $sprite,
+        Sprite $sprite,
         float $directionX,
         PopCollection $pops,
         FruitCollection $fruits
@@ -28,6 +31,11 @@ class Orb extends ColliderActor implements DrawableInterface
         $this->directionX = $directionX;
         $this->pops = $pops;
         $this->fruits = $fruits;
+    }
+
+    public function setAnimator(Animator $animator): void
+    {
+        $this->animator = $animator;
     }
 
     public function update(float $deltaTime): void
@@ -46,7 +54,9 @@ class Orb extends ColliderActor implements DrawableInterface
         if ($this->timer >= self::MAX_TIMER || $this->getPosition()->y <= -40) {
             $this->pop();
         }
-        $this->sprite->updateImage($this->timer, $this->trappedEnemyType);
+        $this->animator->setFloat('timer', $this->timer);
+        $this->animator->setInt('trappedEnemyType', $this->trappedEnemyType);
+        $this->animator->update($deltaTime);
     }
 
     private function pop(): void

@@ -2,29 +2,35 @@
 
 declare(strict_types=1);
 
-namespace Cavern\Sprite;
+namespace Cavern\Animator;
 
 use PhpGame\Anchor;
+use PhpGame\Animator;
 use PhpGame\Sprite;
 use PhpGame\TextureRepository;
 
-class Player extends Sprite
+class Player extends Animator
 {
-    private string $image = 'still.png';
-    private TextureRepository $textureRepository;
+    protected array $acceptedParams = ['dx', 'directionX', 'timer', 'hurtTimer', 'fireTimer', 'health'];
 
-    public function __construct(TextureRepository $textureRepository)
+    public function __construct(TextureRepository $textureRepository, Sprite $sprite, string $defaultImage = 'bolt00.png')
     {
-        parent::__construct($textureRepository[$this->image]);
-        $this->textureRepository = $textureRepository;
-        $this->setAnchor(Anchor::CenterBottom());
+        $sprite->setAnchor(Anchor::CenterBottom());
+        parent::__construct($textureRepository, $sprite, $defaultImage);
     }
 
-    public function updateImage(float $dx, float $directionX, float $timer, float $hurtTimer, float $fireTimer, int $health): void
+    public function update(float $deltaTime): void
     {
+        $dx = $this->getFloat('dx');
+        $directionX = $this->getFloat('directionX');
+        $timer = $this->getFloat('timer');
+        $hurtTimer = $this->getFloat('hurtTimer');
+        $fireTimer = $this->getFloat('fireTimer');
+        $health = $this->getInt('health');
+
         $image = $this->chooseImage($dx, $directionX, $timer, $hurtTimer, $fireTimer, $health);
         $this->image = $image.'.png';
-        $this->updateTexture($this->textureRepository[$this->image]);
+        $this->update($deltaTime);
     }
 
     private function chooseImage(float $dx, float $directionX, float $timer, float $hurtTimer, float $fireTimer, int $health): string

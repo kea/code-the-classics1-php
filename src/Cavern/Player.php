@@ -25,7 +25,7 @@ class Player extends GravityActor implements DrawableInterface
     private ?Orb $blowingOrb = null;
 
     public function __construct(
-        Sprite\Player $sprite,
+        Animator\Player $sprite,
         InputActions $inputActions,
         OrbCollection $orbCollection
     ) {

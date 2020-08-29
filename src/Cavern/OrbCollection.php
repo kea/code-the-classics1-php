@@ -13,9 +13,9 @@ class OrbCollection implements IteratorAggregate
     private array $orbs = [];
     private FruitCollection $fruits;
     private PopCollection $pops;
-    private Sprite\Orb $sprite;
+    private Animator\Orb $sprite;
 
-    public function __construct(\Cavern\Sprite\Orb $sprite, FruitCollection $fruits, PopCollection $pops)
+    public function __construct(\Cavern\Animator\Orb $sprite, FruitCollection $fruits, PopCollection $pops)
     {
         $this->fruits = $fruits;
         $this->pops = $pops;

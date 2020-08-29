@@ -12,7 +12,7 @@ class Bolt extends GravityActor
     private bool $isActive = true;
     private float $timer = .0;
 
-    public function __construct(Sprite\Bolt $sprite, int $directionX)
+    public function __construct(Animator\Bolt $sprite, int $directionX)
     {
         parent::__construct($sprite);
         $this->directionX = $directionX;
@@ -30,7 +30,9 @@ class Bolt extends GravityActor
             $this->isActive = false;
         }
 
-        $this->sprite->updateImage($this->timer, $this->directionX);
+        $this->sprite->setFloat('timer', $this->timer);
+        $this->sprite->setFloat('directionX', $this->directionX);
+        $this->sprite->update($deltaTime);
     }
 
     public function draw(Renderer $renderer): void

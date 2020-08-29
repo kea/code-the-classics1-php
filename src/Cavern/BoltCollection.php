@@ -10,9 +10,9 @@ class BoltCollection implements IteratorAggregate
 {
     /** @var Bolt[] */
     private array $bolts = [];
-    private \Cavern\Sprite\Bolt $sprite;
+    private \Cavern\Animator\Bolt $sprite;
 
-    public function __construct(\Cavern\Sprite\Bolt $sprite)
+    public function __construct(\Cavern\Animator\Bolt $sprite)
     {
         $this->sprite = $sprite;
     }

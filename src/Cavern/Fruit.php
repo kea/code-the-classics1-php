@@ -2,7 +2,7 @@
 
 namespace Cavern;
 
-use Cavern\Sprite\Fruit as SpriteFruit;
+use Cavern\Animator\Fruit as SpriteFruit;
 use PhpGame\SDL\Renderer;
 
 class Fruit extends GravityActor
@@ -25,6 +25,7 @@ class Fruit extends GravityActor
         $this->type = $this->randomType($trappedEnemyType);
         $this->timeToLive = 8.3;
         $this->pops = $pops;
+        $this->animator = new \Cavern\Animator\Fruit()
     }
 
     public function isActive(): bool
@@ -41,7 +42,9 @@ class Fruit extends GravityActor
         if ($this->timeToLive < 0) {
             $this->pop();
         }
-        $this->sprite->updateImage($this->timeToLive, $this->type);
+        $this->sprite->setFloat('timeToLive', $this->timeToLive);
+        $this->sprite->setFloat('type', $this->type);
+        $this->sprite->update($deltaTime);
     }
 
     public function draw(Renderer $renderer): void

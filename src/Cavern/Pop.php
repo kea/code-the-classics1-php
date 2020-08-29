@@ -12,9 +12,9 @@ class Pop implements DrawableInterface
     private int $type;
     private float $timer = .0;
     private bool $isActive = true;
-    private \Cavern\Sprite\Pop $sprite;
+    private Animator\Pop $sprite;
 
-    public function __construct(\Cavern\Sprite\Pop $sprite, int $type)
+    public function __construct(Animator\Pop $sprite, int $type)
     {
         $this->type = $type;
         $this->sprite = $sprite;
@@ -27,7 +27,10 @@ class Pop implements DrawableInterface
             return;
         }
         $this->timer += $deltaTime;
-        $this->sprite->updateImage($this->timer, $this->type);
+
+        $this->sprite->setFloat('timer', $this->timer);
+        $this->sprite->setFloat('type', (float)$this->type);
+        $this->sprite->update($deltaTime);
     }
 
     public function draw(Renderer $renderer): void
