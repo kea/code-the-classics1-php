@@ -1,6 +1,7 @@
 <?php
 
 use Cavern\GameStarter;
+use PhpGame\ECS\Registry;
 use PhpGame\Input\ArrowKeysBinding;
 use PhpGame\Input\ButtonAction;
 use PhpGame\Input\ButtonBinding;
@@ -34,5 +35,5 @@ $inputActions = new InputActions(
 $textureRepository = new TextureRepository($renderer, __DIR__.DIRECTORY_SEPARATOR.'images');
 $gameStarter = new GameStarter($screen->getWidth(), $screen->getHeight(), $sound, $inputActions, $textureRepository);
 
-$engine = new Engine($renderer, $inputActions);
+$engine = new Engine($renderer, $inputActions, new Registry());
 $engine->run($gameStarter);

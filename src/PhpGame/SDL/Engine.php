@@ -3,6 +3,7 @@
 namespace PhpGame\SDL;
 
 use PhpGame\DrawableInterface;
+use PhpGame\ECS\Registry;
 use PhpGame\Input\InputActions;
 use SDL_Event;
 
@@ -13,11 +14,13 @@ class Engine
 {
     private Renderer $renderer;
     private InputActions $inputActions;
+    private Registry $registry;
 
-    public function __construct(Renderer $screen, InputActions $inputActions)
+    public function __construct(Renderer $screen, InputActions $inputActions, Registry $registry)
     {
         $this->renderer = $screen;
         $this->inputActions = $inputActions;
+        $this->registry = $registry;
     }
 
     public function run(DrawableInterface $game): void
@@ -36,6 +39,10 @@ class Engine
             $this->inputActions->update();
 
             $this->renderer->clear();
+            $jobs = $game->getJobs();
+            foreach ($jobs as $job) {
+                $job($this->registry);
+            }
             $game->update($deltaTime);
             $game->draw($this->renderer);
 

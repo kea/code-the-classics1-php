@@ -2,8 +2,10 @@
 
 namespace Cavern;
 
+use Cavern\Jobs\MovableSystem;
 use PhpGame\Animation;
 use PhpGame\DrawableInterface;
+use PhpGame\ECS\Job;
 use PhpGame\Input\InputActions;
 use PhpGame\SDL\Renderer;
 use PhpGame\SoundManager;
@@ -12,7 +14,7 @@ use PhpGame\Vector2Float;
 
 use const SDL_SCANCODE_SPACE;
 
-class GameStarter implements DrawableInterface
+class GameStarter implements DrawableInterface, JobsCollectorInterface
 {
     private const MENU = 0;
     private const PLAY = 1;
@@ -26,6 +28,8 @@ class GameStarter implements DrawableInterface
     private int $height;
     private ?Animation $menuAnimation = null;
     private TextureRepository $textureRepository;
+    /** @var Job[] */
+    private array $jobs;
 
     public function __construct(
         int $width,
@@ -49,6 +53,16 @@ class GameStarter implements DrawableInterface
         $this->game->setSoundManager($this->soundManager);
         $this->game->start();
         $this->textureRepository = $textureRepository;
+
+        $this->jobs = [
+            new MovableSystem()
+        ];
+    }
+
+    /** @return Job[] */
+    public function getJobs(): array
+    {
+        return $this->jobs;
     }
 
     public function update(float $deltaTime): void
