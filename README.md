@@ -12,8 +12,8 @@ You need also two PHP extensions for [SDL_mixer](https://github.com/kea/php-sdl-
 # Porting status
 
 - Boing! [Ready]
-- Cavern [WIP]
-- Infinite bunner [TBD]
+- Cavern [Ready]
+- Infinite bunner [WIP]
 - Myriapod [TBD]
 - Substitute Soccer [TBD]
 
@@ -68,10 +68,11 @@ cd code-the-classics1-php
 composer install
 ```
 
-## Run the game
+## Run the games
 
 ```
 php src/Boing/boing.php
+php src/Cavern/cavern.php
 ```
 
 Menu selection <kbd>Up</kbd>, <kbd>Down</kbd> and <kbd>Space</kbd> to confirm.
