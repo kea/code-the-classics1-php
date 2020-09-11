@@ -124,6 +124,7 @@ class Game implements DrawableInterface
             $animator = new \Cavern\Animator\Robot($this->textureRepository);
             $animator->getSprite()->setPosition($pos);
             $robot = new Robot($animator, $robotType, $this->orbs, $this->bolts, $this->level, $this->player);
+            $robot->setSoundManager($this->soundManager);
             $this->enemies->add($robot);
         }
 
@@ -152,7 +153,7 @@ class Game implements DrawableInterface
             }
         }
 
-        if (!$this->isGameOver()) {
+        if ($this->player !== null && !$this->isGameOver()) {
             $this->statusBar->draw($renderer, $this->player, $this->level);
         }
     }
@@ -191,7 +192,7 @@ class Game implements DrawableInterface
         $this->fruits->newLevel($this->level);
         $this->createEnemies();
         $this->level->buildNextLevel();
-        $this->soundManager->playSound("level");
+        $this->soundManager->playSound('level0.ogg');
     }
 
     private function getUpdatableObjects(): array
@@ -214,7 +215,6 @@ class Game implements DrawableInterface
             array_fill($strongEnemiesCount, $weakEnemiesCount, Robot::TYPE_NORMAL)
         );
         shuffle($this->pendingEnemies);
-        // playSound('level', 1);
     }
 
     public function isGameOver(): bool

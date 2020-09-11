@@ -37,18 +37,12 @@ class GameStarter implements DrawableInterface
         $this->width = $width;
         $this->height = $height;
         $this->soundManager = $soundManager;
-        $this->startMenu();
         $this->inputActions = $inputActions;
-        $level = new Level($this->width, $this->height, $textureRepository);
-
-        $fruits = new FruitCollection(new \Cavern\Animator\Fruit($textureRepository));
-        $pops = new PopCollection(new \Cavern\Animator\Pop($textureRepository));
-        $orbs = new OrbCollection(new \Cavern\Animator\Orb($textureRepository), $fruits, $pops);
-
-        $this->game = new Game($level, $orbs, $fruits, $pops, $textureRepository);
-        $this->game->setSoundManager($this->soundManager);
-        $this->game->start();
         $this->textureRepository = $textureRepository;
+        $this->startMenu();
+
+        $soundManager->playMusic('theme.ogg');
+        $soundManager->setMusicVolume(0.3);
     }
 
     public function update(float $deltaTime): void
@@ -64,12 +58,14 @@ class GameStarter implements DrawableInterface
         if ($this->state === self::MENU) {
             $this->updateMenu($deltaTime);
             if ($this->inputActions->getKeyboard()->getKeyDown(SDL_SCANCODE_SPACE)) {
-                $this->startGame();
+                $this->startGame(true);
+                $this->state = self::PLAY;
             }
         }
         if ($this->state === self::PLAY) {
             if ($this->game->isGameOver()) {
                 $this->state = self::GAME_OVER;
+                $this->soundManager->playSound("over0.ogg");
             }
         }
 
@@ -78,9 +74,7 @@ class GameStarter implements DrawableInterface
 
     public function draw(Renderer $renderer): void
     {
-        if ($this->state === self::PLAY) {
-            $this->game->draw($renderer);
-        }
+        $this->game->draw($renderer);
         if ($this->state === self::MENU) {
             $renderer->drawImage(__DIR__."/images/title.png", 0, 0);
             $renderer->drawImage($this->menuAnimation->getCurrentFrame(), 130, 280);
@@ -102,6 +96,7 @@ class GameStarter implements DrawableInterface
         }
 
         $this->menuAnimation->startAnimation();
+        $this->startGame(false);
     }
 
     private function updateMenu(float $deltaTime): void
@@ -109,23 +104,27 @@ class GameStarter implements DrawableInterface
         $this->menuAnimation->update($deltaTime);
     }
 
-    public function startGame(): void
+    public function startGame(bool $withPlayer): void
     {
-        $playerSprite = new \Cavern\Animator\Player($this->textureRepository);
-        $playerSprite->getSprite()->setPosition(new Vector2Float(200, 200));
         $fruitSprite = new \Cavern\Animator\Fruit($this->textureRepository);
         $popSprite = new \Cavern\Animator\Pop($this->textureRepository);
         $orbSprite = new \Cavern\Animator\Orb($this->textureRepository);
 
-        $fruits = new FruitCollection($fruitSprite);
+        $fruits = new FruitCollection($fruitSprite, $this->soundManager);
         $pops = new PopCollection($popSprite);
-        $orbs = new OrbCollection($orbSprite, $fruits, $pops);
-        $player = new Player($playerSprite, $this->inputActions, $orbs);
+        $orbs = new OrbCollection($orbSprite, $fruits, $pops, $this->soundManager);
+
         $level = new Level($this->width, $this->height, $this->textureRepository);
-        $player->setLevel($level);
+        $player = null;
+        if ($withPlayer) {
+            $playerSprite = new \Cavern\Animator\Player($this->textureRepository);
+            $playerSprite->getSprite()->setPosition(new Vector2Float(200, 200));
+            $player = new Player($playerSprite, $this->inputActions, $orbs);
+            $player->setSoundManager($this->soundManager);
+            $player->setLevel($level);
+        }
         $this->game = new Game($level, $orbs, $fruits, $pops, $this->textureRepository, $player);
         $this->game->setSoundManager($this->soundManager);
         $this->game->start();
-        $this->state = self::PLAY;
     }
 }

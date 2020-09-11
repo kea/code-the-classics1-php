@@ -5,10 +5,14 @@ namespace Cavern;
 use Cavern\Animator\Robot as SpriteRobot;
 use PhpGame\Animator;
 use PhpGame\SDL\Renderer;
+use PhpGame\SoundEmitterInterface;
+use PhpGame\SoundEmitterTrait;
 use PhpGame\Vector2Float;
 
-class Robot extends GravityActor
+class Robot extends GravityActor implements SoundEmitterInterface
 {
+    use SoundEmitterTrait;
+
     public const TYPE_NORMAL = 0;
     public const TYPE_AGGRESSIVE = 1;
     public const TYPE_NONE = -1;
@@ -67,7 +71,7 @@ class Robot extends GravityActor
             }
             if ((random_int(0, 1000) / 1000) < $fireProbability) {
                 $this->fireTimer = 0;
-                //$this->play_sound("laser", 4);
+                $this->playSound('laser'.random_int(0, 3).'.ogg');
             }
         } elseif (($this->fireTimer >= 8 / 60) && ($this->fireTimer <= 9 / 60)) { // @todo wait shooting animation to finish
             $this->fireTimer = 9 / 60; // @todo remove when the shooting is triggered by animation

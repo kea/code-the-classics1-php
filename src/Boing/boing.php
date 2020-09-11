@@ -21,7 +21,7 @@ $screen->setIcon(__DIR__.'/../../phpgame_small.bmp');
 $renderer = new Renderer($screen->getWindow());
 
 $sound = new SoundManager(44100, MIX_DEFAULT_FORMAT, 2, 2048);
-$sound->setBaseAssetsPath(__DIR__);
+$sound->setAssetsPath(__DIR__);
 
 $inputActions = new InputActions(
     [

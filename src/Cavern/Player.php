@@ -7,10 +7,14 @@ namespace Cavern;
 use PhpGame\DrawableInterface;
 use PhpGame\Input\InputActions;
 use PhpGame\SDL\Renderer;
+use PhpGame\SoundEmitterInterface;
+use PhpGame\SoundEmitterTrait;
 use PhpGame\Vector2Float;
 
-class Player extends GravityActor implements DrawableInterface
+class Player extends GravityActor implements DrawableInterface, SoundEmitterInterface
 {
+    use SoundEmitterTrait;
+
     private const MAX_HEALTH = 3;
     private const SPEED = 60 * 4;
     private int $lives = 2;
@@ -79,14 +83,15 @@ class Player extends GravityActor implements DrawableInterface
                 if ($this->blowingOrb !== null) {
                     $this->orbs->add($this->blowingOrb);
                     $this->fireTimer = 0.33;
-                    //sound->play("blow", 4);
+                    $soundName = 'blow'.random_int(0, 3).'.ogg';
+                    $this->playSound($soundName);
                 }
             }
 
             if (($direction->y < 0) && ($this->velocityY === 0.0) && ($this->isLanded)) {
                 $this->velocityY = -17 * 60;
                 $this->isLanded = false;
-                // sound->play("jump");
+                $this->playSound('jump0.ogg');
             }
         }
 
@@ -126,9 +131,10 @@ class Player extends GravityActor implements DrawableInterface
             $this->isLanded = false;
             $this->directionX = $other->directionX;
             if ($this->health > 0) {
-                // $game->playSound("ouch", 4);
+                $soundName = 'ouch'.random_int(0, 3).'.ogg';
+                $this->playSound($soundName);
             } else {
-                // $game->playSound("die");
+                $this->playSound('die0.ogg');
             }
         }
     }

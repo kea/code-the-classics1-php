@@ -7,10 +7,14 @@ namespace Cavern;
 use PhpGame\Animator;
 use PhpGame\DrawableInterface;
 use PhpGame\SDL\Renderer;
+use PhpGame\SoundEmitterInterface;
+use PhpGame\SoundEmitterTrait;
 use PhpGame\Sprite;
 
-class Orb extends ColliderActor implements DrawableInterface
+class Orb extends ColliderActor implements DrawableInterface, SoundEmitterInterface
 {
+    use SoundEmitterTrait;
+
     private const MAX_TIMER = 250 / 60;
     public float $blownTime = 0.1;
     private bool $floating = false;
@@ -66,7 +70,7 @@ class Orb extends ColliderActor implements DrawableInterface
             $fruit = $this->fruits->createFruit($this->getPosition(), $this->pops, $this->trappedEnemyType);
             $this->fruits->add($fruit);
         }
-        //game.play_sound("pop", 4);
+        $this->playSound('pop'.random_int(0, 3).'.ogg');
         $this->isActive = false;
     }
 
@@ -93,7 +97,7 @@ class Orb extends ColliderActor implements DrawableInterface
         if ($other instanceof Robot && !$this->hasTrappedEnemy()) {
             $this->floating = true;
             $this->trappedEnemyType = $other->getType();
-            //$this->playSound("trap", 4);
+            $this->playSound('trap'.random_int(0, 3).'.ogg');
         }
         if ($other instanceof Bolt) {
             $this->pop();

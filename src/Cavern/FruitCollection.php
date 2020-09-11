@@ -5,6 +5,7 @@ namespace Cavern;
 use ArrayIterator;
 use IteratorAggregate;
 use PhpGame\Animator;
+use PhpGame\SoundManager;
 use PhpGame\Vector2Float;
 
 class FruitCollection implements IteratorAggregate
@@ -13,10 +14,12 @@ class FruitCollection implements IteratorAggregate
     private array $fruits = [];
     private Level $level;
     private Animator $animator;
+    private SoundManager $soundManager;
 
-    public function __construct(\Cavern\Animator\Fruit $animator)
+    public function __construct(\Cavern\Animator\Fruit $animator, SoundManager $soundManager)
     {
         $this->animator = $animator;
+        $this->soundManager = $soundManager;
     }
 
     public function newLevel(Level $level): void
@@ -31,6 +34,7 @@ class FruitCollection implements IteratorAggregate
         $animator = clone $this->animator;
         $animator->getSprite()->setPosition($position);
         $fruit = new Fruit($animator, $pops, $trappedEnemyType ?? Robot::TYPE_NORMAL);
+        $fruit->setSoundManager($this->soundManager);
         $fruit->setLevel($this->level);
 
         return $fruit;

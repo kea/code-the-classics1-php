@@ -4,9 +4,13 @@ namespace Cavern;
 
 use Cavern\Animator\Fruit as AnimatorFruit;
 use PhpGame\SDL\Renderer;
+use PhpGame\SoundEmitterInterface;
+use PhpGame\SoundEmitterTrait;
 
-class Fruit extends GravityActor
+class Fruit extends GravityActor implements SoundEmitterInterface
 {
+    use SoundEmitterTrait;
+
     public const APPLE = 0;
     public const RASPBERRY = 1;
     public const LEMON = 2;
@@ -61,13 +65,13 @@ class Fruit extends GravityActor
 
         if ($this->type === self::EXTRA_HEALTH) {
             $other->incHealth();
-            //game.play_sound("bonus");
+            $this->playSound('bonus0.ogg');
         } elseif ($this->type === self::EXTRA_LIFE) {
             $other->incLives();
-            //game.play_sound("bonus");
+            $this->playSound('bonus0.ogg');
         } else {
             $other->addScore(($this->type + 1) * 100);
-            //game.play_sound("score");
+            $this->playSound('score0.ogg');
         }
         $this->timeToLive = 0;
         $this->pop();

@@ -4,6 +4,7 @@ namespace Cavern;
 
 use ArrayIterator;
 use IteratorAggregate;
+use PhpGame\SoundManager;
 use PhpGame\Vector2Float;
 
 class OrbCollection implements IteratorAggregate
@@ -14,12 +15,18 @@ class OrbCollection implements IteratorAggregate
     private FruitCollection $fruits;
     private PopCollection $pops;
     private Animator\Orb $animator;
+    private SoundManager $soundManager;
 
-    public function __construct(\Cavern\Animator\Orb $animator, FruitCollection $fruits, PopCollection $pops)
-    {
+    public function __construct(
+        \Cavern\Animator\Orb $animator,
+        FruitCollection $fruits,
+        PopCollection $pops,
+        SoundManager $soundManager
+    ) {
         $this->fruits = $fruits;
         $this->pops = $pops;
         $this->animator = $animator;
+        $this->soundManager = $soundManager;
     }
 
     public function reset(): void
@@ -39,6 +46,7 @@ class OrbCollection implements IteratorAggregate
 
         $orb = new Orb($animator->getSprite(), $direction, $this->pops, $this->fruits);
         $orb->setAnimator($animator);
+        $orb->setSoundManager($this->soundManager);
 
         return $orb;
     }

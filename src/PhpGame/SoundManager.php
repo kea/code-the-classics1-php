@@ -23,18 +23,27 @@ class SoundManager
         }
     }
 
-    public function setBaseAssetsPath(string $path): void
+    public function setAssetsPath(string $path): void
     {
         $this->basePath = rtrim($path, '/').'/';
     }
 
-    public function playSound(string $path): void
+    /**
+     * This can load WAVE, AIFF, RIFF, OGG, and VOC files
+     */
+    public function playSound(string $path): bool
     {
         if (!isset($this->chunks[$path])) {
-            $this->chunks[$path] = Mix_LoadWAV($this->basePath.'/sounds/'.$path);
+            $fullPath = $this->basePath.'/sounds/'.$path;
+            if (!file_exists($fullPath)) {
+                return false;
+            }
+            $this->chunks[$path] = Mix_LoadWAV($fullPath);
         }
 
         \Mix_PlayChannel(-1, $this->chunks[$path], 0);
+
+        return true;
     }
 
     /**
