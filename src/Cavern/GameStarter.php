@@ -112,7 +112,7 @@ class GameStarter implements DrawableInterface
     public function startGame(): void
     {
         $playerSprite = new \Cavern\Animator\Player($this->textureRepository);
-        $playerSprite->setPosition(new Vector2Float(200, 200));
+        $playerSprite->getSprite()->setPosition(new Vector2Float(200, 200));
         $fruitSprite = new \Cavern\Animator\Fruit($this->textureRepository);
         $popSprite = new \Cavern\Animator\Pop($this->textureRepository);
         $orbSprite = new \Cavern\Animator\Orb($this->textureRepository);

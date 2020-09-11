@@ -12,12 +12,12 @@ class Pop implements DrawableInterface
     private int $type;
     private float $timer = .0;
     private bool $isActive = true;
-    private Animator\Pop $sprite;
+    private Animator\Pop $animator;
 
-    public function __construct(Animator\Pop $sprite, int $type)
+    public function __construct(Animator\Pop $animator, int $type)
     {
         $this->type = $type;
-        $this->sprite = $sprite;
+        $this->animator = $animator;
     }
 
     public function update(float $deltaTime): void
@@ -28,9 +28,9 @@ class Pop implements DrawableInterface
         }
         $this->timer += $deltaTime;
 
-        $this->sprite->setFloat('timer', $this->timer);
-        $this->sprite->setFloat('type', (float)$this->type);
-        $this->sprite->update($deltaTime);
+        $this->animator->setFloat('timer', $this->timer);
+        $this->animator->setFloat('type', (float)$this->type);
+        $this->animator->update($deltaTime);
     }
 
     public function draw(Renderer $renderer): void
@@ -38,7 +38,7 @@ class Pop implements DrawableInterface
         if (!$this->isActive) {
             return;
         }
-        $this->sprite->render($renderer);
+        $this->animator->getSprite()->render($renderer);
     }
 
     public function isActive(): bool

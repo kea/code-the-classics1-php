@@ -24,13 +24,13 @@ class ColliderActor
         $this->level = $level;
     }
 
-    public function move(float $dx, float $dy, float $speed, float $deltaTime): bool
+    public function move(float $directionX, float $directionY, float $speed, float $deltaTime): bool
     {
         $frameSpeed = (int)$speed * $deltaTime;
         $newPosition = clone $this->getPosition();
 
         for ($i = 0; $i < $frameSpeed; ++$i) {
-            $newPosition->add(new Vector2Float($dx, $dy));
+            $newPosition->add(new Vector2Float($directionX, $directionY));
 
             if ($newPosition->x < 70 || $newPosition->x > 730) {
                 return true;
@@ -40,10 +40,7 @@ class ColliderActor
                 continue;
             }
 
-            if ((($dy > 0 && Level::blockStartAt($newPosition->y)) ||
-                    ($dx > 0 && Level::blockStartAt($newPosition->x)) ||
-                    ($dx < 0 && Level::blockEndAt($newPosition->x)))
-                && $this->level->blockAt($newPosition->x, $newPosition->y)) {
+            if ($this->collide($directionX, $directionY, $newPosition)) {
                 return true;
             }
         }
@@ -66,5 +63,13 @@ class ColliderActor
     public function setPosition(Vector2Float $position): void
     {
         $this->sprite->setPosition($position);
+    }
+
+    private function collide(float $dx, float $dy, Vector2Float $newPosition): bool
+    {
+        return (($dy > 0 && $this->level->blockStartAt($newPosition->y)) ||
+                ($dx > 0 && $this->level->blockStartAt($newPosition->x)) ||
+                ($dx < 0 && $this->level->blockEndAt($newPosition->x)))
+            && $this->level->blockAt($newPosition->x, $newPosition->y);
     }
 }

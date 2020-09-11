@@ -13,10 +13,10 @@ class Player extends Animator
 {
     protected array $acceptedParams = ['dx', 'directionX', 'timer', 'hurtTimer', 'fireTimer', 'health'];
 
-    public function __construct(TextureRepository $textureRepository, Sprite $sprite, string $defaultImage = 'bolt00.png')
+    public function __construct(TextureRepository $textureRepository, Sprite $sprite =  null, string $defaultImage = 'bolt00.png')
     {
-        $sprite->setAnchor(Anchor::CenterBottom());
         parent::__construct($textureRepository, $sprite, $defaultImage);
+        $this->sprite->setAnchor(Anchor::CenterBottom());
     }
 
     public function update(float $deltaTime): void
@@ -30,7 +30,7 @@ class Player extends Animator
 
         $image = $this->chooseImage($dx, $directionX, $timer, $hurtTimer, $fireTimer, $health);
         $this->image = $image.'.png';
-        $this->update($deltaTime);
+        parent::update($deltaTime);
     }
 
     private function chooseImage(float $dx, float $directionX, float $timer, float $hurtTimer, float $fireTimer, int $health): string

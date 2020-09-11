@@ -3,6 +3,7 @@
 namespace Cavern;
 
 use Cavern\Animator\Robot as SpriteRobot;
+use PhpGame\Animator;
 use PhpGame\SDL\Renderer;
 use PhpGame\Vector2Float;
 
@@ -21,24 +22,25 @@ class Robot extends GravityActor
     private OrbCollection $orbs;
     private BoltCollection $bolts;
     private ?Player $player;
+    private Animator $animator;
 
     public function __construct(
-        SpriteRobot $sprite,
+        SpriteRobot $animator,
         int $type,
         OrbCollection $orbs,
         BoltCollection $bolts,
         Level $level,
         ?Player $player
     ) {
-        parent::__construct($sprite);
+        parent::__construct($animator->getSprite());
         $this->type = $type;
         $this->speed = random_int(1 * 60, 3 * 60);
         $this->orbs = $orbs;
         $this->player = $player;
         $this->bolts = $bolts;
+        $this->animator = $animator;
         $this->setLevel($level);
         $this->update(0);
-        $this->sprite = $sprite;
     }
 
     public function update(float $deltaTime): void
@@ -75,11 +77,11 @@ class Robot extends GravityActor
             $this->bolts->add($this->bolts->create($position, $this->directionX));
         }
 
-        $this->sprite->setFloat('directionX', $this->directionX);
-        $this->sprite->setFloat('lifeTimer', $this->lifeTimer);
-        $this->sprite->setFloat('fireTimer', $this->fireTimer);
-        $this->sprite->setInt('type', $this->type);
-        $this->sprite->update($deltaTime);
+        $this->animator->setFloat('directionX', $this->directionX);
+        $this->animator->setFloat('lifeTimer', $this->lifeTimer);
+        $this->animator->setFloat('fireTimer', $this->fireTimer);
+        $this->animator->setInt('type', $this->type);
+        $this->animator->update($deltaTime);
     }
 
     public function onCollision(ColliderActor $other): void
@@ -97,7 +99,6 @@ class Robot extends GravityActor
     public function draw(Renderer $renderer): void
     {
         $this->sprite->render($renderer);
-        $renderer->drawRectangle($this->getCollider());
     }
 
     public function isActive(): bool

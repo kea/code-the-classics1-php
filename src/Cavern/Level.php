@@ -31,12 +31,12 @@ class Level
         $this->textureRepository = $textureRepository;
     }
 
-    public static function blockStartAt(float $pos): bool
+    public function blockStartAt(float $pos): bool
     {
         return (int)$pos % self::GRID_BLOCK_SIZE === 0;
     }
 
-    public static function blockEndAt(float $pos): bool
+    public function blockEndAt(float $pos): bool
     {
         return (int)$pos % self::GRID_BLOCK_SIZE === self::GRID_BLOCK_SIZE - 1;
     }

@@ -10,11 +10,11 @@ class BoltCollection implements IteratorAggregate
 {
     /** @var Bolt[] */
     private array $bolts = [];
-    private \Cavern\Animator\Bolt $sprite;
+    private \Cavern\Animator\Bolt $animation;
 
-    public function __construct(\Cavern\Animator\Bolt $sprite)
+    public function __construct(\Cavern\Animator\Bolt $animation)
     {
-        $this->sprite = $sprite;
+        $this->animation = $animation;
     }
 
     public function reset(): void
@@ -30,10 +30,10 @@ class BoltCollection implements IteratorAggregate
 
     public function create(Vector2Float $position, int $directionX): Bolt
     {
-        $sprite = clone $this->sprite;
-        $sprite->setPosition($position);
+        $animation = clone $this->animation;
+        $animation->getSprite()->setPosition($position);
 
-        return new Bolt($sprite, $directionX);
+        return new Bolt($animation, $directionX);
     }
 
     public function removeNotActive(): void

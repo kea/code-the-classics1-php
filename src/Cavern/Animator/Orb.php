@@ -13,7 +13,7 @@ class Orb extends Animator
 {
     protected array $acceptedParams = ['timer', 'trappedEnemyType'];
 
-    public function __construct(TextureRepository $textureRepository, Sprite $sprite, string $defaultImage = 'orb0.png')
+    public function __construct(TextureRepository $textureRepository, Sprite $sprite = null, string $defaultImage = 'orb0.png')
     {
         parent::__construct($textureRepository, $sprite, $defaultImage);
     }

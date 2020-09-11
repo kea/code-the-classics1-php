@@ -11,19 +11,19 @@ class PopCollection implements IteratorAggregate
     /** @var Pop[] */
     private array $pops = [];
 
-    private \Cavern\Animator\Pop $sprite;
+    private \Cavern\Animator\Pop $animator;
 
-    public function __construct(\Cavern\Animator\Pop $sprite)
+    public function __construct(\Cavern\Animator\Pop $animator)
     {
-        $this->sprite = $sprite;
+        $this->animator = $animator;
     }
 
     public function createPop(Vector2Float $position, $type): Pop
     {
-        $sprite = clone $this->sprite;
-        $sprite->setPosition($position);
+        $animator = clone $this->animator;
+        $animator->getSprite()->setPosition($position);
 
-        return new Pop($sprite, $type);
+        return new Pop($animator, $type);
     }
 
     public function reset(): void

@@ -2,8 +2,7 @@
 
 namespace PhpGame;
 
-use PhpGame\SDL\Renderer;
-use PhpGame\SDL\Texture;
+use InvalidArgumentException;
 
 class Animator
 {
@@ -13,13 +12,13 @@ class Animator
     private array $floatParams = [];
     private array $intParams = [];
     protected array $acceptedParams = [];
-    private Sprite $sprite;
+    protected Sprite $sprite;
 
-    public function __construct(TextureRepository $textureRepository, Sprite $sprite, string $defaultImage = 'default.png')
+    public function __construct(TextureRepository $textureRepository, Sprite $sprite = null, string $defaultImage = 'default.png')
     {
         $this->image = $defaultImage;
         $this->textureRepository = $textureRepository;
-        $this->sprite = $sprite;
+        $this->sprite = $sprite ?? new Sprite($textureRepository[$defaultImage]);
     }
 
     public function update(float $deltaTime): void
@@ -62,8 +61,20 @@ class Animator
 
     private function assertIsValidParam(string $key): void
     {
-        if (!isset($this->acceptedParams[$key])) {
-            throw new \InvalidArgumentException("Parameter ".$key." does not exists for animated sprite ".static::class);
+        if (!in_array($key, $this->acceptedParams, true)) {
+            throw new InvalidArgumentException("Parameter ".$key." does not exists for animated sprite ".static::class);
         }
     }
+
+    public function getSprite(): Sprite
+    {
+        return $this->sprite;
+    }
+
+    public function __clone()
+    {
+        $this->sprite = clone $this->sprite;
+    }
+
+
 }

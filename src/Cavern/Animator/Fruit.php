@@ -11,17 +11,17 @@ use PhpGame\TextureRepository;
 
 class Fruit extends Animator
 {
-    protected array $acceptedParams = ['timer', 'type'];
+    protected array $acceptedParams = ['timeToLive', 'type'];
 
-    public function __construct(TextureRepository $textureRepository, Sprite $sprite, string $defaultImage = 'fruit00.png')
+    public function __construct(TextureRepository $textureRepository, Sprite $sprite = null, string $defaultImage = 'fruit00.png')
     {
-        $sprite->setAnchor(Anchor::CenterBottom());
         parent::__construct($textureRepository, $sprite, $defaultImage);
+        $this->sprite->setAnchor(Anchor::CenterBottom());
     }
 
     public function update(float $deltaTime): void
     {
-        $timer = $this->getFloat('timer');
+        $timer = $this->getFloat('timeToLive');
         $type = $this->getInt('type');
 
         if ($timer < 0) {
@@ -33,6 +33,6 @@ class Fruit extends Animator
         $image = 'fruit'.$type.$animFrame;
 
         $this->image = $image.'.png';
-        $this->update($deltaTime);
+        parent::update($deltaTime);
     }
 }

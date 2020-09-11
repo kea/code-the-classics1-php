@@ -11,11 +11,13 @@ class Bolt extends GravityActor
     private const SPEED = 7 * 60;
     private bool $isActive = true;
     private float $timer = .0;
+    private Animator\Bolt $animator;
 
-    public function __construct(Animator\Bolt $sprite, int $directionX)
+    public function __construct(Animator\Bolt $animator, int $directionX)
     {
-        parent::__construct($sprite);
+        parent::__construct($animator->getSprite());
         $this->directionX = $directionX;
+        $this->animator = $animator;
     }
 
     public function isActive(): bool
@@ -30,9 +32,9 @@ class Bolt extends GravityActor
             $this->isActive = false;
         }
 
-        $this->sprite->setFloat('timer', $this->timer);
-        $this->sprite->setFloat('directionX', $this->directionX);
-        $this->sprite->update($deltaTime);
+        $this->animator->setFloat('timer', $this->timer);
+        $this->animator->setFloat('directionX', $this->directionX);
+        $this->animator->update($deltaTime);
     }
 
     public function draw(Renderer $renderer): void
@@ -41,8 +43,7 @@ class Bolt extends GravityActor
             return;
         }
 
-        $this->sprite->render($renderer);
-        $renderer->drawRectangle($this->getCollider());
+        $this->animator->getSprite()->render($renderer);
     }
 
     public function onCollision(ColliderActor $collider): void

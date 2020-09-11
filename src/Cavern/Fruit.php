@@ -2,7 +2,7 @@
 
 namespace Cavern;
 
-use Cavern\Animator\Fruit as SpriteFruit;
+use Cavern\Animator\Fruit as AnimatorFruit;
 use PhpGame\SDL\Renderer;
 
 class Fruit extends GravityActor
@@ -15,17 +15,18 @@ class Fruit extends GravityActor
     private int $type;
     private float $timeToLive;
     private PopCollection $pops;
+    private AnimatorFruit $animator;
 
     public function __construct(
-        SpriteFruit $sprite,
+        AnimatorFruit $animator,
         PopCollection $pops,
         int $trappedEnemyType = Robot::TYPE_NORMAL
     ) {
-        parent::__construct($sprite);
+        parent::__construct($animator->getSprite());
         $this->type = $this->randomType($trappedEnemyType);
         $this->timeToLive = 8.3;
         $this->pops = $pops;
-        $this->animator = new \Cavern\Animator\Fruit()
+        $this->animator = $animator;
     }
 
     public function isActive(): bool
@@ -42,15 +43,14 @@ class Fruit extends GravityActor
         if ($this->timeToLive < 0) {
             $this->pop();
         }
-        $this->sprite->setFloat('timeToLive', $this->timeToLive);
-        $this->sprite->setFloat('type', $this->type);
-        $this->sprite->update($deltaTime);
+        $this->animator->setFloat('timeToLive', $this->timeToLive);
+        $this->animator->setInt('type', $this->type);
+        $this->animator->update($deltaTime);
     }
 
     public function draw(Renderer $renderer): void
     {
-        $this->sprite->render($renderer);
-        $renderer->drawRectangle($this->getCollider());
+        $this->animator->getSprite()->render($renderer);
     }
 
     public function onCollision(ColliderActor $other): void

@@ -60,9 +60,9 @@ class Game implements DrawableInterface
     {
         $this->timer += $deltaTime;
 
-        $updatablesContainer = $this->getUpdatableObjects();
+        $updatablesCollections = $this->getUpdatableObjects();
 
-        foreach ($updatablesContainer as $updatables) {
+        foreach ($updatablesCollections as $updatables) {
             foreach ($updatables as $updatable) {
                 $updatable->update($deltaTime);
             }
@@ -121,9 +121,9 @@ class Game implements DrawableInterface
             $this->nextEnemyTimer -= 1.35;
             $robotType = array_pop($this->pendingEnemies);
             $pos = new Vector2Float($this->level->getRobotSpawnX(), -30);
-            $sprite = new \Cavern\Animator\Robot($this->textureRepository);
-            $sprite->setPosition($pos);
-            $robot = new Robot($sprite, $robotType, $this->orbs, $this->bolts, $this->level, $this->player);
+            $animator = new \Cavern\Animator\Robot($this->textureRepository);
+            $animator->getSprite()->setPosition($pos);
+            $robot = new Robot($animator, $robotType, $this->orbs, $this->bolts, $this->level, $this->player);
             $this->enemies->add($robot);
         }
 

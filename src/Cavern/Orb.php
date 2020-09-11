@@ -78,7 +78,6 @@ class Orb extends ColliderActor implements DrawableInterface
     public function draw(Renderer $renderer): void
     {
         $this->sprite->render($renderer);
-        $renderer->drawRectangle($this->getCollider());
     }
 
     public function hasTrappedEnemy(): bool

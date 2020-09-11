@@ -13,10 +13,10 @@ class Robot extends Animator
 {
     protected array $acceptedParams = ['directionX', 'type', 'fireTimer', 'lifeTimer'];
 
-    public function __construct(TextureRepository $textureRepository, Sprite $sprite, string $defaultImage = 'robot000.png')
+    public function __construct(TextureRepository $textureRepository, Sprite $sprite = null, string $defaultImage = 'robot000.png')
     {
-        $sprite->setAnchor(Anchor::CenterBottom());
         parent::__construct($textureRepository, $sprite, $defaultImage);
+        $this->sprite->setAnchor(Anchor::CenterBottom());
     }
 
     public function update(float $deltaTime): void
@@ -35,6 +35,6 @@ class Robot extends Animator
         $image .= $fireTimer < 3 * $frameSpeed ? (5 + $nthFireFrame) : (1 + $nthLifeFrame % 4);
 
         $this->image = $image.'.png';
-        $this->update($deltaTime);
+        parent::update($deltaTime);
     }
 }

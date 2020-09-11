@@ -12,7 +12,7 @@ class Bolt extends Animator
 {
     protected array $acceptedParams = ['directionX', 'timer'];
 
-    public function __construct(TextureRepository $textureRepository, Sprite $sprite, string $defaultImage = 'bolt00.png')
+    public function __construct(TextureRepository $textureRepository, Sprite $sprite = null, string $defaultImage = 'bolt00.png')
     {
         parent::__construct($textureRepository, $sprite, $defaultImage);
     }

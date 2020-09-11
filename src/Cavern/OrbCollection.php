@@ -13,13 +13,13 @@ class OrbCollection implements IteratorAggregate
     private array $orbs = [];
     private FruitCollection $fruits;
     private PopCollection $pops;
-    private Animator\Orb $sprite;
+    private Animator\Orb $animator;
 
-    public function __construct(\Cavern\Animator\Orb $sprite, FruitCollection $fruits, PopCollection $pops)
+    public function __construct(\Cavern\Animator\Orb $animator, FruitCollection $fruits, PopCollection $pops)
     {
         $this->fruits = $fruits;
         $this->pops = $pops;
-        $this->sprite = $sprite;
+        $this->animator = $animator;
     }
 
     public function reset(): void
@@ -34,10 +34,13 @@ class OrbCollection implements IteratorAggregate
             return null;
         }
 
-        $sprite = clone $this->sprite;
-        $sprite->setPosition(new Vector2Float($x, $y));
+        $animator = clone $this->animator;
+        $animator->getSprite()->setPosition(new Vector2Float($x, $y));
 
-        return new Orb($sprite, $direction, $this->pops, $this->fruits);
+        $orb = new Orb($animator->getSprite(), $direction, $this->pops, $this->fruits);
+        $orb->setAnimator($animator);
+
+        return $orb;
     }
 
     public function add(Orb $orb): void

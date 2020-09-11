@@ -23,13 +23,15 @@ class Player extends GravityActor implements DrawableInterface
     private OrbCollection $orbs;
     private bool $fireDown = false;
     private ?Orb $blowingOrb = null;
+    private Animator\Player $animator;
 
     public function __construct(
-        Animator\Player $sprite,
+        Animator\Player $animator,
         InputActions $inputActions,
         OrbCollection $orbCollection
     ) {
-        parent::__construct($sprite);
+        parent::__construct($animator->getSprite());
+        $this->animator = $animator;
         $this->inputActions = $inputActions;
         $this->orbs = $orbCollection;
     }
@@ -97,20 +99,18 @@ class Player extends GravityActor implements DrawableInterface
             }
         }
 
-        $this->sprite->updateImage(
-            $direction->x,
-            $this->directionX,
-            $this->timer,
-            $this->hurtTimer,
-            $this->fireTimer,
-            $this->health
-        );
+        $this->animator->setFloat('dx', $direction->x);
+        $this->animator->setFloat('directionX', $this->directionX);
+        $this->animator->setFloat('timer', $this->timer);
+        $this->animator->setFloat('hurtTimer', $this->hurtTimer);
+        $this->animator->setFloat('fireTimer', $this->fireTimer);
+        $this->animator->setInt('health', $this->health);
+        $this->animator->update($deltaTime);
     }
 
     public function draw(Renderer $renderer): void
     {
-        $this->sprite->render($renderer);
-        $renderer->drawRectangle($this->getCollider());
+        $this->animator->getSprite()->render($renderer);
     }
 
     public function onCollision(ColliderActor $other): void

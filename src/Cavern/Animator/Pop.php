@@ -13,10 +13,10 @@ class Pop extends Animator
 {
     protected array $acceptedParams = ['timer', 'type'];
 
-    public function __construct(TextureRepository $textureRepository, Sprite $sprite, string $defaultImage = 'pop00.png')
+    public function __construct(TextureRepository $textureRepository, Sprite $sprite = null, string $defaultImage = 'pop00.png')
     {
-        $sprite->setAnchor(Anchor::CenterBottom());
         parent::__construct($textureRepository, $sprite, $defaultImage);
+        $this->sprite->setAnchor(Anchor::CenterBottom());
     }
 
     public function update(float $deltaTime): void
