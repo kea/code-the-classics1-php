@@ -2,6 +2,11 @@
 
 namespace PhpGame;
 
+use function Mix_LoadMUS;
+use function Mix_LoadWAV;
+use function Mix_PlayMusic;
+use function Mix_VolumeMusic;
+
 class SoundManager
 {
     /** @var array|\Mix_Chunk[] */
@@ -26,7 +31,7 @@ class SoundManager
     public function playSound(string $path): void
     {
         if (!isset($this->chunks[$path])) {
-            $this->chunks[$path] = \Mix_LoadWAV($this->basePath.'/sounds/'.$path);
+            $this->chunks[$path] = Mix_LoadWAV($this->basePath.'/sounds/'.$path);
         }
 
         \Mix_PlayChannel(-1, $this->chunks[$path], 0);
@@ -38,7 +43,7 @@ class SoundManager
     public function setMusicVolume(float $volume): void
     {
         $this->volume = $volume;
-        \Mix_VolumeMusic(MIX_MAX_VOLUME * $volume);
+        Mix_VolumeMusic(MIX_MAX_VOLUME * $volume);
     }
 
     public function getMusicVolume(): float
@@ -49,9 +54,9 @@ class SoundManager
     public function playMusic(string $path): void
     {
         if (!isset($this->chunks[$path])) {
-            $this->musics[$path] = \Mix_LoadMUS($this->basePath.'/music/'.$path);
+            $this->musics[$path] = Mix_LoadMUS($this->basePath.'/music/'.$path);
         }
 
-        \Mix_PlayMusic($this->musics[$path], 0);
+        Mix_PlayMusic($this->musics[$path], -1);
     }
 }
