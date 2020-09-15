@@ -8,6 +8,7 @@ class Ticker
     private float $lastTime;
     private float $elapsedTime = 0;
     private int $frame = 0;
+    private float $tickPerSecond;
 
     public function __construct()
     {
@@ -22,15 +23,20 @@ class Ticker
         ++$this->frame;
         $this->elapsedTime += $this->deltaTime;
         if ($this->elapsedTime > 1) {
-            $this->log();
+            $this->updateFps();
             $this->elapsedTime = $this->frame = 0;
         }
 
         return $this->deltaTime;
     }
 
-    private function log(): void
+    private function updateFps(): void
     {
-        echo "\nFPS: ".round($this->frame / $this->elapsedTime)." ".$this->elapsedTime;
+        $this->tickPerSecond = round($this->frame / $this->elapsedTime, 1);
+    }
+
+    public function getTickPerSecond(): float
+    {
+        return $this->tickPerSecond;
     }
 }
