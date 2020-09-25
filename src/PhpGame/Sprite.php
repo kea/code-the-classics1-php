@@ -14,14 +14,15 @@ class Sprite
 
     /**
      * Sprite constructor.
-     * @param Texture $texture
-     * @param int     $x
-     * @param int     $y
+     * @param Texture     $texture
+     * @param float       $x
+     * @param float       $y
+     * @param Anchor|null $anchor
      */
-    public function __construct(Texture $texture, int $x = 0, int $y = 0)
+    public function __construct(Texture $texture, float $x = 0, float $y = 0, ?Anchor $anchor = null)
     {
         $this->texture = $texture;
-        $this->anchor = Anchor::CenterCenter();
+        $this->anchor = $anchor ?? Anchor::CenterCenter();
         $this->transform = new Transform(new Vector2Float($x, $y));
         $this->updateBoundedRect();
     }

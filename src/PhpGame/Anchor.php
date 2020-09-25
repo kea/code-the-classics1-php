@@ -71,6 +71,11 @@ class Anchor
         return new Anchor(self::LEFT, self::TOP);
     }
 
+    public static function LeftBottom(): Anchor
+    {
+        return new Anchor(self::LEFT, self::BOTTOM);
+    }
+
     public function getBoundedRect(float $posX, float $posY, int $width, int $height): \SDL_Rect
     {
         return new \SDL_Rect($posX - $width * $this->x, $posY - $height * $this->y, $width, $height);
