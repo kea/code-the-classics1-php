@@ -1,6 +1,8 @@
 <?php
 
-namespace Bunner;
+declare(strict_types=1);
+
+namespace Bunner\Row;
 
 class Rail extends Row
 {

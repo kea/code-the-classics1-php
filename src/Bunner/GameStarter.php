@@ -8,7 +8,6 @@ use PhpGame\Input\InputActions;
 use PhpGame\SDL\Renderer;
 use PhpGame\SoundManager;
 use PhpGame\TextureRepository;
-use PhpGame\Vector2Float;
 
 use const SDL_SCANCODE_SPACE;
 

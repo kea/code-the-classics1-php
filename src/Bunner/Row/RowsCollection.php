@@ -1,6 +1,6 @@
 <?php
 
-namespace Bunner;
+namespace Bunner\Row;
 
 use PhpGame\DrawableInterface;
 use PhpGame\SDL\Renderer;

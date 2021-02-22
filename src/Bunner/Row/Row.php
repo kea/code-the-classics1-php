@@ -1,6 +1,8 @@
 <?php
 
-namespace Bunner;
+declare(strict_types=1);
+
+namespace Bunner\Row;
 
 use PhpGame\Anchor;
 use PhpGame\DrawableInterface;
@@ -12,6 +14,7 @@ use PhpGame\Vector2Float;
 abstract class Row implements DrawableInterface
 {
     protected const ROW_HEIGHT = 40.0;
+    protected const ROW_WIDTH = 780.0;
     protected TextureRepository $textureRepository;
     protected Sprite $sprite;
     protected string $textureName = 'grass%d.png';
@@ -20,7 +23,7 @@ abstract class Row implements DrawableInterface
 
     public function __construct(TextureRepository $textureRepository, int $index, ?Row $previous = null)
     {
-        $y = is_null($previous) ? 780.0 : $previous->sprite->getPosition()->y - self::ROW_HEIGHT;
+        $y = is_null($previous) ? self::ROW_WIDTH : $previous->sprite->getPosition()->y - self::ROW_HEIGHT;
         echo $y."\n";
         $this->index = $index;
         $this->textureRepository = $textureRepository;

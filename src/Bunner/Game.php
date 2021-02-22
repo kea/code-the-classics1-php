@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Bunner;
 
+use Bunner\Row\RowsCollection;
 use PhpGame\DrawableInterface;
 use PhpGame\SDL\Renderer;
 use PhpGame\SoundEmitterInterface;

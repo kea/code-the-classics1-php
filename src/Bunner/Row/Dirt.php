@@ -1,14 +1,16 @@
 <?php
 
-namespace Bunner;
+declare(strict_types=1);
 
-class Grass extends Row
+namespace Bunner\Row;
+
+class Dirt extends Row
 {
-    protected string $textureName = 'grass%d.png';
+    protected string $textureName = 'dirt%d.png';
 
     public function nextRow(): Row
     {
-        $nextRowClass = Grass::class;
+        $nextRowClass = Dirt::class;
         $index = 0;
         if ($this->index > 14) {
             $nextPossibleClasses = [Road::class, Water::class];

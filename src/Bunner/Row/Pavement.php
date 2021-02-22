@@ -1,6 +1,6 @@
 <?php
 
-namespace Bunner;
+namespace Bunner\Row;
 
 class Pavement extends Row
 {
