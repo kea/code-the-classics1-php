@@ -20,6 +20,7 @@ abstract class Row implements DrawableInterface
     protected string $textureName = 'grass%d.png';
     protected Row $previous;
     protected int $index = 0;
+    protected float $dx = 0;
 
     public function __construct(TextureRepository $textureRepository, int $index, ?Row $previous = null)
     {

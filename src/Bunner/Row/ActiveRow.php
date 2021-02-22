@@ -11,7 +11,6 @@ use PhpGame\Vector2Float;
 abstract class ActiveRow extends Row
 {
     protected string $childType;
-    protected float $dx;
     private float $timer;
     protected array $children;
 
