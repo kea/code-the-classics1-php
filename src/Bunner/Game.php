@@ -9,17 +9,22 @@ use PhpGame\DrawableInterface;
 use PhpGame\SDL\Renderer;
 use PhpGame\SoundEmitterInterface;
 use PhpGame\SoundEmitterTrait;
+use PhpGame\SoundManager;
 use PhpGame\TextureRepository;
 
 class Game implements DrawableInterface, SoundEmitterInterface
 {
+    public const HEIGHT = 800;
+
     use SoundEmitterTrait;
     protected RowsCollection $rowsCollection;
     private TextureRepository $textureRepository;
+    private ?SoundManager $soundManager = null;
 
-    public function __construct(TextureRepository $textureRepository)
+    public function __construct(TextureRepository $textureRepository, SoundManager $soundManager)
     {
-        $this->rowsCollection = new RowsCollection($textureRepository);
+        $this->soundManager = $soundManager;
+        $this->rowsCollection = new RowsCollection($textureRepository, $soundManager);
         $this->rowsCollection->createRows(23);
         $this->textureRepository = $textureRepository;
     }

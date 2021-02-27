@@ -6,7 +6,7 @@ namespace PhpGame;
 
 trait SoundEmitterTrait
 {
-    private SoundManager $soundManager;
+    private ?SoundManager $soundManager = null;
 
     public function setSoundManager(SoundManager $soundManager): void
     {

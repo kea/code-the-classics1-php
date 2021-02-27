@@ -4,6 +4,8 @@ namespace Bunner\Row;
 
 use PhpGame\DrawableInterface;
 use PhpGame\SDL\Renderer;
+use PhpGame\SoundEmitterInterface;
+use PhpGame\SoundManager;
 use PhpGame\TextureRepository;
 
 class RowsCollection implements DrawableInterface
@@ -11,10 +13,12 @@ class RowsCollection implements DrawableInterface
     private array $rows = [];
     private TextureRepository $textureRepository;
     private float $newRowTimer = 0.0;
+    private SoundManager $soundManager;
 
-    public function __construct(TextureRepository $textureRepository)
+    public function __construct(TextureRepository $textureRepository, SoundManager $soundManager)
     {
         $this->textureRepository = $textureRepository;
+        $this->soundManager = $soundManager;
     }
 
     public function createRows(int $int = 1): void
@@ -35,7 +39,11 @@ class RowsCollection implements DrawableInterface
         }
 
         echo "$rowsCount row\n";
-        $this->rows[] = $this->rows[$rowsCount-1]->nextRow();
+        $nextRow = $this->rows[$rowsCount-1]->nextRow();
+        if ($nextRow instanceof SoundEmitterInterface) {
+            $nextRow->setSoundManager($this->soundManager);
+        }
+        $this->rows[] = $nextRow;
     }
 
     public function update(float $deltaTime): void

@@ -110,8 +110,7 @@ class GameStarter implements DrawableInterface
     public function startGame(bool $withPlayer): void
     {
         unset($this->game);
-        $this->game = new Game($this->textureRepository); //$player);
-        $this->game->setSoundManager($this->soundManager);
+        $this->game = new Game($this->textureRepository, $this->soundManager); //$player);
         $this->game->start();
     }
 }
