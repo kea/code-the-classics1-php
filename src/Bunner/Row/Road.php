@@ -3,6 +3,7 @@
 namespace Bunner\Row;
 
 use Bunner\Obstacle\Car;
+use Bunner\Player\Bunner;
 use Bunner\Player\PlayerState;
 use PhpGame\TextureRepository;
 
@@ -10,6 +11,7 @@ class Road extends ActiveRow
 {
     protected string $textureName = 'road%d.png';
     protected string $childType = Car::class;
+    protected ?Bunner $player = null;
 
     public function __construct(TextureRepository $textureRepository, int $index, ?Row $previous = null)
     {
@@ -32,7 +34,7 @@ class Road extends ActiveRow
                 return new self($this->textureRepository, $this->index + 1, $this);
             }
             if ($random < 88) {
-                return new Grass($this->textureRepository, random_int(0, 6), $this);
+                return new Grass($this->textureRepository, random_int(0, 5), $this);
             }
             if ($random < 94) {
                 return new Rail($this->textureRepository, 0, $this);
@@ -43,7 +45,7 @@ class Road extends ActiveRow
 
         $random = random_int(1, 100);
         if ($random < 60) {
-            return new Grass($this->textureRepository, random_int(0, 6), $this);
+            return new Grass($this->textureRepository, random_int(0, 5), $this);
         }
         if ($random < 90) {
             return new Rail($this->textureRepository, 0, $this);
@@ -52,23 +54,25 @@ class Road extends ActiveRow
         return new Pavement($this->textureRepository, 0, $this);
     }
 
-    public function checkCollision(Bunner $bunner)
+    public function setPlayer(Bunner $bunner): void
     {
+        $this->player = $bunner;
+    }
+
+    public function update(float $deltaTime): void
+    {
+        parent::update($deltaTime);
+
+        $player = $this->player;
         $checks = [[-Row::ROW_HEIGHT, Car::SOUND_ZOOM], [0, Car::SOUND_HONK], [Row::ROW_HEIGHT, Car::SOUND_ZOOM]];
         foreach ($checks as $check) {
             [$yOffset, $carSoundName] = $check;
-            # Is the player on the appropriate row?
-            if ($bunner && $bunner->sprite->y === $this->sprite->y + $yOffset) {
+            if ($player !== null && round($player->getY()) === round($this->sprite->getPosition()->y + $yOffset)) {
                 foreach ($this->children as $child) {
                     if ($child instanceof Car) {
-                        // The car must be within 100 pixels of the player on the x-axis, and moving towards the player
-                        // child_obj.dx < 0 is True or False depending on whether the car is moving left or right, and
-                        // dx < 0 is True or False depending on whether the player is to the left or right of the car.
-                        // If the results of these two comparisons are different, the car is moving towards the player.
-                        // Also, for the zoom sound, the car must be travelling faster than one pixel per frame
-                        $dx = $child->x - game.bunner.x;
-                        if (abs($dx) < 100 && (($child->dx < 0) != ($dx < 0))
-                            && ($yOffset == 0 || abs($child->dx) > 1)) {
+                        $dx = $child->getX() - $player->getX();
+                        if (abs($dx) < 100 && (($child->getDx() < 0) !== ($dx < 0))
+                            && ($yOffset === 0 || abs($child->getDx()) > 1)) {
                             $child->playSound($carSoundName);
                         }
                     }
@@ -77,12 +81,14 @@ class Road extends ActiveRow
         }
     }
 
-    public function check_collision(float $x): string
+    public function checkCollision(Bunner $player): string
     {
-        if ($this->collide($x)) {
-            $this->playSound("splat0");
+        foreach ($this->children as $child) {
+            if (SDL_HasIntersection($player->getSprite()->getBoundedRect(), $child->getSprite()->getBoundedRect())) {
+                $this->playSound("splat0");
 
-            return PlayerState::SPLAT;
+                return PlayerState::SPLAT;
+            }
         }
 
         return PlayerState::ALIVE;

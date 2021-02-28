@@ -49,4 +49,14 @@ abstract class Mover implements DrawableInterface
     {
         $this->sprite->render($renderer);
     }
+
+    public function getDx()
+    {
+        return $this->speed->x;
+    }
+
+    public function getSprite(): Sprite
+    {
+        return $this->sprite;
+    }
 }

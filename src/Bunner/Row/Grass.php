@@ -33,7 +33,7 @@ class Grass extends Row implements SoundEmitterInterface
         parent::__construct($textureRepository, $index, $previous);
 
         if (!$previous instanceof Grass || $previous->hedgeRowIndex === null) {
-            if (random_int(0, 9) < 5 && $index > 7 && $index < 14) {
+            if (random_int(1, 100) <= 50 && $index > 7 && $index < 14) {
                 $this->hedgeMask = $this->generateHedgeMask();
                 $this->hedgeRowIndex = self::ROW_BOTTOM;
             }
@@ -82,14 +82,15 @@ class Grass extends Row implements SoundEmitterInterface
     {
         $mask = [];
         for ($i = 0; $i<12; $i++) {
-            $mask[$i] = random_int(0, 999) < 10;
+            $mask[$i] = random_int(1, 100) === 42;
         }
-        $mask[random_int(0, 11)] = true;
+        $mask[random_int(0, 10)] = true;
+        $resultMask = [];
         for ($i = 0; $i<12; $i++) {
-            $mask[$i] = $mask[max(0, $i-1)] || $mask[$i] || $mask[min($i+1, 11)];
+            $resultMask[$i] = $mask[max(0, $i-1)] || $mask[$i] || $mask[min($i+1, 11)];
         }
 
-        return array_merge([$mask[0]], $mask, [$mask[11]]);
+        return array_merge([$resultMask[0]], $resultMask, [$resultMask[11], $resultMask[11]]);
     }
 
     private function classifyHedgeSegment(int $index, ?int $previousMidSegment): array
