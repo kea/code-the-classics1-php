@@ -16,7 +16,7 @@ use PhpGame\TextureRepository;
 
 include __DIR__.'/../../vendor/autoload.php';
 
-$screen = new Screen(480, 800, 'Cavern');
+$screen = new Screen(480, 800, 'Infinite bunner');
 $screen->setIcon(__DIR__.'/../../phpgame_small.bmp');
 $renderer = new Renderer($screen->getWindow());
 
