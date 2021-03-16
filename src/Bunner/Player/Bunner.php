@@ -69,7 +69,7 @@ class Bunner implements SoundEmitterInterface, DrawableInterface
         $nextPosition = (clone $this->sprite->getPosition())->add($jumpPath);
 
         foreach ($this->rows as $row) {
-            if ($row->contains($nextPosition)) {
+            if (!$row->contains($nextPosition)) {
                 continue;
             }
             if ($row->allowMovement($nextPosition->x)) {

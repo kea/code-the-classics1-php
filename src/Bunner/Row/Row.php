@@ -61,17 +61,17 @@ abstract class Row implements DrawableInterface, SoundEmitterInterface
         return PlayerState::ALIVE;
     }
 
-    public function collide(float $x, float $margin = 0): ?Mover
+    public function collide(float $x, float $margin = 0): bool
     {
         foreach ($this->children as $child) {
             $rect = $child->getBoundedRectangle();
             if (($x >= $rect->x - $margin) &&
                 ($x < $rect->x + $rect->w + $margin)) {
-                return $child;
+                return true;
             }
         }
 
-        return null;
+        return false;
     }
 
     abstract public function nextRow(): Row;
