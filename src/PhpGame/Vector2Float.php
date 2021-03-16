@@ -44,4 +44,14 @@ class Vector2Float
 
         return $this;
     }
+
+    public function isZero(): bool
+    {
+        return $this->x === .0 && $this->y === .0;
+    }
+
+    public function isEqual(Vector2Float $vector2Float)
+    {
+        return $this->x === $vector2Float->x && $this->y === $vector2Float->y;
+    }
 }

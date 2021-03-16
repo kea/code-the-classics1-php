@@ -6,15 +6,11 @@ namespace Bunner\Row;
 
 use Bunner\Obstacle\Hedge;
 use PhpGame\SDL\Renderer;
-use PhpGame\SoundEmitterInterface;
-use PhpGame\SoundEmitterTrait;
 use PhpGame\TextureRepository;
 use PhpGame\Vector2Float;
 
-class Grass extends Row implements SoundEmitterInterface
+class Grass extends Row
 {
-    use SoundEmitterTrait;
-
     private const HEDGE_MIDDLE1 = 3;
     private const HEDGE_MIDDLE2 = 4;
     private const HEDGE_MIDDLE3 = 5;
@@ -25,8 +21,6 @@ class Grass extends Row implements SoundEmitterInterface
     protected string $textureName = 'grass%d.png';
     private ?int $hedgeRowIndex = null;
     private ?array $hedgeMask = null;
-    /** @var array|Hedge[]  */
-    private array $children = [];
 
     public function __construct(TextureRepository $textureRepository, int $index, ?Row $previous = null)
     {
@@ -130,5 +124,15 @@ class Grass extends Row implements SoundEmitterInterface
         foreach ($this->children as $child) {
             $child->setY($this->sprite->getPosition()->y);
         }
+    }
+
+    public function playLandedSound(): void
+    {
+        $this->playSound("grass0.wav");
+    }
+
+    public function allowMovement(float $x): bool
+    {
+        return parent::allowMovement($x) && !$this->collide($x, 8);
     }
 }

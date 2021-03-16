@@ -8,7 +8,7 @@ use PhpGame\SoundEmitterInterface;
 use PhpGame\SoundManager;
 use PhpGame\TextureRepository;
 
-class RowsCollection implements DrawableInterface
+class RowsCollection implements DrawableInterface, \IteratorAggregate
 {
     private array $rows = [];
     private TextureRepository $textureRepository;
@@ -32,13 +32,11 @@ class RowsCollection implements DrawableInterface
     {
         $rowsCount = count($this->rows);
         if ($rowsCount === 0) {
-            echo "First row\n";
             $this->rows[] = new Grass($this->textureRepository, 0);
 
             return;
         }
 
-        echo "$rowsCount row\n";
         $nextRow = $this->rows[$rowsCount-1]->nextRow();
         if ($nextRow instanceof SoundEmitterInterface) {
             $nextRow->setSoundManager($this->soundManager);
@@ -53,6 +51,7 @@ class RowsCollection implements DrawableInterface
             $this->newRowTimer -= 2.0;
             $this->createRows(3);
         }
+
         foreach ($this->rows as $row) {
             $row->update($deltaTime);
         }
@@ -64,5 +63,11 @@ class RowsCollection implements DrawableInterface
         foreach ($reverseRows as $row) {
             $row->draw($renderer);
         }
+    }
+
+    /** @return \ArrayIterator<Row> */
+    public function getIterator()
+    {
+        return new \ArrayIterator($this->rows);
     }
 }

@@ -6,6 +6,7 @@ namespace Bunner\Row;
 
 use Bunner\Obstacle\Log;
 use PhpGame\TextureRepository;
+use PhpGame\Vector2Float;
 
 class Water extends ActiveRow
 {
@@ -14,12 +15,12 @@ class Water extends ActiveRow
 
     public function __construct(TextureRepository $textureRepository, int $index, ?Row $previous = null)
     {
-        $dxs = [];
-        if ($previous->dx >= 0) {
+        if ($previous === null || $previous->dx === 0) {
+            $dxs = [-2, -1, 1, 2];
+        } elseif ($previous->dx > 0) {
             $dxs = [-2, -1];
-        }
-        if ($previous->dx <= 0) {
-            $dxs = array_merge($dxs, range(1, 2));
+        } else {
+            $dxs = [1, 2];
         }
         $this->dx = $dxs[array_rand($dxs)];
         parent::__construct($textureRepository, $index, $previous);
@@ -46,5 +47,15 @@ class Water extends ActiveRow
 //                $y = 0
 //            }
         }
+    }
+
+    public function push(): Vector2Float
+    {
+        return $this->scrollSpeed()->add(new Vector2Float($this->dx, .0));
+    }
+
+    public function playLandedSound(): void
+    {
+        $this->playSound("grass0.wav");
     }
 }

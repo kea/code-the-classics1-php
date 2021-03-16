@@ -14,4 +14,9 @@ class Pavement extends Row
 
         return new Road($this->textureRepository, 0, $this);
     }
+
+    public function playLandedSound(): void
+    {
+        $this->playSound("sidewalk0.wav");
+    }
 }

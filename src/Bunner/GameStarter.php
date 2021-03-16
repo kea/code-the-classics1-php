@@ -39,15 +39,12 @@ class GameStarter implements DrawableInterface
         $this->inputActions = $inputActions;
         $this->textureRepository = $textureRepository;
         $this->startMenu();
-
-        $soundManager->playMusic('theme.ogg');
-        $soundManager->setMusicVolume(0.3);
     }
 
     public function update(float $deltaTime): void
     {
         if ($this->state === self::GAME_OVER) {
-            if (!$this->inputActions->getValueForAction('Fire')) {
+            if (!$this->inputActions->getValueForAction('Confirm')) {
                 return;
             }
             $this->startMenu();
@@ -109,8 +106,14 @@ class GameStarter implements DrawableInterface
 
     public function startGame(bool $withPlayer): void
     {
+        $this->soundManager->setMusicVolume($withPlayer ? 0.4 : 1);
+        $this->soundManager->playMusic('theme.ogg');
+
         unset($this->game);
-        $this->game = new Game($this->textureRepository, $this->soundManager); //$player);
+        $this->game = new Game($this->textureRepository, $this->soundManager, $this->inputActions);
+        if ($withPlayer) {
+            $this->game->addPlayer();
+        }
         $this->game->start();
     }
 }

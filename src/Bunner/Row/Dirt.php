@@ -27,4 +27,9 @@ class Dirt extends Row
 
         return new $nextRowClass($this->textureRepository, $index, $this);
     }
+
+    public function playLandedSound(): void
+    {
+        $this->playSound("dirt0.wav");
+    }
 }

@@ -1,5 +1,6 @@
 <?php
 
+use Bunner\Game;
 use Bunner\GameStarter;
 use PhpGame\Input\ArrowKeysBinding;
 use PhpGame\Input\ButtonAction;
@@ -16,7 +17,7 @@ use PhpGame\TextureRepository;
 
 include __DIR__.'/../../vendor/autoload.php';
 
-$screen = new Screen(480, 800, 'Infinite bunner');
+$screen = new Screen(Game::WIDTH, Game::HEIGHT, 'Infinite bunner');
 $screen->setIcon(__DIR__.'/../../phpgame_small.bmp');
 $renderer = new Renderer($screen->getWindow());
 
@@ -26,7 +27,7 @@ $sound->setAssetsPath(__DIR__);
 $inputActions = new InputActions(
     [
         'Move' => new VectorAction([new ArrowKeysBinding(), new WASDKeysBinding()]),
-        'Fire' => new ButtonAction([new ButtonBinding([SDL_SCANCODE_SPACE])]),
+        'Confirm' => new ButtonAction([new ButtonBinding([SDL_SCANCODE_SPACE])]),
     ],
     new Keyboard()
 );

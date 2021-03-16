@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Bunner\Obstacle;
 
+use Bunner\RectangleBounded;
 use PhpGame\Anchor;
 use PhpGame\DrawableInterface;
 use PhpGame\SDL\Renderer;
@@ -11,7 +12,7 @@ use PhpGame\Sprite;
 use PhpGame\TextureRepository;
 use PhpGame\Vector2Float;
 
-abstract class Mover implements DrawableInterface
+abstract class Mover implements DrawableInterface, RectangleBounded
 {
     private const SPEED_PIXEL_PER_SECOND = 60;
     private Sprite $sprite;
@@ -32,6 +33,10 @@ abstract class Mover implements DrawableInterface
         $speed = clone $this->speed;
         $this->sprite->setPosition($position->add($speed->multiplyFloat($deltaTime)));
     }
+    public function draw(Renderer $renderer): void
+    {
+        $this->sprite->render($renderer);
+    }
 
     public function getX(): float
     {
@@ -45,11 +50,6 @@ abstract class Mover implements DrawableInterface
         $this->sprite->setPosition($position);
     }
 
-    public function draw(Renderer $renderer): void
-    {
-        $this->sprite->render($renderer);
-    }
-
     public function getDx()
     {
         return $this->speed->x;
@@ -58,5 +58,10 @@ abstract class Mover implements DrawableInterface
     public function getSprite(): Sprite
     {
         return $this->sprite;
+    }
+
+    public function getBoundedRectangle(): \SDL_Rect
+    {
+        return $this->sprite->getBoundedRect();
     }
 }

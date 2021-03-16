@@ -12,7 +12,6 @@ abstract class ActiveRow extends Row
 {
     protected string $childType;
     private float $timer;
-    protected array $children;
 
     public function __construct(TextureRepository $textureRepository, int $index, ?Row $previous = null)
     {

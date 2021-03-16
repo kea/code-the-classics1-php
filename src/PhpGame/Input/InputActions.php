@@ -34,7 +34,7 @@ class InputActions
 
     /**
      * @param $name
-     * @return mixed|bool|Vector2Float
+     * @return bool|Vector2Float
      */
     public function getValueForAction($name)
     {

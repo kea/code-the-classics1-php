@@ -83,19 +83,17 @@ class Road extends ActiveRow
 
     public function checkCollision(Bunner $player): string
     {
-        foreach ($this->children as $child) {
-            if (SDL_HasIntersection($player->getSprite()->getBoundedRect(), $child->getSprite()->getBoundedRect())) {
-                $this->playSound("splat0");
+        if ($this->collide($player->getX())) {
+            $this->playSound("splat0");
 
-                return PlayerState::SPLAT;
-            }
+            return PlayerState::SPLAT;
         }
 
         return PlayerState::ALIVE;
     }
 
-    public function playSound(string $sound): void
+    public function playLandedSound(): void
     {
-        //game.play_sound("road", 1);
+        $this->playSound("road0.wav");
     }
 }

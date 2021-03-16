@@ -7,15 +7,11 @@ namespace Bunner\Row;
 use Bunner\Game;
 use Bunner\Obstacle\Train;
 use PhpGame\SDL\Renderer;
-use PhpGame\SoundEmitterInterface;
-use PhpGame\SoundEmitterTrait;
 use PhpGame\Vector2Float;
 
-class Rail extends Row implements SoundEmitterInterface
+class Rail extends Row
 {
-    use SoundEmitterTrait;
     protected string $textureName = 'rail%d.png';
-    private array $children = [];
 
     public function nextRow(): Row
     {
@@ -65,5 +61,10 @@ class Rail extends Row implements SoundEmitterInterface
         foreach ($this->children as $child) {
             $child->draw($renderer);
         }
+    }
+
+    public function playLandedSound(): void
+    {
+        $this->playSound("grass0.wav");
     }
 }

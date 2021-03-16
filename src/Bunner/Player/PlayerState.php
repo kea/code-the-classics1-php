@@ -6,6 +6,8 @@ namespace Bunner\Player;
 
 class PlayerState
 {
-    const SPLAT = 'splat';
-    const ALIVE = 'alive';
+    public const SPLAT = 'splat';
+    public const ALIVE = 'alive';
+    public const EAGLE = 'eagle';
+    public const SPLASH = 'splash';
 }
