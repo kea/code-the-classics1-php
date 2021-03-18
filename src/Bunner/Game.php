@@ -82,7 +82,7 @@ class Game implements DrawableInterface, SoundEmitterInterface
             return false;
         }
 
-        return !$this->player->isAlive();
+        return !$this->player->isAlive() && !$this->player->isAnimationPlaying();
     }
 
     public function addPlayer(): void

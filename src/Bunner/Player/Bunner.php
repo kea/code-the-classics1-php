@@ -39,7 +39,7 @@ class Bunner implements SoundEmitterInterface, DrawableInterface
      */
     public function __construct(TextureRepository $textureRepository, InputActions $inputActions, RowsCollection $rows)
     {
-        $this->sprite = new Sprite($textureRepository[$this->image], Game::WIDTH/2, Game::HEIGHT - 320);
+        $this->sprite = new Sprite($textureRepository[$this->image], Game::WIDTH/2, Game::HEIGHT - 330);
         $this->state = PlayerState::ALIVE;
         $this->direction = new Vector2Float(0, 1);
         $this->timer = 0;
@@ -160,7 +160,7 @@ class Bunner implements SoundEmitterInterface, DrawableInterface
             $this->image = $this->timer > 0 ? "jump" : "sit";
             $this->image.= $directionFrame.".png";
         } elseif ($this->state === PlayerState::SPLASH && $this->timer > 1.4) {
-            $this->image = "splash".((int)((1.66 - $this->timer) / 2)).".png";
+            $this->image = "splash".((int)((1.66 - $this->timer) * 30)).".png";
         }
     }
 
@@ -189,5 +189,10 @@ class Bunner implements SoundEmitterInterface, DrawableInterface
     public function isAlive(): bool
     {
         return $this->state === PlayerState::ALIVE;
+    }
+
+    public function isAnimationPlaying(): bool
+    {
+        return $this->timer > 0;
     }
 }

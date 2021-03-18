@@ -14,7 +14,7 @@ use PhpGame\Vector2Float;
 
 abstract class Mover implements DrawableInterface, RectangleBounded
 {
-    private const SPEED_PIXEL_PER_SECOND = 60;
+    public const SPEED_PIXEL_PER_SECOND = 60;
     private Sprite $sprite;
     protected Vector2Float $speed;
 

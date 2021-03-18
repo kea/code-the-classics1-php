@@ -5,6 +5,9 @@ declare(strict_types=1);
 namespace Bunner\Row;
 
 use Bunner\Obstacle\Log;
+use Bunner\Obstacle\Mover;
+use Bunner\Player\Bunner;
+use Bunner\Player\PlayerState;
 use PhpGame\TextureRepository;
 use PhpGame\Vector2Float;
 
@@ -51,11 +54,22 @@ class Water extends ActiveRow
 
     public function push(): Vector2Float
     {
-        return $this->scrollSpeed()->add(new Vector2Float($this->dx, .0));
+        return $this->scrollSpeed()->add(new Vector2Float($this->dx * Mover::SPEED_PIXEL_PER_SECOND, .0));
     }
 
     public function playLandedSound(): void
     {
-        $this->playSound("grass0.wav");
+        $this->playSound("log0.wav");
+    }
+
+    public function checkCollision(Bunner $player): string
+    {
+        if ($this->collide($player->getX(), -4)) {
+            return PlayerState::ALIVE;
+        }
+
+        $this->playSound("splash0.wav");
+
+        return PlayerState::SPLASH;
     }
 }
