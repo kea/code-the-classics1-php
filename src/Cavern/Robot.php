@@ -21,7 +21,7 @@ class Robot extends GravityActor implements SoundEmitterInterface
     private int $speed;
     private bool $alive = true;
     private float $changeDirTimer = .0;
-    private float $fireTimer = 100.0;
+    private float $fireTimer = .0;
     private float $lifeTimer = .0;
     private OrbCollection $orbs;
     private BoltCollection $bolts;
@@ -64,9 +64,7 @@ class Robot extends GravityActor implements SoundEmitterInterface
 
         if ($this->fireTimer >= 12 / 60) {
             $fireProbability = $this->fireProbability();
-            if ($this->player
-                && ($this->sprite->top() < $this->player->sprite->bottom())
-                && ($this->sprite->bottom() > $this->player->sprite->top())) {
+            if ($this->isAtTheSameRowAsThePlayer()) {
                 $fireProbability *= 10;
             }
             if ((random_int(0, 1000) / 1000) < $fireProbability) {
@@ -145,5 +143,12 @@ class Robot extends GravityActor implements SoundEmitterInterface
         }
         $this->directionX = $directions[random_int(0, count($directions) - 1)];
         $this->changeDirTimer = random_int(100, 250);
+    }
+
+    private function isAtTheSameRowAsThePlayer(): bool
+    {
+        return $this->player
+            && ($this->sprite->top() < $this->player->sprite->bottom())
+            && ($this->sprite->bottom() > $this->player->sprite->top());
     }
 }
