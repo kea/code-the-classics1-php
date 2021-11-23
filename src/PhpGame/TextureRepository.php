@@ -19,6 +19,13 @@ class TextureRepository implements \ArrayAccess
         $this->basePath = rtrim($basePath, DIRECTORY_SEPARATOR).DIRECTORY_SEPARATOR;
     }
 
+    public function preload(string $imageName): void
+    {
+        if (!$this->offsetGet($imageName)) {
+            throw new \RuntimeException("Image not found ".$imageName);
+        }
+    }
+
     public function offsetGet($index)
     {
         if (!isset($this->textures[$index])) {
@@ -28,7 +35,6 @@ class TextureRepository implements \ArrayAccess
 
         return $this->textures[$index];
     }
-
 
     public function offsetExists($offset)
     {
