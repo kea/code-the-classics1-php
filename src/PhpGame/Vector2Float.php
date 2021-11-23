@@ -13,6 +13,11 @@ class Vector2Float
         $this->y = $y;
     }
 
+    public static function zero(): self
+    {
+        return new self(.0, .0);
+    }
+
     public function add(Vector2Float $addendum): self
     {
         $this->x += $addendum->x;
