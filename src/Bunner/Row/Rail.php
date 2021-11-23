@@ -6,12 +6,22 @@ namespace Bunner\Row;
 
 use Bunner\Game;
 use Bunner\Obstacle\Train;
+use Bunner\Player\Bunner;
+use Bunner\Player\PlayerState;
 use PhpGame\SDL\Renderer;
+use PhpGame\TextureRepository;
 use PhpGame\Vector2Float;
 
 class Rail extends Row
 {
+    protected ?Row $previous = null;
     protected string $textureName = 'rail%d.png';
+
+    public function __construct(TextureRepository $textureRepository, int $index, ?Row $previous = null)
+    {
+        parent::__construct($textureRepository, $index, $previous);
+        $this->previous = $previous;
+    }
 
     public function nextRow(): Row
     {
@@ -66,5 +76,16 @@ class Rail extends Row
     public function playLandedSound(): void
     {
         $this->playSound("grass0.wav");
+    }
+
+    public function checkCollision(Bunner $player): string
+    {
+         if ($this->index === 2 && $this->previous !== null && $this->previous->collide($player->getX())) {
+            $this->playSound("splat0.wav");
+
+            return PlayerState::SPLAT; // y+8
+        }
+
+        return PlayerState::ALIVE;
     }
 }
