@@ -47,7 +47,7 @@ class Sprite
 
     public function render(Renderer $renderer): void
     {
-        $renderer->copy($this->texture, null, $this->boundedRect);
+        $renderer->drawTexture($this->texture, $this->boundedRect);
 //        $renderer->setDrawColor([90, 96, 93, 0]);
 //        $renderer->drawRectangle($this->boundedRect);
     }
