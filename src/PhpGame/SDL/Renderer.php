@@ -2,6 +2,7 @@
 
 namespace PhpGame\SDL;
 
+use PhpGame\Camera;
 use RuntimeException;
 use SDL_Rect;
 use SDL_Window;
@@ -24,17 +25,21 @@ class Renderer
     /** @var array|Texture[] */
     private array $textures;
 
+    private Camera $camera;
+
     /**
      * Render constructor.
      * @param SDL_Window $window
      */
-    public function __construct(SDL_Window $window)
+    public function __construct(SDL_Window $window, Camera $camera)
     {
         $this->renderer = SDL_CreateRenderer($window, 0, 0);
 
         SDL_SetRenderDrawColor($this->renderer, ...$this->clearColor);
         SDL_RenderClear($this->renderer);
         SDL_RenderPresent($this->renderer);
+
+        $this->camera = $camera;
     }
 
     public function __destruct()
@@ -42,7 +47,7 @@ class Renderer
         SDL_DestroyRenderer($this->renderer);
     }
 
-    public function copy(Texture $texture, ?SDL_Rect $sourceRect = null, ?SDL_Rect $destinationRect = null): void
+    private function copy(Texture $texture, ?SDL_Rect $sourceRect = null, ?SDL_Rect $destinationRect = null): void
     {
         if (SDL_RenderCopy($this->renderer, $texture->getContent(), $sourceRect, $destinationRect) !== 0) {
             throw new RuntimeException(SDL_GetError());
@@ -76,24 +81,45 @@ class Renderer
             $this->textures[$name] = Texture::loadFromFile($name, $this);
         }
 
+        $texture = $this->textures[$name];
         $destinationRect = new SDL_Rect(
             $posX,
             $posY,
-            $width ?? $this->textures[$name]->getWidth(),
-            $height ?? $this->textures[$name]->getHeight()
+            $width ?? $texture->getWidth(),
+            $height ?? $texture->getHeight()
         );
 
-        $this->copy($this->textures[$name], null, $destinationRect);
+        $this->copy($texture, null, $this->camera->toViewport($destinationRect));
+    }
+
+    public function drawTexture(Texture $texture, SDL_Rect $destinationRect): void
+    {
+        $this->copy($texture, null, $this->camera->toViewport($destinationRect));
+    }
+
+    public function drawPartialTexture(Texture $texture, SDL_Rect $destinationRect, SDL_Rect $sourceRect): void
+    {
+        $this->copy($texture, $sourceRect, $this->camera->toViewport($destinationRect));
     }
 
     public function drawRectangle(SDL_Rect $rect): void
     {
-        SDL_RenderDrawRect($this->renderer, $rect);
+        SDL_RenderDrawRect($this->renderer, $this->camera->toViewport($rect));
     }
 
     /** @return resource */
     public function getSDLRenderer()
     {
         return $this->renderer;
+    }
+
+    public function getCamera(): Camera
+    {
+        return $this->camera;
+    }
+
+    public function setCamera(Camera $camera): void
+    {
+        $this->camera = $camera;
     }
 }

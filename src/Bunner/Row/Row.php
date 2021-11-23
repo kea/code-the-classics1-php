@@ -26,7 +26,6 @@ abstract class Row implements DrawableInterface, SoundEmitterInterface
     protected TextureRepository $textureRepository;
     protected Sprite $sprite;
     protected string $textureName = 'grass%d.png';
-    protected Row $previous;
     protected int $index = 0;
     protected float $dx = 0;
     /** @var array|RectangleBounded[] */
@@ -48,7 +47,7 @@ abstract class Row implements DrawableInterface, SoundEmitterInterface
 
     public function update(float $deltaTime): void
     {
-        $this->sprite->setPosition($this->sprite->getPosition()->add($this->scrollSpeed()->multiplyFloat($deltaTime)));
+        //$this->sprite->setPosition($this->sprite->getPosition()->add($this->scrollSpeed()->multiplyFloat($deltaTime)));
     }
 
     public function push(): Vector2Float
@@ -78,9 +77,9 @@ abstract class Row implements DrawableInterface, SoundEmitterInterface
 
     abstract public function playLandedSound(): void;
 
-    protected function scrollSpeed(): Vector2Float
+    public function scrollSpeed(): Vector2Float
     {
-        return new Vector2Float(.0, 60.0);
+        return new Vector2Float(.0, .0);
     }
 
     public function contains(Vector2Float $center): bool
@@ -96,5 +95,10 @@ abstract class Row implements DrawableInterface, SoundEmitterInterface
     public function allowMovement(float $x): bool
     {
         return $x > 16 && $x < Game::WIDTH - 16;
+    }
+
+    public function addChild(RectangleBounded $child): void
+    {
+        $this->children[] = $child;
     }
 }

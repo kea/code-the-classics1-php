@@ -1,6 +1,7 @@
 <?php
 
 use Cavern\GameStarter;
+use PhpGame\Camera;
 use PhpGame\Input\ArrowKeysBinding;
 use PhpGame\Input\ButtonAction;
 use PhpGame\Input\ButtonBinding;
@@ -18,7 +19,8 @@ include __DIR__.'/../../vendor/autoload.php';
 
 $screen = new Screen(800, 480, 'Cavern');
 $screen->setIcon(__DIR__.'/../../phpgame_small.bmp');
-$renderer = new Renderer($screen->getWindow());
+$camera = new Camera(new \SDL_Rect(0,0, $screen->getWidth(), $screen->getHeight()));
+$renderer = new Renderer($screen->getWindow(), $camera);
 
 $sound = new SoundManager(44100, MIX_DEFAULT_FORMAT, 2, 2048);
 $sound->setAssetsPath(__DIR__);

@@ -38,8 +38,8 @@ class Engine
             }
             $this->inputActions->update();
 
-            $this->renderer->clear();
             $game->update($deltaTime);
+            $this->renderer->clear();
             $game->draw($this->renderer);
             $this->renderer->render();
 
@@ -53,4 +53,3 @@ class Engine
         $this->framePerSecond = $framePerSecond;
     }
 }
-

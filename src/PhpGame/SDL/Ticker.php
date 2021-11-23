@@ -8,7 +8,7 @@ class Ticker
     private float $lastTime;
     private float $elapsedTime = 0;
     private int $frame = 0;
-    private float $tickPerSecond;
+    private float $tickPerSecond = 0;
 
     public function __construct()
     {

@@ -131,9 +131,8 @@ class Bunner implements SoundEmitterInterface, DrawableInterface
                     }
                 } else {
                     if ($this->state === PlayerState::SPLAT) {
-                        $texture = $this->textureRepository["splat".$this->getDirectionFrameNumber()];
-                        /** @todo splat */
-                        //$currentRow->addChild(new Sprite($texture, $this->getX(), $this->getY()));
+                        $texture = $this->textureRepository["splat".$this->getDirectionFrameNumber().'.png'];
+                        $currentRow->addChild(new Splatted($texture, $this->getX(), $this->getY()));
                     }
                     $this->timer = 100 / 60;
                 }
@@ -154,19 +153,11 @@ class Bunner implements SoundEmitterInterface, DrawableInterface
         }
         $this->minY = min($this->minY, $this->getY());
 
-        $this->image = "blank.png";
-        if ($this->state === PlayerState::ALIVE) {
-            $directionFrame = $this->getDirectionFrameNumber();
-            $this->image = $this->timer > 0 ? "jump" : "sit";
-            $this->image.= $directionFrame.".png";
-        } elseif ($this->state === PlayerState::SPLASH && $this->timer > 1.4) {
-            $this->image = "splash".((int)((1.66 - $this->timer) * 30)).".png";
-        }
+        $this->updateImage();
     }
 
     public function draw(Renderer $renderer): void
     {
-        $this->sprite->updateTexture($this->textureRepository[$this->image]);
         $renderer->drawRectangle($this->sprite->getBoundedRect());
         $this->sprite->render($renderer);
     }
@@ -194,5 +185,19 @@ class Bunner implements SoundEmitterInterface, DrawableInterface
     public function isAnimationPlaying(): bool
     {
         return $this->timer > 0;
+    }
+
+    private function updateImage(): void
+    {
+        $this->image = "blank.png";
+        if ($this->state === PlayerState::ALIVE) {
+            $directionFrame = $this->getDirectionFrameNumber();
+            $this->image = $this->timer > 0 ? "jump" : "sit";
+            $this->image .= $directionFrame.".png";
+        } elseif ($this->state === PlayerState::SPLASH && $this->timer > 1.4) {
+            $this->image = "splash".((int)((1.66 - $this->timer) * 30)).".png";
+        }
+
+        $this->sprite->updateTexture($this->textureRepository[$this->image]);
     }
 }
