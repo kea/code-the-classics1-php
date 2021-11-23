@@ -3,10 +3,11 @@
 namespace PhpGame;
 
 use PhpGame\SDL\Renderer;
+use PhpGame\SDL\Texture;
 
 class Animation implements DrawableInterface
 {
-    /** @var array<string> */
+    /** @var array<string|Texture> */
     private array $images;
     private int $framePerSecond;
     private float $elapsedTime = 0;
@@ -52,7 +53,7 @@ class Animation implements DrawableInterface
         return $this->isRunning;
     }
 
-    public function getCurrentFrame(): string
+    public function getCurrentFrame() //:string|Texture
     {
         return $this->images[$this->getCurrentFrameNumber()];
     }
@@ -64,5 +65,6 @@ class Animation implements DrawableInterface
 
     public function draw(Renderer $renderer): void
     {
+        // @todo wrong interface, should split DrawableInterface
     }
 }
