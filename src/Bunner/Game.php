@@ -23,6 +23,7 @@ class Game implements DrawableInterface, SoundEmitterInterface
     public const WIDTH = 480;
 
     use SoundEmitterTrait;
+
     protected RowsCollection $rowsCollection;
     private TextureRepository $textureRepository;
     private ?Bunner $player = null;
@@ -36,8 +37,7 @@ class Game implements DrawableInterface, SoundEmitterInterface
         InputActions $inputActions,
         Camera $camera,
         GUI $gui
-    )
-    {
+    ) {
         $this->soundManager = $soundManager;
         $this->rowsCollection = new RowsCollection($textureRepository, $soundManager);
         $this->rowsCollection->createRows(24);
@@ -49,23 +49,16 @@ class Game implements DrawableInterface, SoundEmitterInterface
 
     public function update(float $deltaTime): void
     {
-        /* @todo
-        if ($this->player !== null) {
-            $this->rowsCollection->setScrollInc(
-                max(1, min(3, Game::HEIGHT - $this->player->getY()) / (Game::HEIGHT / 4))
-            );
-            $this->updateAmbientSoundEffects();
-        } else {
-            $this->rowsCollection->setScrollInc(1);
-        }
-        */
-
+        $this->rowsCollection->updateVerticalScroll($this->verticalScroll);
         $this->rowsCollection->update($deltaTime);
+        $verticalScrollVelocity = 1;
         if ($this->player !== null) {
             $this->player->update($deltaTime);
+            $playerYOnScreen = $this->verticalScroll + (self::HEIGHT / 2) - $this->player->getY();
+            $verticalScrollVelocity = max(1, min(3, 4 - round((self::HEIGHT - $playerYOnScreen) / (self::HEIGHT / 4))));
         }
-        $this->verticalScroll -= $deltaTime * 60;
-        $this->camera->follow(new Vector2Int(self::WIDTH/2, (int)$this->verticalScroll));
+        $this->verticalScroll -= $deltaTime * 60 * $verticalScrollVelocity;
+        $this->camera->follow(new Vector2Int(self::WIDTH / 2, (int)$this->verticalScroll));
         $this->gui->update($deltaTime);
     }
 

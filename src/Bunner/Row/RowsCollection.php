@@ -2,17 +2,19 @@
 
 namespace Bunner\Row;
 
+use Bunner\Game;
 use PhpGame\DrawableInterface;
 use PhpGame\SDL\Renderer;
 use PhpGame\SoundEmitterInterface;
 use PhpGame\SoundManager;
 use PhpGame\TextureRepository;
+use PhpGame\Vector2Float;
 
 class RowsCollection implements DrawableInterface, \IteratorAggregate
 {
+    /** @var array<Row> */
     private array $rows = [];
     private TextureRepository $textureRepository;
-    private float $newRowTimer = 0.0;
     private SoundManager $soundManager;
 
     public function __construct(TextureRepository $textureRepository, SoundManager $soundManager)
@@ -46,12 +48,6 @@ class RowsCollection implements DrawableInterface, \IteratorAggregate
 
     public function update(float $deltaTime): void
     {
-        $this->newRowTimer += $deltaTime;
-        if ($this->newRowTimer >= 2.0) {
-            $this->newRowTimer -= 2.0;
-            $this->createRows(3);
-        }
-
         foreach ($this->rows as $row) {
             $row->update($deltaTime);
         }
@@ -69,5 +65,12 @@ class RowsCollection implements DrawableInterface, \IteratorAggregate
     public function getIterator()
     {
         return new \ArrayIterator($this->rows);
+    }
+
+    public function updateVerticalScroll(float $verticalScroll): void
+    {
+        if (end($this->rows)->contains(new Vector2Float(Game::WIDTH / 2, $verticalScroll - Game::HEIGHT / 2))) {
+            $this->createRow();
+        }
     }
 }
