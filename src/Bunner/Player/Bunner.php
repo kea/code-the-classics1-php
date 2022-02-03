@@ -7,6 +7,8 @@ use Bunner\Row\Row;
 use Bunner\Row\RowsCollection;
 use PhpGame\DrawableInterface;
 use PhpGame\Input\InputActions;
+use PhpGame\LayerInterface;
+use PhpGame\LayerTrait;
 use PhpGame\SDL\Renderer;
 use PhpGame\SoundEmitterInterface;
 use PhpGame\SoundEmitterTrait;
@@ -14,9 +16,10 @@ use PhpGame\Sprite;
 use PhpGame\TextureRepository;
 use PhpGame\Vector2Float;
 
-class Bunner implements SoundEmitterInterface, DrawableInterface
+class Bunner implements SoundEmitterInterface, DrawableInterface, LayerInterface
 {
     use SoundEmitterTrait;
+    use LayerTrait;
 
     private const MOVE_DISTANCE = 40;
     private Sprite $sprite;
