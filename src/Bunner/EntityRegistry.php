@@ -14,6 +14,17 @@ class EntityRegistry
         $this->entities[] =  $entity;
     }
 
+    public function remove(DrawableInterface $entity): void // @todo create Entity interface
+    {
+        $index = array_search($entity, $this->entities, true);
+
+        if ($index === false) {
+            return;
+        }
+
+        unset($this->entities[$index]);
+    }
+
     public function all(): array
     {
         return $this->entities;

@@ -10,6 +10,7 @@ use Bunner\Row\RowsCollection;
 use PhpGame\Camera;
 use PhpGame\DrawableInterface;
 use PhpGame\Input\InputActions;
+use PhpGame\LayerInterface;
 use PhpGame\SDL\Renderer;
 use PhpGame\SoundEmitterInterface;
 use PhpGame\SoundEmitterTrait;
@@ -79,12 +80,11 @@ class Game implements DrawableInterface, TimeUpdatableInterface, SoundEmitterInt
 
     public function draw(Renderer $renderer): void
     {
-        $grounds = $this->entityRegistry->allByLayer('ground');
+        $grounds = array_reverse($this->entityRegistry->allByLayer(LayerInterface::DEFAULT));
         foreach ($grounds as $ground) {
             $ground->draw($renderer);
         }
 
-        $this->rowsCollection->draw($renderer);
         $this->gui->draw($renderer);
     }
 

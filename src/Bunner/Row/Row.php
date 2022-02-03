@@ -27,7 +27,7 @@ abstract class Row implements DrawableInterface, LayerInterface, SoundEmitterInt
     protected const ROW_WIDTH = 480.0;
     protected TextureRepository $textureRepository;
     protected Sprite $sprite;
-    protected string $textureName = 'grass%d.png';
+    protected string $textureName;
     protected int $index = 0;
     protected float $dx = 0;
     /** @var array|RectangleBounded[] */
@@ -40,7 +40,6 @@ abstract class Row implements DrawableInterface, LayerInterface, SoundEmitterInt
         $this->textureRepository = $textureRepository;
         $this->textureName = sprintf($this->textureName, $index);
         $this->sprite = new Sprite($textureRepository[$this->textureName], 0, $y, Anchor::LeftBottom());
-        $this->layer = 'ground';
     }
 
     public function draw(Renderer $renderer): void

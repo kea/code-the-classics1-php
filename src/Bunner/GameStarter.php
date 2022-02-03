@@ -28,7 +28,6 @@ class GameStarter implements DrawableInterface, TimeUpdatableInterface
     private TextureRepository $textureRepository;
     private Camera $camera;
     private GUI\GUI $gui;
-    private EntityRegistry $entityRegistry;
 
     public function __construct(
         int $width,
@@ -46,7 +45,6 @@ class GameStarter implements DrawableInterface, TimeUpdatableInterface
         $this->camera = $camera;
         $guiCamera = new Camera(new \SDL_Rect(0, 0, Game::WIDTH, Game::HEIGHT));
         $this->gui = new GUI\GUI($textureRepository, $guiCamera);
-        $this->entityRegistry = new EntityRegistry();
         $this->init();
     }
 
@@ -104,13 +102,15 @@ class GameStarter implements DrawableInterface, TimeUpdatableInterface
         $this->soundManager->playMusic('theme.ogg');
 
         unset($this->game);
+        $entityRegistry = new EntityRegistry();
+
         $this->game = new Game(
             $this->textureRepository,
             $this->soundManager,
             $this->inputActions,
             $this->camera,
             $this->gui,
-            $this->entityRegistry
+            $entityRegistry
         );
         if ($withPlayer) {
             $this->game->addPlayer();

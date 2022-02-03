@@ -16,8 +16,8 @@ class Grass extends Row
     private const HEDGE_MIDDLE3 = 5;
     private const HEDGE_LEFT = 1;
     private const HEDGE_RIGHT = 2;
-    const ROW_BOTTOM = 0;
-    const ROW_TOP = 1;
+    private const ROW_BOTTOM = 0;
+    private const ROW_TOP = 1;
     protected string $textureName = 'grass%d.png';
     private ?int $hedgeRowIndex = null;
     private ?array $hedgeMask = null;
@@ -36,18 +36,20 @@ class Grass extends Row
             $this->hedgeRowIndex = self::ROW_TOP;
         }
 
-        if ($this->hedgeRowIndex !== null) {
-            $previousMidSegment = null;
-            for ($i = 1; $i < 13; $i++) {
-                [$bushPosition, $previousMidSegment] = $this->classifyHedgeSegment($i, $previousMidSegment);
-                if ($bushPosition !== null) {
-                    $this->children[] = new Hedge(
-                        $textureRepository,
-                        $bushPosition,
-                        $this->hedgeRowIndex,
-                        new Vector2Float($i * 40.0 - 20.0, .0)
-                    );
-                }
+        if ($this->hedgeRowIndex === null) {
+            return;
+        }
+
+        $previousMidSegment = null;
+        for ($i = 1; $i < 13; $i++) {
+            [$bushPosition, $previousMidSegment] = $this->classifyHedgeSegment($i, $previousMidSegment);
+            if ($bushPosition !== null) {
+                $this->children[] = new Hedge(
+                    $textureRepository,
+                    $bushPosition,
+                    $this->hedgeRowIndex,
+                    new Vector2Float($i * 40.0 - 20.0, .0)
+                );
             }
         }
     }

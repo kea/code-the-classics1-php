@@ -4,15 +4,13 @@ namespace Bunner\Row;
 
 use Bunner\EntityRegistry;
 use Bunner\Game;
-use PhpGame\DrawableInterface;
-use PhpGame\SDL\Renderer;
 use PhpGame\SoundEmitterInterface;
 use PhpGame\SoundManager;
 use PhpGame\TextureRepository;
 use PhpGame\TimeUpdatableInterface;
 use PhpGame\Vector2Float;
 
-class RowsCollection implements DrawableInterface, TimeUpdatableInterface, \IteratorAggregate
+class RowsCollection implements TimeUpdatableInterface, \IteratorAggregate
 {
     /** @var array<Row> */
     private array $rows = [];
@@ -60,16 +58,7 @@ class RowsCollection implements DrawableInterface, TimeUpdatableInterface, \Iter
         }
     }
 
-    public function draw(Renderer $renderer): void
-    {
-//        $reverseRows = array_reverse($this->rows);
-//        foreach ($reverseRows as $row) {
-//            $row->draw($renderer);
-//        }
-    }
-
-    /** @return \ArrayIterator<Row> */
-    public function getIterator()
+    public function getIterator(): \Traversable
     {
         return new \ArrayIterator($this->rows);
     }
