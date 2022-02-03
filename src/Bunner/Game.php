@@ -15,9 +15,10 @@ use PhpGame\SoundEmitterInterface;
 use PhpGame\SoundEmitterTrait;
 use PhpGame\SoundManager;
 use PhpGame\TextureRepository;
+use PhpGame\TimeUpdatableInterface;
 use PhpGame\Vector2Int;
 
-class Game implements DrawableInterface, SoundEmitterInterface
+class Game implements DrawableInterface, TimeUpdatableInterface, SoundEmitterInterface
 {
     public const HEIGHT = 800;
     public const WIDTH = 480;
@@ -30,21 +31,24 @@ class Game implements DrawableInterface, SoundEmitterInterface
     private InputActions $inputActions;
     private Camera $camera;
     private float $verticalScroll = 0.0;
+    private EntityRegistry $entityRegistry;
 
     public function __construct(
         TextureRepository $textureRepository,
         SoundManager $soundManager,
         InputActions $inputActions,
         Camera $camera,
-        GUI $gui
+        GUI $gui,
+        EntityRegistry $entityRegistry
     ) {
         $this->soundManager = $soundManager;
-        $this->rowsCollection = new RowsCollection($textureRepository, $soundManager);
+        $this->rowsCollection = new RowsCollection($textureRepository, $soundManager, $entityRegistry);
         $this->rowsCollection->createRows(24);
         $this->textureRepository = $textureRepository;
         $this->inputActions = $inputActions;
         $this->camera = $camera;
         $this->gui = $gui;
+        $this->entityRegistry = $entityRegistry;
     }
 
     public function update(float $deltaTime): void
@@ -75,10 +79,12 @@ class Game implements DrawableInterface, SoundEmitterInterface
 
     public function draw(Renderer $renderer): void
     {
-        $this->rowsCollection->draw($renderer);
-        if ($this->player !== null) {
-            $this->player->draw($renderer);
+        $grounds = $this->entityRegistry->allByLayer('ground');
+        foreach ($grounds as $ground) {
+            $ground->draw($renderer);
         }
+
+        $this->rowsCollection->draw($renderer);
         $this->gui->draw($renderer);
     }
 
@@ -100,5 +106,6 @@ class Game implements DrawableInterface, SoundEmitterInterface
     {
         $this->player = new Bunner($this->textureRepository, $this->inputActions, $this->rowsCollection);
         $this->player->setSoundManager($this->soundManager);
+        $this->entityRegistry->add($this->player);
     }
 }

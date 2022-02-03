@@ -54,7 +54,7 @@ class Fruit extends GravityActor implements SoundEmitterInterface
 
     public function draw(Renderer $renderer): void
     {
-        $this->animator->getSprite()->render($renderer);
+        $this->animator->getSprite()->draw($renderer);
     }
 
     public function onCollision(ColliderActor $other): void

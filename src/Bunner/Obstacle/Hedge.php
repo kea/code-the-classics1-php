@@ -23,13 +23,9 @@ class Hedge implements DrawableInterface, RectangleBounded
         $this->sprite = new Sprite($textureRepository[$image], $position->x, $position->y, Anchor::CenterBottom());
     }
 
-    public function update(float $deltaTime): void
-    {
-    }
-
     public function draw(Renderer $renderer): void
     {
-        $this->sprite->render($renderer);
+        $this->sprite->draw($renderer);
     }
 
     public function setY(float $y): void

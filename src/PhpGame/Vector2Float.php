@@ -55,7 +55,7 @@ class Vector2Float
         return $this->x === .0 && $this->y === .0;
     }
 
-    public function isEqual(Vector2Float $vector2Float)
+    public function isEqual(Vector2Float $vector2Float): bool
     {
         return $this->x === $vector2Float->x && $this->y === $vector2Float->y;
     }

@@ -6,9 +6,10 @@ use PhpGame\DrawableInterface;
 use PhpGame\Input\InputActions;
 use PhpGame\SDL\Renderer;
 use PhpGame\SoundManager;
+use PhpGame\TimeUpdatableInterface;
 use PhpGame\Vector2Float;
 
-class GameStarter implements DrawableInterface
+class GameStarter implements DrawableInterface, TimeUpdatableInterface
 {
     private const MENU = 0;
     private const PLAY = 1;

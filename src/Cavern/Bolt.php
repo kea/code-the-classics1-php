@@ -43,7 +43,7 @@ class Bolt extends GravityActor
             return;
         }
 
-        $this->animator->getSprite()->render($renderer);
+        $this->animator->getSprite()->draw($renderer);
     }
 
     public function onCollision(ColliderActor $collider): void

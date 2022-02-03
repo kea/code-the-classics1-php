@@ -5,12 +5,13 @@ declare(strict_types=1);
 namespace Bunner\Row;
 
 use Bunner\Game;
-use Bunner\Obstacle\Mover;
 use Bunner\Player\Bunner;
 use Bunner\Player\PlayerState;
 use Bunner\RectangleBounded;
 use PhpGame\Anchor;
 use PhpGame\DrawableInterface;
+use PhpGame\LayerInterface;
+use PhpGame\LayerTrait;
 use PhpGame\SDL\Renderer;
 use PhpGame\SoundEmitterInterface;
 use PhpGame\SoundEmitterTrait;
@@ -18,9 +19,10 @@ use PhpGame\Sprite;
 use PhpGame\TextureRepository;
 use PhpGame\Vector2Float;
 
-abstract class Row implements DrawableInterface, SoundEmitterInterface
+abstract class Row implements DrawableInterface, LayerInterface, SoundEmitterInterface
 {
     use SoundEmitterTrait;
+    use LayerTrait;
     protected const ROW_HEIGHT = 40.0;
     protected const ROW_WIDTH = 480.0;
     protected TextureRepository $textureRepository;
@@ -38,11 +40,12 @@ abstract class Row implements DrawableInterface, SoundEmitterInterface
         $this->textureRepository = $textureRepository;
         $this->textureName = sprintf($this->textureName, $index);
         $this->sprite = new Sprite($textureRepository[$this->textureName], 0, $y, Anchor::LeftBottom());
+        $this->layer = 'ground';
     }
 
     public function draw(Renderer $renderer): void
     {
-        $this->sprite->render($renderer);
+        $this->sprite->draw($renderer);
     }
 
     public function update(float $deltaTime): void

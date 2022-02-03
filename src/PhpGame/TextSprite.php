@@ -9,17 +9,20 @@ class TextSprite
 {
     private Texture $texture;
     private string $text;
+    private Transform $transform;
+    private Anchor $anchor;
 
     /**
      * Sprite constructor.
      * @param Texture $texture
      * @param string  $text
      */
-    public function __construct(Texture $texture, string $text, Vector2FLoat $position)
+    public function __construct(Texture $texture, string $text, Vector2Float $position)
     {
         $this->texture = $texture;
         $this->text = $text;
         $this->transform = new Transform($position);
+        $this->anchor = Anchor::CenterBottom();
     }
 
     public static function fromImage(string $path, Renderer $renderer): self

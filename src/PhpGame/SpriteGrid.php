@@ -35,7 +35,7 @@ class SpriteGrid
         foreach ($this->grid as $row) {
             foreach ($row as $cell) {
                 if ($cell instanceof Sprite) {
-                    $cell->render($renderer);
+                    $cell->draw($renderer);
                 }
             }
         }

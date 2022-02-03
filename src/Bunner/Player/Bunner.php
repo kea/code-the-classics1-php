@@ -130,10 +130,6 @@ class Bunner implements SoundEmitterInterface, DrawableInterface
                         $currentRow->playLandedSound();
                     }
                 } else {
-                    if ($this->state === PlayerState::SPLAT) {
-                        $texture = $this->textureRepository["splat".$this->getDirectionFrameNumber().'.png'];
-                        $currentRow->addChild(new Splatted($texture, $this->getX(), $this->getY()));
-                    }
                     $this->timer = 100 / 60;
                 }
             } elseif ($this->getY() > Game::HEIGHT + 80) {
@@ -159,7 +155,7 @@ class Bunner implements SoundEmitterInterface, DrawableInterface
     public function draw(Renderer $renderer): void
     {
         $renderer->drawRectangle($this->sprite->getBoundedRect());
-        $this->sprite->render($renderer);
+        $this->sprite->draw($renderer);
     }
 
     private function getDirectionFrameNumber(): string
@@ -196,6 +192,8 @@ class Bunner implements SoundEmitterInterface, DrawableInterface
             $this->image .= $directionFrame.".png";
         } elseif ($this->state === PlayerState::SPLASH && $this->timer > 1.4) {
             $this->image = "splash".((int)((1.66 - $this->timer) * 30)).".png";
+        } elseif ($this->state === PlayerState::SPLAT) {
+            $this->image = "splat".$this->getDirectionFrameNumber().'.png';
         }
 
         $this->sprite->updateTexture($this->textureRepository[$this->image]);

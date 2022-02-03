@@ -43,13 +43,13 @@ class Water extends ActiveRow
     {
         parent::update($deltaTime);
 
-        foreach ($this->children as $i => $child) {
+//        foreach ($this->children as $i => $child) {
 //            if ($bunner && $this->sprite->y == $bunner->sprite->y && child == collide($bunner->sprite->x, -4) {
 //                $y = 2
 //            } else {
 //                $y = 0
 //            }
-        }
+//        }
     }
 
     public function push(): Vector2Float

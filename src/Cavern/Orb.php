@@ -10,8 +10,9 @@ use PhpGame\SDL\Renderer;
 use PhpGame\SoundEmitterInterface;
 use PhpGame\SoundEmitterTrait;
 use PhpGame\Sprite;
+use PhpGame\TimeUpdatableInterface;
 
-class Orb extends ColliderActor implements DrawableInterface, SoundEmitterInterface
+class Orb extends ColliderActor implements DrawableInterface, TimeUpdatableInterface, SoundEmitterInterface
 {
     use SoundEmitterTrait;
 
@@ -81,7 +82,7 @@ class Orb extends ColliderActor implements DrawableInterface, SoundEmitterInterf
 
     public function draw(Renderer $renderer): void
     {
-        $this->sprite->render($renderer);
+        $this->sprite->draw($renderer);
     }
 
     public function hasTrappedEnemy(): bool

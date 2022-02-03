@@ -6,8 +6,9 @@ namespace Boing;
 use PhpGame\DrawableInterface;
 use PhpGame\SDL\Renderer;
 use PhpGame\SoundManager;
+use PhpGame\TimeUpdatableInterface;
 
-class Game implements DrawableInterface
+class Game implements DrawableInterface, TimeUpdatableInterface
 {
     private const PLAY = 0;
     private const GOAL = 1;

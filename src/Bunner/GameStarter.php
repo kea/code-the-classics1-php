@@ -9,9 +9,11 @@ use PhpGame\SDL\Renderer;
 use PhpGame\SoundManager;
 use PhpGame\TextureRepository;
 
+use PhpGame\TimeUpdatableInterface;
+
 use const SDL_SCANCODE_SPACE;
 
-class GameStarter implements DrawableInterface
+class GameStarter implements DrawableInterface, TimeUpdatableInterface
 {
     private const MENU = 0;
     private const PLAY = 1;
@@ -26,6 +28,7 @@ class GameStarter implements DrawableInterface
     private TextureRepository $textureRepository;
     private Camera $camera;
     private GUI\GUI $gui;
+    private EntityRegistry $entityRegistry;
 
     public function __construct(
         int $width,
@@ -43,6 +46,12 @@ class GameStarter implements DrawableInterface
         $this->camera = $camera;
         $guiCamera = new Camera(new \SDL_Rect(0, 0, Game::WIDTH, Game::HEIGHT));
         $this->gui = new GUI\GUI($textureRepository, $guiCamera);
+        $this->entityRegistry = new EntityRegistry();
+        $this->init();
+    }
+
+    public function init(): void
+    {
         $this->startMenu();
     }
 
@@ -95,7 +104,14 @@ class GameStarter implements DrawableInterface
         $this->soundManager->playMusic('theme.ogg');
 
         unset($this->game);
-        $this->game = new Game($this->textureRepository, $this->soundManager, $this->inputActions, $this->camera, $this->gui);
+        $this->game = new Game(
+            $this->textureRepository,
+            $this->soundManager,
+            $this->inputActions,
+            $this->camera,
+            $this->gui,
+            $this->entityRegistry
+        );
         if ($withPlayer) {
             $this->game->addPlayer();
         }

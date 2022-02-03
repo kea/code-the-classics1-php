@@ -2,10 +2,9 @@
 
 namespace PhpGame;
 
-use PhpGame\SDL\Renderer;
 use PhpGame\SDL\Texture;
 
-class Animation implements DrawableInterface
+class Animation implements TimeUpdatableInterface
 {
     /** @var array<string|Texture> */
     private array $images;
@@ -61,10 +60,5 @@ class Animation implements DrawableInterface
     public function update(float $deltaTime): void
     {
         $this->elapsedTime += $deltaTime;
-    }
-
-    public function draw(Renderer $renderer): void
-    {
-        // @todo wrong interface, should split DrawableInterface
     }
 }

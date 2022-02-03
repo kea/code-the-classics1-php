@@ -10,9 +10,10 @@ use PhpGame\DrawableInterface;
 use PhpGame\SDL\Renderer;
 use PhpGame\Sprite;
 use PhpGame\TextureRepository;
+use PhpGame\TimeUpdatableInterface;
 use PhpGame\Vector2Float;
 
-abstract class Mover implements DrawableInterface, RectangleBounded
+abstract class Mover implements DrawableInterface, TimeUpdatableInterface, RectangleBounded
 {
     public const SPEED_PIXEL_PER_SECOND = 60;
     private Sprite $sprite;
@@ -35,7 +36,7 @@ abstract class Mover implements DrawableInterface, RectangleBounded
     }
     public function draw(Renderer $renderer): void
     {
-        $this->sprite->render($renderer);
+        $this->sprite->draw($renderer);
     }
 
     public function getX(): float

@@ -17,13 +17,9 @@ class Splatted implements DrawableInterface, RectangleBounded
         $this->sprite = new Sprite($texture, $x, $y);
     }
 
-    public function update(float $deltaTime): void
-    {
-    }
-
     public function draw(Renderer $renderer): void
     {
-        $this->sprite->render($renderer);
+        $this->sprite->draw($renderer);
     }
 
     public function getBoundedRectangle(): \SDL_Rect

@@ -5,8 +5,9 @@ namespace Boing;
 
 use PhpGame\DrawableInterface;
 use PhpGame\SDL\Renderer;
+use PhpGame\TimeUpdatableInterface;
 
-class Bat implements DrawableInterface
+class Bat implements DrawableInterface, TimeUpdatableInterface
 {
     public const PLAY = 0;
     public const HIT = 1;

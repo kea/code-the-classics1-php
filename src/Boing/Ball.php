@@ -5,9 +5,9 @@ namespace Boing;
 
 use PhpGame\DrawableInterface;
 use PhpGame\SDL\Renderer;
-use PhpGame\SDL\Screen;
+use PhpGame\TimeUpdatableInterface;
 
-class Ball implements DrawableInterface
+class Ball implements DrawableInterface, TimeUpdatableInterface
 {
     private const TOP_BOTTOM_DY_FROM_CENTER = 220;
     private float $x = 0;

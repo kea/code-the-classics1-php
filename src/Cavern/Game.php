@@ -8,9 +8,10 @@ use PhpGame\DrawableInterface;
 use PhpGame\SDL\Renderer;
 use PhpGame\SoundManager;
 use PhpGame\TextureRepository;
+use PhpGame\TimeUpdatableInterface;
 use PhpGame\Vector2Float;
 
-class Game implements DrawableInterface
+class Game implements DrawableInterface, TimeUpdatableInterface
 {
     private ?SoundManager $soundManager;
     private ?Player $player = null;

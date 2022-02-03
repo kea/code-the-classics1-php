@@ -4,8 +4,9 @@ namespace Cavern;
 
 use PhpGame\DrawableInterface;
 use PhpGame\SDL\Renderer;
+use PhpGame\TimeUpdatableInterface;
 
-class Pop implements DrawableInterface
+class Pop implements DrawableInterface, TimeUpdatableInterface
 {
     public const TYPE_FRUIT = 0;
     public const TYPE_ORB = 1;
@@ -38,7 +39,7 @@ class Pop implements DrawableInterface
         if (!$this->isActive) {
             return;
         }
-        $this->animator->getSprite()->render($renderer);
+        $this->animator->getSprite()->draw($renderer);
     }
 
     public function isActive(): bool

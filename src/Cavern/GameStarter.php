@@ -8,11 +8,12 @@ use PhpGame\Input\InputActions;
 use PhpGame\SDL\Renderer;
 use PhpGame\SoundManager;
 use PhpGame\TextureRepository;
+use PhpGame\TimeUpdatableInterface;
 use PhpGame\Vector2Float;
 
 use const SDL_SCANCODE_SPACE;
 
-class GameStarter implements DrawableInterface
+class GameStarter implements DrawableInterface, TimeUpdatableInterface
 {
     private const MENU = 0;
     private const PLAY = 1;

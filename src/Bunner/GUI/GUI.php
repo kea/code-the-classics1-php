@@ -10,9 +10,10 @@ use PhpGame\SDL\Renderer;
 use PhpGame\Sprite;
 use PhpGame\TextSprite;
 use PhpGame\TextureRepository;
+use PhpGame\TimeUpdatableInterface;
 use PhpGame\Vector2Float;
 
-class GUI implements DrawableInterface
+class GUI implements DrawableInterface, TimeUpdatableInterface
 {
     private const PLAY = 'PLAY';
     private const MENU = 'MENU';
@@ -80,11 +81,11 @@ class GUI implements DrawableInterface
         $this->text->draw($renderer);
 
         if ($this->state === self::MENU) {
-            $this->sprites['title']->render($renderer);
+            $this->sprites['title']->draw($renderer);
             $renderer->drawTexture($this->menuAnimation->getCurrentFrame(), $this->menuPosition);
         }
         if ($this->state === self::GAME_OVER) {
-            $this->sprites['gameover']->render($renderer);
+            $this->sprites['gameover']->draw($renderer);
         }
 
         $renderer->setCamera($camera);

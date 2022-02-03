@@ -5,7 +5,7 @@ namespace PhpGame;
 use PhpGame\SDL\Renderer;
 use PhpGame\SDL\Texture;
 
-class Sprite
+class Sprite implements DrawableInterface
 {
     private Texture $texture;
     protected \SDL_Rect $boundedRect;
@@ -45,7 +45,7 @@ class Sprite
         $this->updateBoundedRect();
     }
 
-    public function render(Renderer $renderer): void
+    public function draw(Renderer $renderer): void
     {
         $renderer->drawTexture($this->texture, $this->boundedRect);
 //        $renderer->setDrawColor([90, 96, 93, 0]);

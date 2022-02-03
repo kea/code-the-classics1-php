@@ -100,7 +100,7 @@ class Robot extends GravityActor implements SoundEmitterInterface
 
     public function draw(Renderer $renderer): void
     {
-        $this->sprite->render($renderer);
+        $this->sprite->draw($renderer);
     }
 
     public function isActive(): bool

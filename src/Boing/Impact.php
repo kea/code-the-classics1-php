@@ -5,9 +5,9 @@ namespace Boing;
 use PhpGame\Animation;
 use PhpGame\DrawableInterface;
 use PhpGame\SDL\Renderer;
-use PhpGame\SDL\Screen;
+use PhpGame\TimeUpdatableInterface;
 
-class Impact implements DrawableInterface
+class Impact implements DrawableInterface, TimeUpdatableInterface
 {
     private float $x;
     private float $y;

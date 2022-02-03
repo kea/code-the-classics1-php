@@ -9,9 +9,10 @@ use PhpGame\Input\InputActions;
 use PhpGame\SDL\Renderer;
 use PhpGame\SoundEmitterInterface;
 use PhpGame\SoundEmitterTrait;
+use PhpGame\TimeUpdatableInterface;
 use PhpGame\Vector2Float;
 
-class Player extends GravityActor implements DrawableInterface, SoundEmitterInterface
+class Player extends GravityActor implements DrawableInterface, TimeUpdatableInterface, SoundEmitterInterface
 {
     use SoundEmitterTrait;
 
@@ -115,7 +116,7 @@ class Player extends GravityActor implements DrawableInterface, SoundEmitterInte
 
     public function draw(Renderer $renderer): void
     {
-        $this->animator->getSprite()->render($renderer);
+        $this->animator->getSprite()->draw($renderer);
     }
 
     public function onCollision(ColliderActor $other): void

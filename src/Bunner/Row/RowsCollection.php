@@ -2,25 +2,29 @@
 
 namespace Bunner\Row;
 
+use Bunner\EntityRegistry;
 use Bunner\Game;
 use PhpGame\DrawableInterface;
 use PhpGame\SDL\Renderer;
 use PhpGame\SoundEmitterInterface;
 use PhpGame\SoundManager;
 use PhpGame\TextureRepository;
+use PhpGame\TimeUpdatableInterface;
 use PhpGame\Vector2Float;
 
-class RowsCollection implements DrawableInterface, \IteratorAggregate
+class RowsCollection implements DrawableInterface, TimeUpdatableInterface, \IteratorAggregate
 {
     /** @var array<Row> */
     private array $rows = [];
     private TextureRepository $textureRepository;
     private SoundManager $soundManager;
+    private EntityRegistry $entityRegistry;
 
-    public function __construct(TextureRepository $textureRepository, SoundManager $soundManager)
+    public function __construct(TextureRepository $textureRepository, SoundManager $soundManager, EntityRegistry $entityRegistry)
     {
         $this->textureRepository = $textureRepository;
         $this->soundManager = $soundManager;
+        $this->entityRegistry = $entityRegistry;
     }
 
     public function createRows(int $int = 1): void
@@ -34,7 +38,9 @@ class RowsCollection implements DrawableInterface, \IteratorAggregate
     {
         $rowsCount = count($this->rows);
         if ($rowsCount === 0) {
-            $this->rows[] = new Grass($this->textureRepository, 0);
+            $grass = new Grass($this->textureRepository, 0);
+            $this->rows[] = $grass;
+            $this->entityRegistry->add($grass);
 
             return;
         }
@@ -44,6 +50,7 @@ class RowsCollection implements DrawableInterface, \IteratorAggregate
             $nextRow->setSoundManager($this->soundManager);
         }
         $this->rows[] = $nextRow;
+        $this->entityRegistry->add($nextRow);
     }
 
     public function update(float $deltaTime): void
@@ -55,10 +62,10 @@ class RowsCollection implements DrawableInterface, \IteratorAggregate
 
     public function draw(Renderer $renderer): void
     {
-        $reverseRows = array_reverse($this->rows);
-        foreach ($reverseRows as $row) {
-            $row->draw($renderer);
-        }
+//        $reverseRows = array_reverse($this->rows);
+//        foreach ($reverseRows as $row) {
+//            $row->draw($renderer);
+//        }
     }
 
     /** @return \ArrayIterator<Row> */
