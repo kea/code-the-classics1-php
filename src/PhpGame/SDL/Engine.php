@@ -27,7 +27,6 @@ class Engine
         $ticker = new Ticker();
         $frameRateTimer = new Ticker();
         while (true) {
-            $deltaTime = $ticker->tick();
             $frameRateTimer->tick();
 
             if (SDL_PollEvent($event)) {
@@ -38,13 +37,14 @@ class Engine
             }
             $this->inputActions->update();
 
+            $deltaTime = $ticker->tick();
             $game->update($deltaTime);
             $this->renderer->clear();
             $game->draw($this->renderer);
             $this->renderer->render();
 
             $waitTime = (1000 / $this->framePerSecond) - ($frameRateTimer->tick() * 1000);
-            SDL_Delay($waitTime > 0 ? $waitTime : 0);
+            SDL_Delay(max($waitTime, 0));
         }
     }
 
