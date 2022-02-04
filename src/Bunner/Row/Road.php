@@ -3,14 +3,15 @@
 namespace Bunner\Row;
 
 use Bunner\Obstacle\Car;
+use Bunner\Obstacle\Mover;
 use Bunner\Player\Bunner;
 use Bunner\Player\PlayerState;
 use PhpGame\TextureRepository;
+use PhpGame\Vector2Float;
 
 class Road extends ActiveRow
 {
     protected string $textureName = 'road%d.png';
-    protected string $childType = Car::class;
     protected ?Bunner $player = null;
 
     public function __construct(TextureRepository $textureRepository, int $index, ?Row $previous = null)
@@ -95,5 +96,10 @@ class Road extends ActiveRow
     public function playLandedSound(): void
     {
         $this->playSound("road0.wav");
+    }
+
+    protected function createChild(Vector2Float $position): Mover
+    {
+        return new Car($this->textureRepository, $position,  $this->dx);
     }
 }

@@ -40,7 +40,6 @@ class TextSprite
     public function setPosition(Vector2Float $position): void
     {
         $this->transform->setPosition($position);
-        $this->updateBoundedRect();
     }
 
     public function draw(Renderer $renderer): void
@@ -50,23 +49,9 @@ class TextSprite
         foreach ($chars as $char) {
             $positionInSprite = ord($char) - ord('0');
             $boundedCharRect = new \SDL_Rect(28 * $positionInSprite, 0, 28, 28);
-            $destinationRect = new \SDL_Rect($nextPosition->x, $nextPosition->y, 28, 28);
+            $destinationRect = new \SDL_Rect((int)$nextPosition->x, (int)$nextPosition->y, 28, 28);
             $nextPosition = $nextPosition->add(new Vector2Float(28, 0));
             $renderer->drawPartialTexture($this->texture, $destinationRect, $boundedCharRect);
         }
-    }
-
-    private function updateBoundedRect(): void
-    {
-        //$width = $this->texture->getWidth() * $this->transform->getScale()->x;
-        $width = $this->texture->getHeight() * strlen($this->text) * $this->transform->getScale()->x;
-        $height = $this->texture->getHeight() * $this->transform->getScale()->y;
-
-        $this->boundedRect = $this->anchor->getBoundedRect(
-            $this->transform->getPosition()->x,
-            $this->transform->getPosition()->y,
-            $width,
-            $height
-        );
     }
 }

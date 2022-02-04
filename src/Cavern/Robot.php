@@ -76,7 +76,7 @@ class Robot extends GravityActor implements SoundEmitterInterface
             $position = new Vector2Float(
                 $this->getPosition()->x + $this->directionX * 20, $this->getPosition()->y - 38
             );
-            $this->bolts->add($this->bolts->create($position, $this->directionX));
+            $this->bolts->add($this->bolts->create($position, (int)$this->directionX));
         }
 
         $this->animator->setFloat('directionX', $this->directionX);
@@ -95,7 +95,7 @@ class Robot extends GravityActor implements SoundEmitterInterface
 
     public function fireProbability(): float
     {
-        return 0.001 + (0.0001 * min(100, $this->level->level));
+        return 0.001 + (0.0001 * min(100, $this->level?->level ?? 1));
     }
 
     public function draw(Renderer $renderer): void
@@ -119,12 +119,15 @@ class Robot extends GravityActor implements SoundEmitterInterface
             return;
         }
 
+        /** @var Orb $orb */
         foreach ($this->orbs as $orb) {
-            if ($orb->position->y >= $this->sprite->top() &&
-                $orb->position->y < $this->sprite->bottom() &&
-                abs($orb->position->x - $this->getPosition()->x) < 200
+            $orbX = $orb->getPosition()->x;
+            $orbY = $orb->getPosition()->y;
+            if ($orbY >= $this->sprite->top() &&
+                $orbY < $this->sprite->bottom() &&
+                abs($orbX - $this->getPosition()->x) < 200
             ) {
-                $this->directionX = $this->sign($orb->getPosition()->x - $this->getPosition()->x);
+                $this->directionX = $this->sign($orbX - $this->getPosition()->x);
                 $this->fireTimer = 0;
                 break;
             }

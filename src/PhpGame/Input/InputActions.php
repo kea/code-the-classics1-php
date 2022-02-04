@@ -36,7 +36,7 @@ class InputActions
      * @param $name
      * @return bool|Vector2Float
      */
-    public function getValueForAction($name)
+    public function getValueForAction($name): mixed
     {
         if (!isset($this->actions[$name])) {
             throw new RuntimeException("Wrong input action name: ".$name);

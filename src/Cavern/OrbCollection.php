@@ -10,7 +10,7 @@ use PhpGame\Vector2Float;
 class OrbCollection implements IteratorAggregate
 {
     private const MAX_ORBS = 5;
-    /** @var Orb[] */
+    /** @var array<int, Orb> */
     private array $orbs = [];
     private FruitCollection $fruits;
     private PopCollection $pops;
@@ -58,10 +58,12 @@ class OrbCollection implements IteratorAggregate
 
     public function removeNotActive(): void
     {
-        $this->orbs = array_filter($this->orbs, fn($orb) => $orb->isActive());
+        $this->orbs = array_filter($this->orbs, static fn($orb) => $orb->isActive());
     }
 
-    /** @return ArrayIterator<Bolt> */
+    /**
+     * @return ArrayIterator<int, Orb>
+     */
     public function getIterator(): ArrayIterator
     {
         return new ArrayIterator($this->orbs);

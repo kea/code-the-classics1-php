@@ -7,7 +7,7 @@ use PhpGame\SDL\Texture;
 
 class SpriteGrid
 {
-    /** @var array<int, array<int, Sprite>> */
+    /** @var array<int, array<int, Sprite|null>> */
     private array $grid;
     /** @var SDL\Texture[] */
     private array $textures;

@@ -14,6 +14,7 @@ class Level
     private const GRID_BLOCK_SIZE = 25;
     private const NUM_COLUMNS = 28;
 
+    /** @var array<int, array<int, string>> */
     private array $levels;
     public int $level = -1;
     private array $backgroundBlocks;
@@ -98,7 +99,7 @@ class Level
         return false;
     }
 
-    public function getRobotSpawnX()
+    public function getRobotSpawnX(): int
     {
         $r = random_int(0, self::NUM_COLUMNS);
         for ($i = 0; $i < self::NUM_COLUMNS; ++$i) {
@@ -108,6 +109,6 @@ class Level
             }
         }
 
-        return WINDOW_WIDTH / 2;
+        return (int)($this->fieldWidth / 2);
     }
 }

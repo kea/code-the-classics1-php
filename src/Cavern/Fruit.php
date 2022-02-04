@@ -3,6 +3,7 @@
 namespace Cavern;
 
 use Cavern\Animator\Fruit as AnimatorFruit;
+use PhpGame\Animator;
 use PhpGame\SDL\Renderer;
 use PhpGame\SoundEmitterInterface;
 use PhpGame\SoundEmitterTrait;
@@ -19,10 +20,10 @@ class Fruit extends GravityActor implements SoundEmitterInterface
     private int $type;
     private float $timeToLive;
     private PopCollection $pops;
-    private AnimatorFruit $animator;
+    private Animator $animator;
 
     public function __construct(
-        AnimatorFruit $animator,
+        Animator $animator,
         PopCollection $pops,
         int $trappedEnemyType = Robot::TYPE_NORMAL
     ) {

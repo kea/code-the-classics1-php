@@ -68,6 +68,7 @@ class Player extends GravityActor implements DrawableInterface, TimeUpdatableInt
         if ($this->hurtTimer > 1.7) {
             $this->beenHurt($deltaTime);
         } else {
+            /** @var Vector2Float $direction */
             $direction = $this->inputActions->getValueForAction('Move');
             if ($direction->x !== .0) {
                 $this->directionX = $direction->x;

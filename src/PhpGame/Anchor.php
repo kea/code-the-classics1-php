@@ -78,6 +78,6 @@ class Anchor
 
     public function getBoundedRect(float $posX, float $posY, int $width, int $height): \SDL_Rect
     {
-        return new \SDL_Rect($posX - $width * $this->x, $posY - $height * $this->y, $width, $height);
+        return new \SDL_Rect((int)($posX - $width * $this->x), (int)($posY - $height * $this->y), $width, $height);
     }
 }

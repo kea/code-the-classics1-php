@@ -12,10 +12,10 @@ class Game implements DrawableInterface, TimeUpdatableInterface
 {
     private const PLAY = 0;
     private const GOAL = 1;
-    /** @var array|Bat[] */
+    /** @var array<int, Bat> */
     public array $bats;
     public Ball $ball;
-    /** @var array|Impact[] */
+    /** @var array<int, Impact> */
     public array $impacts;
     public int $aiOffset;
 
@@ -98,7 +98,7 @@ class Game implements DrawableInterface, TimeUpdatableInterface
             return;
         }
 
-        if ($this->soundManager->getMusicVolume() === 0) {
+        if ($this->soundManager->getMusicVolume() === .0) {
             return;
         }
 

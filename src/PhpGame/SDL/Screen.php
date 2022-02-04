@@ -52,6 +52,7 @@ class Screen
 
     public function setIcon(string $file): void
     {
+        /** @var \SDL_Surface $icon */
         $icon = SDL_LoadBMP($file);
         SDL_SetWindowIcon($this->window, $icon);
         SDL_FreeSurface($icon);

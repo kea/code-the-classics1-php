@@ -27,10 +27,10 @@ abstract class Row implements DrawableInterface, LayerInterface, SoundEmitterInt
     protected const ROW_WIDTH = 480.0;
     protected TextureRepository $textureRepository;
     protected Sprite $sprite;
-    protected string $textureName;
+    protected string $textureName = 'name%d.png';
     protected int $index = 0;
-    protected float $dx = 0;
-    /** @var array|RectangleBounded[] */
+    protected float $dx = .0;
+    /** @var array<int, RectangleBounded> */
     protected array $children = [];
 
     public function __construct(TextureRepository $textureRepository, int $index, ?Row $previous = null)

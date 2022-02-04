@@ -42,7 +42,10 @@ class PopCollection implements IteratorAggregate
         $this->pops = array_filter($this->pops, fn($pop) => $pop->isActive());
     }
 
-    public function getIterator()
+    /**
+     * @return ArrayIterator<int, Pop>
+     */
+    public function getIterator(): ArrayIterator
     {
         return new ArrayIterator($this->pops);
     }

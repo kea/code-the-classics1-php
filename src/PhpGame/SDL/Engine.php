@@ -4,6 +4,7 @@ namespace PhpGame\SDL;
 
 use PhpGame\DrawableInterface;
 use PhpGame\Input\InputActions;
+use PhpGame\TimeUpdatableInterface;
 use SDL_Event;
 
 use function SDL_Delay;
@@ -21,6 +22,7 @@ class Engine
         $this->inputActions = $inputActions;
     }
 
+    /** @param DrawableInterface&TimeUpdatableInterface $game */
     public function run(DrawableInterface $game): void
     {
         $event = new SDL_Event();
@@ -44,7 +46,7 @@ class Engine
             $this->renderer->render();
 
             $waitTime = (1000 / $this->framePerSecond) - ($frameRateTimer->tick() * 1000);
-            SDL_Delay(max($waitTime, 0));
+            SDL_Delay((int)max($waitTime, 0));
         }
     }
 

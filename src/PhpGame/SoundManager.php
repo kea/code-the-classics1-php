@@ -14,7 +14,7 @@ class SoundManager
     /** @var array|\Mix_Music[] */
     private array $musics = [];
     private string $basePath = '';
-    private int $volume = \MIX_MAX_VOLUME;
+    private float $volume = \MIX_MAX_VOLUME;
 
     public function __construct(int $frequency, int $format, int $nchannels, int $chunksize)
     {
@@ -52,7 +52,7 @@ class SoundManager
      */
     public function setChannelVolume(float $volume, int $channel = -1): void
     {
-        $volume = max(0, min(1.0, $volume));
+        $volume = max(.0, min(1.0, $volume));
         // Mix_Volume add binding do sdl_mixer extension
         // \Mix_Volume($channel, MIX_MAX_VOLUME * $volume);
     }
@@ -62,8 +62,8 @@ class SoundManager
      */
     public function setMusicVolume(float $volume): void
     {
-        $this->volume = max(0, min(1.0, $volume));
-        Mix_VolumeMusic(MIX_MAX_VOLUME * $this->volume);
+        $this->volume = max(.0, min(1.0, $volume));
+        Mix_VolumeMusic((int)(MIX_MAX_VOLUME * $this->volume));
     }
 
     public function getMusicVolume(): float
@@ -73,9 +73,12 @@ class SoundManager
 
     public function playMusic(string $path): void
     {
-        if (!isset($this->chunks[$path])) {
-            $this->musics[$path] = Mix_LoadMUS($this->basePath.'/music/'.$path);
+        $fullPath = $this->basePath.'/music/'.$path;
+        if (!file_exists($fullPath)) {
+            return;
         }
+
+        $this->musics[$path] ??= Mix_LoadMUS($fullPath);
 
         Mix_PlayMusic($this->musics[$path], -1);
     }

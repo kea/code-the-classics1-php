@@ -16,6 +16,8 @@ class Rail extends Row
 {
     protected ?Row $previous = null;
     protected string $textureName = 'rail%d.png';
+    /** @var array<int, Train> */
+    protected array $children = [];
 
     public function __construct(TextureRepository $textureRepository, int $index, ?Row $previous = null)
     {

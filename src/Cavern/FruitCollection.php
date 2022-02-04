@@ -10,7 +10,7 @@ use PhpGame\Vector2Float;
 
 class FruitCollection implements IteratorAggregate
 {
-    /** @var Fruit[] */
+    /** @var array<int, Fruit> */
     private array $fruits = [];
     private Level $level;
     private Animator $animator;
@@ -50,6 +50,9 @@ class FruitCollection implements IteratorAggregate
         $this->fruits = array_filter($this->fruits, fn($fruit) => $fruit->isActive());
     }
 
+    /**
+     * @return ArrayIterator<int, Fruit>
+     */
     public function getIterator(): ArrayIterator
     {
         return new ArrayIterator($this->fruits);

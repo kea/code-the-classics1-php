@@ -8,7 +8,7 @@ use PhpGame\Vector2Float;
 
 class BoltCollection implements IteratorAggregate
 {
-    /** @var Bolt[] */
+    /** @var array<int, Bolt> */
     private array $bolts = [];
     private \Cavern\Animator\Bolt $animation;
 
@@ -38,10 +38,13 @@ class BoltCollection implements IteratorAggregate
 
     public function removeNotActive(): void
     {
-        $this->bolts = array_filter($this->bolts, fn($bolt) => $bolt->isActive());
+        $this->bolts = array_filter($this->bolts, static fn($bolt) => $bolt->isActive());
     }
 
-    public function getIterator()
+    /**
+     * @return \Traversable<Bolt>
+     */
+    public function getIterator(): \Traversable
     {
         return new ArrayIterator($this->bolts);
     }

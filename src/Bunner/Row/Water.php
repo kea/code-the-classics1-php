@@ -14,17 +14,17 @@ use PhpGame\Vector2Float;
 class Water extends ActiveRow
 {
     protected string $textureName = 'water%d.png';
-    protected string $childType = Log::class;
 
     public function __construct(TextureRepository $textureRepository, int $index, ?Row $previous = null)
     {
-        if ($previous === null || $previous->dx === 0) {
+        if (($previous === null) || ($previous->dx === .0)) {
             $dxs = [-2, -1, 1, 2];
         } elseif ($previous->dx > 0) {
             $dxs = [-2, -1];
         } else {
             $dxs = [1, 2];
         }
+        /** @psalm-suppress PossiblyUndefinedArrayOffset */
         $this->dx = $dxs[array_rand($dxs)];
         parent::__construct($textureRepository, $index, $previous);
     }
@@ -71,5 +71,10 @@ class Water extends ActiveRow
         $this->playSound("splash0.wav");
 
         return PlayerState::SPLASH;
+    }
+
+    protected function createChild(Vector2Float $position): Mover
+    {
+        return new Log($this->textureRepository, $position,  $this->dx);
     }
 }

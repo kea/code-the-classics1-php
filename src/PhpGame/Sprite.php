@@ -52,14 +52,6 @@ class Sprite implements DrawableInterface
 //        $renderer->drawRectangle($this->boundedRect);
     }
 
-    public function distanceFromTop(): float
-    {
-        $anchorRelativePercentage = ['top' => .0, 'center' => 0.5, 'middle' => 0.5, 'bottom' => 1.0];
-        $height = $this->texture->getHeight() * $this->transform->getScale()->y;
-
-        return $height * $anchorRelativePercentage[$this->anchor[1]];
-    }
-
     private function updateBoundedRect(): void
     {
         $width = $this->texture->getWidth() * $this->transform->getScale()->x;

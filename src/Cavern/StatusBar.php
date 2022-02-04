@@ -14,7 +14,7 @@ class StatusBar
     {
         $index = max(0, ord($char) - 65);
 
-        return self::CHAR_WIDTH[$index];
+        return self::CHAR_WIDTH[$index] ?? 27;
     }
 
     private function drawText(Renderer $renderer, string $text, int $y, ?int $x = null): void

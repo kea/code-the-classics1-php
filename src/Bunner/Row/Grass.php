@@ -21,6 +21,8 @@ class Grass extends Row
     protected string $textureName = 'grass%d.png';
     private ?int $hedgeRowIndex = null;
     private ?array $hedgeMask = null;
+    /** @var array<int, Hedge>  */
+    protected array $children = [];
 
     public function __construct(TextureRepository $textureRepository, int $index, ?Row $previous = null)
     {
@@ -76,14 +78,14 @@ class Grass extends Row
 
     private function generateHedgeMask(): array
     {
-        $mask = [];
-        for ($i = 0; $i<12; $i++) {
+        $mask = array_fill(0, 12, false);
+        for ($i = 0; $i < 12; $i++) {
             $mask[$i] = random_int(1, 100) === 42;
         }
         $mask[random_int(0, 10)] = true;
         $resultMask = [];
-        for ($i = 0; $i<12; $i++) {
-            $resultMask[$i] = $mask[max(0, $i-1)] || $mask[$i] || $mask[min($i+1, 11)];
+        for ($i = 0; $i < 12; $i++) {
+            $resultMask[$i] = $mask[max(0, $i - 1)] || $mask[$i] || $mask[min($i + 1, 11)];
         }
 
         return array_merge([$resultMask[0]], $resultMask, [$resultMask[11], $resultMask[11]]);

@@ -67,9 +67,10 @@ class ColliderActor
 
     private function collide(float $dx, float $dy, Vector2Float $newPosition): bool
     {
-        return (($dy > 0 && $this->level->blockStartAt($newPosition->y)) ||
+        return ($this->level &&
+            (($dy > 0 && $this->level->blockStartAt($newPosition->y)) ||
                 ($dx > 0 && $this->level->blockStartAt($newPosition->x)) ||
                 ($dx < 0 && $this->level->blockEndAt($newPosition->x)))
-            && $this->level->blockAt($newPosition->x, $newPosition->y);
+            && $this->level->blockAt($newPosition->x, $newPosition->y));
     }
 }

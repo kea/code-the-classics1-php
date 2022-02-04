@@ -27,7 +27,10 @@ class RobotCollection implements IteratorAggregate, Countable
         $this->robots = array_filter($this->robots, fn($robot) => $robot->isActive());
     }
 
-    public function getIterator()
+    /**
+     * @return ArrayIterator<int, Robot>
+     */
+    public function getIterator(): ArrayIterator
     {
         return new ArrayIterator($this->robots);
     }

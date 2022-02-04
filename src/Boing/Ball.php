@@ -30,8 +30,8 @@ class Ball implements DrawableInterface, TimeUpdatableInterface
         $this->dx = $dx;
         $this->fieldWidth = $fieldWidth;
         $this->fieldHeight = $fieldHeight;
-        $this->fieldHalfWidth = $fieldWidth / 2;
-        $this->fieldHalfHeight = $fieldHeight / 2;
+        $this->fieldHalfWidth = intdiv($fieldWidth, 2);
+        $this->fieldHalfHeight = intdiv($fieldHeight, 2);
         $this->x = $this->fieldHalfWidth;
         $this->y = $this->fieldHalfHeight;
         $this->gameToBeRemoved = $gameToBeRemoved;

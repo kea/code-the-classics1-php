@@ -26,22 +26,22 @@ class TextureRepository implements \ArrayAccess
         }
     }
 
-    public function offsetGet($index)
+    public function offsetGet(mixed $offset): mixed
     {
-        if (!isset($this->textures[$index])) {
-            $fullPath = $this->basePath.$index;
-            $this->textures[$index] = Texture::loadFromFile($fullPath, $this->renderer);
+        if (!isset($this->textures[$offset])) {
+            $fullPath = $this->basePath.$offset;
+            $this->textures[$offset] = Texture::loadFromFile($fullPath, $this->renderer);
         }
 
-        return $this->textures[$index];
+        return $this->textures[$offset];
     }
 
-    public function offsetExists($offset)
+    public function offsetExists(mixed $offset): bool
     {
         return isset($this->textures[$offset]);
     }
 
-    public function offsetSet($offset, $value)
+    public function offsetSet(mixed $offset, mixed $value): void
     {
         if (!$value instanceof Texture) {
             throw new \InvalidArgumentException("Only ".Texture::class." is allowed");
@@ -49,7 +49,7 @@ class TextureRepository implements \ArrayAccess
         $this->textures[$offset] = $value;
     }
 
-    public function offsetUnset($offset)
+    public function offsetUnset(mixed $offset): void
     {
         unset($this->textures[$offset]);
     }

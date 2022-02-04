@@ -33,6 +33,7 @@ class Game implements DrawableInterface, TimeUpdatableInterface, SoundEmitterInt
     private Camera $camera;
     private float $verticalScroll = 0.0;
     private EntityRegistry $entityRegistry;
+    private GUI $gui;
 
     public function __construct(
         TextureRepository $textureRepository,
@@ -56,15 +57,20 @@ class Game implements DrawableInterface, TimeUpdatableInterface, SoundEmitterInt
     {
         $this->rowsCollection->updateVerticalScroll($this->verticalScroll);
         $this->rowsCollection->update($deltaTime);
+        $this->player?->update($deltaTime);
+        $this->updateVerticalScroll($deltaTime);
+        $this->camera->follow(new Vector2Int(self::WIDTH / 2, (int)$this->verticalScroll));
+        $this->gui->update($deltaTime);
+    }
+
+    protected function updateVerticalScroll(float $deltaTime): void
+    {
         $verticalScrollVelocity = 1;
         if ($this->player !== null) {
-            $this->player->update($deltaTime);
             $playerYOnScreen = $this->verticalScroll + (self::HEIGHT / 2) - $this->player->getY();
             $verticalScrollVelocity = max(1, min(3, 4 - round((self::HEIGHT - $playerYOnScreen) / (self::HEIGHT / 4))));
         }
         $this->verticalScroll -= $deltaTime * 60 * $verticalScrollVelocity;
-        $this->camera->follow(new Vector2Int(self::WIDTH / 2, (int)$this->verticalScroll));
-        $this->gui->update($deltaTime);
     }
 
     private function updateAmbientSoundEffects(): void
@@ -85,6 +91,7 @@ class Game implements DrawableInterface, TimeUpdatableInterface, SoundEmitterInt
             $ground->draw($renderer);
         }
 
+        $this->player?->draw($renderer);
         $this->gui->draw($renderer);
     }
 
@@ -105,7 +112,9 @@ class Game implements DrawableInterface, TimeUpdatableInterface, SoundEmitterInt
     public function addPlayer(): void
     {
         $this->player = new Bunner($this->textureRepository, $this->inputActions, $this->rowsCollection);
-        $this->player->setSoundManager($this->soundManager);
+        if ($this->soundManager) {
+            $this->player->setSoundManager($this->soundManager);
+        }
         $this->entityRegistry->add($this->player);
     }
 }

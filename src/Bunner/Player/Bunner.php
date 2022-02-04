@@ -116,7 +116,6 @@ class Bunner implements SoundEmitterInterface, DrawableInterface, LayerInterface
 
             $currentRow = null;
             foreach ($this->rows as $row) {
-                /** @var $row Row */
                 if ($row->contains($this->sprite->getPosition())) {
                     $currentRow = $row;
                     break;

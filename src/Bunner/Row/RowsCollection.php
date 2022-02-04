@@ -68,5 +68,6 @@ class RowsCollection implements TimeUpdatableInterface, \IteratorAggregate
         if (end($this->rows)->contains(new Vector2Float(Game::WIDTH / 2, $verticalScroll - Game::HEIGHT / 2))) {
             $this->createRow();
         }
+        /** @todo remove invisible rows on bottom */
     }
 }

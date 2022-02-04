@@ -83,7 +83,6 @@ class Game implements DrawableInterface, TimeUpdatableInterface
                     if (SDL_HasIntersection($bolt->getCollider(), $orb->getCollider())) {
                         $bolt->onCollision($orb);
                         $orb->onCollision($bolt);
-                        continue;
                     }
                 }
                 if (SDL_HasIntersection($bolt->getCollider(), $this->player->getCollider())) {
@@ -125,7 +124,9 @@ class Game implements DrawableInterface, TimeUpdatableInterface
             $animator = new \Cavern\Animator\Robot($this->textureRepository);
             $animator->getSprite()->setPosition($pos);
             $robot = new Robot($animator, $robotType, $this->orbs, $this->bolts, $this->level, $this->player);
-            $robot->setSoundManager($this->soundManager);
+            if ($this->soundManager) {
+                $robot->setSoundManager($this->soundManager);
+            }
             $this->enemies->add($robot);
         }
 
@@ -165,7 +166,7 @@ class Game implements DrawableInterface, TimeUpdatableInterface
             return;
         }
 
-        if ($this->soundManager->getMusicVolume() === 0) {
+        if ($this->soundManager->getMusicVolume() === .0) {
             return;
         }
 
@@ -193,7 +194,7 @@ class Game implements DrawableInterface, TimeUpdatableInterface
         $this->fruits->newLevel($this->level);
         $this->createEnemies();
         $this->level->buildNextLevel();
-        $this->soundManager->playSound('level0.ogg');
+        $this->soundManager?->playSound('level0.ogg');
     }
 
     private function getUpdatableObjects(): array
