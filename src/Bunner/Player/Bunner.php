@@ -156,7 +156,7 @@ class Bunner implements SoundEmitterInterface, DrawableInterface, LayerInterface
 
     public function draw(Renderer $renderer): void
     {
-        $renderer->drawRectangle($this->sprite->getBoundedRect());
+// debug        $renderer->drawRectangle($this->sprite->getBoundedRect());
         $this->sprite->draw($renderer);
     }
 

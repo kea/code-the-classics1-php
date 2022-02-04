@@ -3,6 +3,7 @@
 namespace Bunner\GUI;
 
 use Bunner\Game;
+use Bunner\Score;
 use PhpGame\Animation;
 use PhpGame\Camera;
 use PhpGame\DrawableInterface;
@@ -21,7 +22,8 @@ class GUI implements DrawableInterface, TimeUpdatableInterface
     private float $timeElapsed = 0;
     private int $fps =0;
     private int $tick = 0;
-    private TextSprite $text;
+    private TextSprite $scoreText;
+    private TextSprite $maxScoreText;
     private Camera $camera;
     private TextureRepository $textureRepository;
     private string $state = self::MENU;
@@ -29,16 +31,19 @@ class GUI implements DrawableInterface, TimeUpdatableInterface
     private array $sprites = [];
     private Animation $menuAnimation;
     private \SDL_Rect $menuPosition;
+    private Score $score;
 
-    public function __construct(TextureRepository $textureRepository, Camera $camera)
+    public function __construct(TextureRepository $textureRepository, Camera $camera, Score $score)
     {
         $this->camera = $camera;
         $this->textureRepository = $textureRepository;
+        $this->score = $score;
     }
 
     public function init(): void
     {
-        $this->text = new TextSprite($this->textureRepository["digits.png"], '0', new Vector2Float(400.0, 20.0));
+        $this->scoreText = new TextSprite($this->textureRepository["digits.png"], '0', new Vector2Float(360.0, 20.0));
+        $this->maxScoreText = new TextSprite($this->textureRepository["digits.png"], '0', new Vector2Float(20.0, 20.0));
         $this->sprites["title"] = new Sprite($this->textureRepository["title.png"], Game::WIDTH / 2, Game::HEIGHT / 2);
         $this->sprites["gameover"] = new Sprite($this->textureRepository["gameover.png"], Game::WIDTH / 2, Game::HEIGHT / 2);
 
@@ -75,10 +80,12 @@ class GUI implements DrawableInterface, TimeUpdatableInterface
 
     public function draw(Renderer $renderer): void
     {
-        $this->text->updateText((string)round($this->fps));
+        $this->scoreText->updateText((string)($this->score->getScore()));
+        $this->maxScoreText->updateText((string)($this->score->getMaxScore()));
         $camera = $renderer->getCamera();
         $renderer->setCamera($this->camera);
-        $this->text->draw($renderer);
+        $this->scoreText->draw($renderer);
+        $this->maxScoreText->draw($renderer);
 
         if ($this->state === self::MENU) {
             $this->sprites['title']->draw($renderer);

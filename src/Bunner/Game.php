@@ -34,6 +34,7 @@ class Game implements DrawableInterface, TimeUpdatableInterface, SoundEmitterInt
     private float $verticalScroll = 0.0;
     private EntityRegistry $entityRegistry;
     private GUI $gui;
+    private Score $score;
 
     public function __construct(
         TextureRepository $textureRepository,
@@ -41,7 +42,8 @@ class Game implements DrawableInterface, TimeUpdatableInterface, SoundEmitterInt
         InputActions $inputActions,
         Camera $camera,
         GUI $gui,
-        EntityRegistry $entityRegistry
+        EntityRegistry $entityRegistry,
+        Score $score
     ) {
         $this->soundManager = $soundManager;
         $this->rowsCollection = new RowsCollection($textureRepository, $soundManager, $entityRegistry);
@@ -51,6 +53,7 @@ class Game implements DrawableInterface, TimeUpdatableInterface, SoundEmitterInt
         $this->camera = $camera;
         $this->gui = $gui;
         $this->entityRegistry = $entityRegistry;
+        $this->score = $score;
     }
 
     public function update(float $deltaTime): void
@@ -60,7 +63,18 @@ class Game implements DrawableInterface, TimeUpdatableInterface, SoundEmitterInt
         $this->player?->update($deltaTime);
         $this->updateVerticalScroll($deltaTime);
         $this->camera->follow(new Vector2Int(self::WIDTH / 2, (int)$this->verticalScroll));
+        $this->updateScore();
         $this->gui->update($deltaTime);
+    }
+
+    protected function updateScore(): void
+    {
+        if (!$this->player) {
+            return;
+        }
+
+        $score = (470 - $this->player->getY());
+        $this->score->updateScore((int)$score);
     }
 
     protected function updateVerticalScroll(float $deltaTime): void
@@ -98,6 +112,7 @@ class Game implements DrawableInterface, TimeUpdatableInterface, SoundEmitterInt
     public function start(): void
     {
         $this->verticalScroll = self::HEIGHT / 2;
+        $this->score->resetScore();
     }
 
     public function isGameOver(): bool

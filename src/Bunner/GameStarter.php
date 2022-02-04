@@ -28,6 +28,7 @@ class GameStarter implements DrawableInterface, TimeUpdatableInterface
     private TextureRepository $textureRepository;
     private Camera $camera;
     private GUI\GUI $gui;
+    private Score $score;
 
     public function __construct(
         int $width,
@@ -43,13 +44,15 @@ class GameStarter implements DrawableInterface, TimeUpdatableInterface
         $this->inputActions = $inputActions;
         $this->textureRepository = $textureRepository;
         $this->camera = $camera;
-        $guiCamera = new Camera(new \SDL_Rect(0, 0, Game::WIDTH, Game::HEIGHT));
-        $this->gui = new GUI\GUI($textureRepository, $guiCamera);
         $this->init();
     }
 
     public function init(): void
     {
+        $this->score = new Score();
+        $this->score->loadMaxScore();
+        $guiCamera = new Camera(new \SDL_Rect(0, 0, Game::WIDTH, Game::HEIGHT));
+        $this->gui = new GUI\GUI($this->textureRepository, $guiCamera, $this->score);
         $this->startMenu();
     }
 
@@ -75,7 +78,7 @@ class GameStarter implements DrawableInterface, TimeUpdatableInterface
             if ($this->game->isGameOver()) {
                 $this->state = self::GAME_OVER;
                 $this->gui->changeStateToGameOver();
-                // save high score
+                $this->score->saveMaxScore();
             }
         }
 
@@ -110,7 +113,8 @@ class GameStarter implements DrawableInterface, TimeUpdatableInterface
             $this->inputActions,
             $this->camera,
             $this->gui,
-            $entityRegistry
+            $entityRegistry,
+            $this->score
         );
         if ($withPlayer) {
             $this->game->addPlayer();
