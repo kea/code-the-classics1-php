@@ -13,10 +13,10 @@ You need also two PHP extensions for [SDL_mixer](https://github.com/kea/php-sdl-
 
 - Boing! [Ready]
 - Cavern [Ready]
-- Infinite bunner [WIP]
-- Myriapod [TBD]
+- Infinite bunner [Ready 99%]
+- Myriapod [WIP]
 - Substitute Soccer [TBD]
-
+ 
 ## Installation
 
 To install the extension, you need sdl2, sdl2_image and sdl_mixer. You can install the package from your Linux distro or for mac users with brew:
