@@ -52,9 +52,8 @@ class SoundManager
      */
     public function setChannelVolume(float $volume, int $channel = -1): void
     {
-        $volume = max(.0, min(1.0, $volume));
-        // Mix_Volume add binding do sdl_mixer extension
-        // \Mix_Volume($channel, MIX_MAX_VOLUME * $volume);
+        $intVolume = (int)(MIX_MAX_VOLUME * max(.0, min(1.0, $volume)));
+        Mix_Volume($channel, $intVolume);
     }
 
     /**

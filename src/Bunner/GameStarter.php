@@ -100,8 +100,8 @@ class GameStarter implements DrawableInterface, TimeUpdatableInterface
     public function startGame(bool $withPlayer): void
     {
         //$this->soundManager->setMusicVolume($withPlayer ? 0.4 : 1);
-        $this->soundManager->setChannelVolume(0.02);
-        $this->soundManager->setMusicVolume(0.02);
+        $this->soundManager->setChannelVolume(0.4);
+        $this->soundManager->setMusicVolume(0.2);
         $this->soundManager->playMusic('theme.ogg');
 
         unset($this->game);
