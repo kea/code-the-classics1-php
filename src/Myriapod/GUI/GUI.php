@@ -6,6 +6,7 @@ use Myriapod\Game;
 use Myriapod\Score;
 use PhpGame\Animation;
 use PhpGame\Camera;
+use PhpGame\DigitsSprites;
 use PhpGame\DrawableInterface;
 use PhpGame\SDL\Renderer;
 use PhpGame\Sprite;
@@ -22,7 +23,7 @@ class GUI implements DrawableInterface, TimeUpdatableInterface
     private float $timeElapsed = 0;
     private int $fps =0;
     private int $tick = 0;
-    private TextSprite $scoreText;
+    private DigitsSprites $scoreText;
     private Camera $camera;
     private TextureRepository $textureRepository;
     private string $state = self::MENU;
@@ -41,7 +42,11 @@ class GUI implements DrawableInterface, TimeUpdatableInterface
 
     public function init(): void
     {
-//        $this->scoreText = new TextSprite($this->textureRepository["digits.png"], '0', new Vector2Float(360.0, 20.0));
+        $digits = [];
+        for ($i = 0; $i < 10; $i++) {
+            $digits[] = $this->textureRepository['digit'.$i.'.png'];
+        }
+        $this->scoreText = new DigitsSprites($digits, '0', new Vector2Float(360.0, 20.0));
         $this->sprites["title"] = new Sprite($this->textureRepository["title.png"], Game::WIDTH / 2, Game::HEIGHT / 2);
         $this->sprites["gameover"] = new Sprite($this->textureRepository["over.png"], Game::WIDTH / 2, Game::HEIGHT / 2);
 
