@@ -6,6 +6,7 @@ namespace Myriapod;
 
 use Myriapod\Bullet\Bullet;
 use Myriapod\Bullet\Bullets;
+use Myriapod\Enemy\Segments;
 use Myriapod\GUI\GUI;
 use Myriapod\Player\Pod;
 use PhpGame\DrawableInterface;
@@ -28,7 +29,8 @@ class Game implements DrawableInterface, TimeUpdatableInterface, SoundEmitterInt
     private int $wave = -1;
     private int $time = 0;
     private Bullets $bullets;
-    private Grid $grid;
+    private Rocks $grid;
+    private Segments $segments;
 
     public function __construct(
         private TextureRepository $textureRepository,
@@ -44,8 +46,25 @@ class Game implements DrawableInterface, TimeUpdatableInterface, SoundEmitterInt
         $this->soundManager = $soundManager;
     }
 
+    private function handleNewWave(): void
+    {
+        if (!$this->segments->isEmpty()) {
+            return;
+        }
+        $numRocks = $this->grid->count();
+        if ($numRocks < 31+$this->wave) {
+            $this->grid->addRockRandom();
+        } else {
+            $this->playSound("wave.ogg");
+            ++$this->wave;
+            $this->time = 0;
+            $this->segments->create($this->wave);
+        }
+    }
+
     public function update(float $deltaTime): void
     {
+        $this->handleNewWave();
         $updatableObjects = $this->getUpdatableObjects();
         foreach ($updatableObjects as $object) {
             $object->update($deltaTime);
@@ -86,13 +105,11 @@ class Game implements DrawableInterface, TimeUpdatableInterface, SoundEmitterInt
         $this->wave = -1;
         $this->time = 0;
 
-        $this->grid = new Grid($this->textureRepository, $this->wave);
-        $this->grid->addRock(10, 10);
-
+        $this->grid = new Rocks($this->textureRepository, $this->wave);
         $this->bullets->reset();
         $this->explosions = [];
-        $this->segments = [];
-        $this->flying_enemy = null;
+        $this->segments = new Segments();
+        $this->flyingEnemy = null;
     }
 
     public function isGameOver(): bool

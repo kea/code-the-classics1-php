@@ -68,9 +68,9 @@ class Rock implements DrawableInterface, TimeUpdatableInterface, SoundEmitterInt
         $this->timer += $deltaTime;
         $this->timerAnimation += $deltaTime;
 
-        if ($this->showHealth < $this->health && $this->timerAnimation > 0.333) {
+        if ($this->showHealth < $this->health && $this->timerAnimation > 0.033) {
             ++$this->showHealth;
-            $this->timerAnimation -= 0.333;
+            $this->timerAnimation -= 0.033;
         }
         if ($this->health === 5 && $this->timer > 200/60) {
             $this->damage(1);
