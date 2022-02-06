@@ -14,12 +14,17 @@ use PhpGame\Vector2Float;
 
 class Pod implements DrawableInterface, TimeUpdatableInterface, SoundEmitterInterface
 {
-    private const RELOAD_TIME = 0.166;
     use SoundEmitterTrait;
+    private const RELOAD_TIME = 0.166;
+    private const RESPAWN_TIME = 1.666;
+    private const INVULNERABILITY_TIME = 1.666;
+
     private Sprite $sprite;
     private int $lastDirectionFrame = 0;
     private int $lastFireFrame = 0;
     private float $fireTimer = 0;
+    private float $timer = 0;
+    private bool $alive = true;
 
     public function __construct(private TextureRepository $textureRepository, private InputActions $inputActions)
     {
@@ -33,20 +38,40 @@ class Pod implements DrawableInterface, TimeUpdatableInterface, SoundEmitterInte
 
     public function update(float $deltaTime): void
     {
-        /** @var Vector2Float $direction */
-        $direction = $this->inputActions->getValueForAction('Move');
+        $this->timer += $deltaTime;
+        if ($this->isAlive()) {
+            /** @var Vector2Float $direction */
+            $direction = $this->inputActions->getValueForAction('Move');
 
-        if (!$direction->isZero()) {
-            $position = $this->sprite->getPosition()->add($direction->multiplyFloat($deltaTime * 180));
-            $this->sprite->setPosition($position);
+            if (!$direction->isZero()) {
+                $position = $this->sprite->getPosition()->add($direction->multiplyFloat($deltaTime * 180));
+                $this->sprite->setPosition($position);
 
-            $frame = $this->getSpriteFrame($direction);
-            $this->lastDirectionFrame = $frame;
+                $frame = $this->getSpriteFrame($direction);
+                $this->lastDirectionFrame = $frame;
+            }
+
+            $this->updateFire($deltaTime, $this->inputActions->getValueForAction('Fire'));
+        } elseif ($this->timer > self::RESPAWN_TIME) {
+            $this->alive = true;
+            $this->timer = 0;
+            $this->sprite->setPosition(new Vector2Float(240.0, 768.0));
+            //game.clear_rocks_for_respawn(*self.pos)
         }
 
-        $this->updateFire($deltaTime, $this->inputActions->getValueForAction('Fire'));
+        $image = "blank.png";
+        $invulnerable = $this->timer <= self::INVULNERABILITY_TIME;
+        if ($this->alive && (!$invulnerable || $this->invulnerableFrame() === 0)) {
+            $image = 'player'.$this->lastDirectionFrame.$this->lastFireFrame.'.png';
+        }
+        $this->sprite->updateTexture($this->textureRepository[$image]);
+    }
 
-        $this->sprite->updateTexture($this->textureRepository['player'.$this->lastDirectionFrame.$this->lastFireFrame.'.png']);
+    private function invulnerableFrame(): int
+    {
+        $frame = floor($this->timer * 60);
+
+        return $frame % 2;
     }
 
     private function updateFire(float $deltaTime, bool $fire): void
@@ -64,7 +89,7 @@ class Pod implements DrawableInterface, TimeUpdatableInterface, SoundEmitterInte
 
     public function isAlive(): bool
     {
-        return true;
+        return $this->alive;
     }
 
     public function isAnimationPlaying(): bool
