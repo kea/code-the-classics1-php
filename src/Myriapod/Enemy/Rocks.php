@@ -2,9 +2,8 @@
 
 declare(strict_types=1);
 
-namespace Myriapod;
+namespace Myriapod\Enemy;
 
-use Myriapod\Enemy\Rock;
 use PhpGame\TextureRepository;
 use PhpGame\Vector2Float;
 

@@ -6,6 +6,7 @@ namespace Myriapod;
 
 use Myriapod\Bullet\Bullet;
 use Myriapod\Bullet\Bullets;
+use Myriapod\Enemy\Rocks;
 use Myriapod\Enemy\Segments;
 use Myriapod\GUI\GUI;
 use Myriapod\Player\Pod;
