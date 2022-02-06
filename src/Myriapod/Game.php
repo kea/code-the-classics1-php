@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Myriapod;
 
+use Myriapod\Bullet\Bullet;
+use Myriapod\Bullet\Bullets;
 use Myriapod\GUI\GUI;
 use Myriapod\Player\Pod;
 use PhpGame\DrawableInterface;
@@ -25,6 +27,7 @@ class Game implements DrawableInterface, TimeUpdatableInterface, SoundEmitterInt
     private ?Pod $player = null;
     private int $wave = -1;
     private int $time = 0;
+    private Bullets $bullets;
 
     public function __construct(
         private TextureRepository $textureRepository,
@@ -35,13 +38,20 @@ class Game implements DrawableInterface, TimeUpdatableInterface, SoundEmitterInt
         private Score $score
     ) {
         $this->entityRegistry = $entityRegistry;
+        $this->bullets = new Bullets();
         $this->start();
         $this->soundManager = $soundManager;
     }
 
     public function update(float $deltaTime): void
     {
-        $this->player?->update($deltaTime);
+        $updatableObjects = $this->getUpdatableObjects();
+        foreach ($updatableObjects as $object) {
+            $object->update($deltaTime);
+            if ($object instanceof Bullet && $object->getPosition()->y < 0) {
+                $this->bullets->remove($object);
+            }
+        }
         $this->gui->update($deltaTime);
     }
 
@@ -52,11 +62,7 @@ class Game implements DrawableInterface, TimeUpdatableInterface, SoundEmitterInt
             new \SDL_Rect(0, 0,self::WIDTH, self::HEIGHT)
         );
 
-        //all_objs = sum(self.grid, self.bullets + self.segments + self.explosions + [self.player])
-        $objectToDraw = [];
-        if ($this->player) {
-            $objectToDraw[] = $this->player;
-        }
+        $objectToDraw = $this->getUpdatableObjects();
 
         $sortScore = fn($obj) => (($obj instanceof Explosion) ? 10000 : 0) + $obj->getPosition()->y;
         $sort = fn($a, $b) => $sortScore($a) <=> $sortScore($b);
@@ -66,7 +72,6 @@ class Game implements DrawableInterface, TimeUpdatableInterface, SoundEmitterInt
         # Draw the flying enemy on top of everything else
         //all_objs.append(self.flying_enemy)
 
-        # Draw the objects
         foreach ($objectToDraw as $object) {
             $object->draw($renderer);
         }
@@ -84,7 +89,7 @@ class Game implements DrawableInterface, TimeUpdatableInterface, SoundEmitterInt
         # Rocks will be added to the grid later
 //        $this->grid = new Grid(); // [[None] * num_grid_cols for y in range(num_grid_rows)];
 
-        $this->bullets = [];
+        $this->bullets->reset();
         $this->explosions = [];
         $this->segments = [];
         $this->flying_enemy = null;
@@ -101,10 +106,24 @@ class Game implements DrawableInterface, TimeUpdatableInterface, SoundEmitterInt
 
     public function addPlayer(): void
     {
-        $this->player = new Pod($this->textureRepository, $this->inputActions);
+        $this->player = new Pod($this->textureRepository, $this->inputActions, $this->bullets);
         if ($this->soundManager) {
             $this->player->setSoundManager($this->soundManager);
         }
         $this->entityRegistry->add($this->player);
+    }
+
+    protected function getUpdatableObjects(): array
+    {
+        //all_objs = sum(self.grid, self.bullets + self.segments + self.explosions + [self.player])
+        $objectToDraw = [];
+        foreach ($this->bullets as $bullet) {
+            $objectToDraw[] = $bullet;
+        }
+        if ($this->player) {
+            $objectToDraw[] = $this->player;
+        }
+
+        return $objectToDraw;
     }
 }

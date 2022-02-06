@@ -2,6 +2,8 @@
 
 namespace Myriapod\Player;
 
+use Myriapod\Bullet\Bullet;
+use Myriapod\Bullet\Bullets;
 use PhpGame\DrawableInterface;
 use PhpGame\Input\InputActions;
 use PhpGame\SDL\Renderer;
@@ -26,7 +28,11 @@ class Pod implements DrawableInterface, TimeUpdatableInterface, SoundEmitterInte
     private float $timer = 0;
     private bool $alive = true;
 
-    public function __construct(private TextureRepository $textureRepository, private InputActions $inputActions)
+    public function __construct(
+        private TextureRepository $textureRepository,
+        private InputActions $inputActions,
+        private Bullets $bullets
+    )
     {
         $this->sprite = new Sprite($textureRepository['player00.png'], 240, 768);
     }
@@ -79,8 +85,9 @@ class Pod implements DrawableInterface, TimeUpdatableInterface, SoundEmitterInte
         $this->fireTimer -= $deltaTime;
         if ($this->fireTimer < 0 && ($this->lastFireFrame > 0 || $fire)) {
             if ($this->lastFireFrame === 0) {
-                $this->playSound("laser");
-                //    game.bullets.append(Bullet((self.x, self.y - 8)))
+                $this->playSound("laser0.ogg");
+                $laserPos = (clone $this->sprite->getPosition())->sub(new Vector2Float(.0, -8.0));
+                $this->bullets->append(new Bullet($this->textureRepository, $laserPos));
             }
             $this->lastFireFrame = ($this->lastFireFrame + 1) % 3;
             $this->fireTimer = self::RELOAD_TIME;
@@ -114,5 +121,10 @@ class Pod implements DrawableInterface, TimeUpdatableInterface, SoundEmitterInte
         }
 
         return $frame;
+    }
+
+    public function getPosition(): Vector2Float
+    {
+        return $this->sprite->getPosition();
     }
 }
