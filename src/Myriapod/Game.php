@@ -28,6 +28,7 @@ class Game implements DrawableInterface, TimeUpdatableInterface, SoundEmitterInt
     private int $wave = -1;
     private int $time = 0;
     private Bullets $bullets;
+    private Grid $grid;
 
     public function __construct(
         private TextureRepository $textureRepository,
@@ -85,9 +86,8 @@ class Game implements DrawableInterface, TimeUpdatableInterface, SoundEmitterInt
         $this->wave = -1;
         $this->time = 0;
 
-        # Create empty grid of 14 columns, 25 rows, each element intially just containing the value 'None'
-        # Rocks will be added to the grid later
-//        $this->grid = new Grid(); // [[None] * num_grid_cols for y in range(num_grid_rows)];
+        $this->grid = new Grid($this->textureRepository, $this->wave);
+        $this->grid->addRock(10, 10);
 
         $this->bullets->reset();
         $this->explosions = [];
@@ -119,6 +119,9 @@ class Game implements DrawableInterface, TimeUpdatableInterface, SoundEmitterInt
         $objectToDraw = [];
         foreach ($this->bullets as $bullet) {
             $objectToDraw[] = $bullet;
+        }
+        foreach ($this->grid as $obj) {
+            $objectToDraw[] = $obj;
         }
         if ($this->player) {
             $objectToDraw[] = $this->player;
