@@ -4,6 +4,9 @@ namespace PhpGame;
 
 use PHPUnit\Framework\TestCase;
 
+/**
+ * @covers Anchor
+ */
 class AnchorTest extends TestCase
 {
     public function positionsProvider()
