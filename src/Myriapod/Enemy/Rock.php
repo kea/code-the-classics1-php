@@ -94,6 +94,11 @@ class Rock implements DrawableInterface, TimeUpdatableInterface, SoundEmitterInt
         return $this->sprite->getPosition();
     }
 
+    public function getCollider(): \SDL_Rect
+    {
+        return $this->sprite->getBoundedRect();
+    }
+
     /** :D */
     public function isAlive(): bool
     {

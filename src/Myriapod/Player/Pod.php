@@ -4,6 +4,7 @@ namespace Myriapod\Player;
 
 use Myriapod\Bullet\Bullet;
 use Myriapod\Bullet\Bullets;
+use Myriapod\Enemy\Rocks;
 use Myriapod\Enemy\Segments;
 use Myriapod\Explosion\Explosion;
 use Myriapod\Explosion\Explosions;
@@ -37,7 +38,8 @@ class Pod implements DrawableInterface, TimeUpdatableInterface, SoundEmitterInte
         private TextureRepository $textureRepository,
         private InputActions $inputActions,
         private Bullets $bullets,
-        private Explosions $explosions
+        private Explosions $explosions,
+        private Rocks $rocks
     )
     {
         $this->sprite = new Sprite($textureRepository['player00.png'], 240, 768);
@@ -46,6 +48,8 @@ class Pod implements DrawableInterface, TimeUpdatableInterface, SoundEmitterInte
     public function draw(Renderer $renderer): void
     {
         $this->sprite->draw($renderer);
+        $renderer->setDrawColor([90, 96, 93, 0]);
+        $renderer->drawRectangle($this->getCollider());
     }
 
     public function update(float $deltaTime): void
@@ -54,14 +58,16 @@ class Pod implements DrawableInterface, TimeUpdatableInterface, SoundEmitterInte
         if ($this->isAlive()) {
             /** @var Vector2Float $direction */
             $direction = $this->inputActions->getValueForAction('Move');
-
             if (!$direction->isZero()) {
                 // get in account diagonal moves
                 //self.move(dx, 0, 3 - abs(dy))
                 //self.move(0, dy, 3 - abs(dx))
-                $position = $this->sprite->getPosition()->add($direction->multiplyFloat($deltaTime * 180));
+                $position = clone $this->sprite->getPosition();
+                $position->add($direction->multiplyFloat($deltaTime * 180));
                 $this->boundToAllowedPositions($position);
-                $this->sprite->setPosition($position);
+                if (!$this->hasRockCollision($position)) {
+                    $this->sprite->setPosition($position);
+                }
 
                 $frame = $this->getSpriteFrame($direction);
                 $this->lastDirectionFrame = $frame;
@@ -83,10 +89,11 @@ class Pod implements DrawableInterface, TimeUpdatableInterface, SoundEmitterInte
         $this->sprite->updateTexture($this->textureRepository[$image]);
     }
 
-    public function checkCollision(Segments $enemies): void
+    public function checkEnemiesCollision(Segments $enemies): void
     {
+        $collider = $this->getCollider();
         foreach ($enemies as $enemy) {
-            if (($this->timer > self::INVULNERABILITY_TIME) && $enemy->collideWith($this->sprite->getBoundedRect())) {
+            if (($this->timer > self::INVULNERABILITY_TIME) && $enemy->collideWith($collider)) {
                 $this->playSound("player_explode0.ogg");
                 $this->explosions->addExplosion($this->getPosition(), Explosion::POD);
                 $this->alive = false;
@@ -174,5 +181,24 @@ class Pod implements DrawableInterface, TimeUpdatableInterface, SoundEmitterInte
         if ($position->y > Game::HEIGHT - 16) {
             $position->y = Game::HEIGHT - 16;
         }
+    }
+
+    private function hasRockCollision(Vector2Float $position): bool
+    {
+        $collider = $this->getCollider($position);
+        foreach ($this->rocks as $rock) {
+            if ($collider->HasIntersection($rock->getCollider())) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private function getCollider(?Vector2Float $position = null): \SDL_Rect
+    {
+        $position ??= $this->sprite->getPosition();
+
+        return new \SDL_Rect((int)$position->x - 15, (int)$position->y - 15, 30, 30);
     }
 }

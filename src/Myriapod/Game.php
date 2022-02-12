@@ -47,6 +47,7 @@ class Game implements DrawableInterface, TimeUpdatableInterface, SoundEmitterInt
         $this->bullets = new Bullets();
         $this->explosions = new Explosions($this->textureRepository);
         $this->soundManager = $soundManager;
+        $this->rocks = new Rocks($this->textureRepository, $this->wave, $this->soundManager, $this->explosions);
         $this->start();
     }
 
@@ -78,7 +79,7 @@ class Game implements DrawableInterface, TimeUpdatableInterface, SoundEmitterInt
         $this->bullets->cleanUp();
         $this->explosions->cleanUp();
         $this->segments->cleanUp();
-        $this->player?->checkCollision($this->segments);
+        $this->player?->checkEnemiesCollision($this->segments);
         $this->bullets->checkCollision($this->rocks);
 
         $this->gui->update($deltaTime);
@@ -114,7 +115,6 @@ class Game implements DrawableInterface, TimeUpdatableInterface, SoundEmitterInt
         $this->wave = -1;
         $this->time = 0;
 
-        $this->rocks = new Rocks($this->textureRepository, $this->wave, $this->soundManager, $this->explosions);
         $this->segments = new Segments($this->textureRepository, $this->rocks);
         $this->flyingEnemy = null;
     }
@@ -135,7 +135,7 @@ class Game implements DrawableInterface, TimeUpdatableInterface, SoundEmitterInt
 
     public function addPlayer(): void
     {
-        $this->player = new Pod($this->textureRepository, $this->inputActions, $this->bullets, $this->explosions);
+        $this->player = new Pod($this->textureRepository, $this->inputActions, $this->bullets, $this->explosions, $this->rocks);
         if ($this->soundManager) {
             $this->player->setSoundManager($this->soundManager);
         }

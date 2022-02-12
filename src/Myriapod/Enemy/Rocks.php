@@ -49,6 +49,9 @@ class Rocks implements \IteratorAggregate
         $this->rocks[] = $object;
     }
 
+    /**
+     * @return \ArrayIterator<int, Rock>
+     */
     public function getIterator(): \ArrayIterator
     {
         return new \ArrayIterator($this->rocks);
