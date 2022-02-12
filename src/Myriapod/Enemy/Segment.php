@@ -224,9 +224,8 @@ class Segment implements DrawableInterface, TimeUpdatableInterface
         $newCellX = $this->cellX + self::DX[$this->outEdge];
         $newCellY = $this->cellY + self::DY[$this->outEdge];
 
-        //Destroy any rock that might be in the new cell
         if ($newCellX >= 0 && $newCellX < Rocks::HEIGHT) {
-            $this->rocks->damage($newCellX, $newCellY, 5);
+            $this->rocks->damage($newCellX, $newCellY, 5, false);
         }
 
         $this->segmentsPosition->occupy($newCellX, $newCellY);

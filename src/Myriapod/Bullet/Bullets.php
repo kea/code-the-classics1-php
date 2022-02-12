@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Myriapod\Bullet;
 
+use Myriapod\Enemy\Rocks;
+
 class Bullets implements \IteratorAggregate
 {
     /** @var array<int, Bullet> */
@@ -33,5 +35,20 @@ class Bullets implements \IteratorAggregate
     public function cleanUp(): void
     {
         $this->bullets = array_filter($this->bullets, static fn($b) => $b->getPosition()->y > 0);
+    }
+
+    public function checkCollision(Rocks $rocks):void
+    {
+        foreach ($this->bullets as $bullet) {
+            $gridCell = $this->pos2cell($bullet->getPosition()->x, $bullet->getPosition()->y);
+            if ($rocks->damage($gridCell[0], $gridCell[1], 1, true)) {
+                $this->remove($bullet);
+            }
+        }
+    }
+
+    private function pos2cell(int|float $x, int|float $y): array
+    {
+        return [intdiv((int)$x - 16, 32), intdiv((int)$y, 32)];
     }
 }

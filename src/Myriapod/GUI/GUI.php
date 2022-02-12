@@ -3,6 +3,7 @@
 namespace Myriapod\GUI;
 
 use Myriapod\Game;
+use Myriapod\Player\Pod;
 use Myriapod\Score;
 use PhpGame\Animation;
 use PhpGame\Camera;
@@ -32,6 +33,7 @@ class GUI implements DrawableInterface, TimeUpdatableInterface
     private Animation $menuAnimation;
     private \SDL_Rect $menuPosition;
     private Score $score;
+    private ?Pod $player;
 
     public function __construct(TextureRepository $textureRepository, Camera $camera, Score $score)
     {
@@ -97,5 +99,10 @@ class GUI implements DrawableInterface, TimeUpdatableInterface
     public function changeStateToMenu(): void
     {
         $this->state = self::MENU;
+    }
+
+    public function addPlayer(Pod $player): void
+    {
+        $this->player = $player;
     }
 }

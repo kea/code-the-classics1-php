@@ -66,16 +66,18 @@ class Rocks implements \IteratorAggregate
         return !empty($this->cells[$y][$x]);
     }
 
-    public function damage(int $x, int $y, int $damage): void
+    public function damage(int $x, int $y, int $damage, bool $isBullet): bool
     {
         if (!$this->isOccupied($x, $y)) {
-            return;
+            return false;
         }
 
-        $this->cells[$y][$x]->damage($damage);
+        $this->cells[$y][$x]->damage($damage, $isBullet);
         if (!$this->cells[$y][$x]->isAlive()) {
             $rock = $this->cells[$y][$x];
             unset($this->rocks[array_search($rock, $this->rocks, true)], $this->cells[$y][$x], $rock);
         }
+
+        return true;
     }
 }

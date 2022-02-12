@@ -112,6 +112,7 @@ class GameStarter implements DrawableInterface, TimeUpdatableInterface
         );
         if ($withPlayer) {
             $this->game->addPlayer();
+            $this->gui->addPlayer($this->game->getPlayer() ?? throw new \RuntimeException("No player?!?!?"));
         }
         $this->game->start();
     }

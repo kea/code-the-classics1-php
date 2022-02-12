@@ -75,6 +75,7 @@ class Game implements DrawableInterface, TimeUpdatableInterface, SoundEmitterInt
         //$this->explosions->cleanUp(); // timer == 31
         $this->segments->cleanUp();
         $this->player?->checkCollision($this->segments);
+        $this->bullets->checkCollision($this->rocks);
 
         $this->gui->update($deltaTime);
     }
@@ -123,6 +124,11 @@ class Game implements DrawableInterface, TimeUpdatableInterface, SoundEmitterInt
         }
 
         return $this->player->getLives() === 0 && !$this->player->isAnimationPlaying();
+    }
+
+    public function getPlayer(): ?Pod
+    {
+        return $this->player;
     }
 
     public function addPlayer(): void
