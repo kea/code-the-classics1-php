@@ -4,6 +4,8 @@ namespace Myriapod\Player;
 
 use Myriapod\Bullet\Bullet;
 use Myriapod\Bullet\Bullets;
+use Myriapod\Enemy\Segments;
+use Myriapod\Game;
 use PhpGame\DrawableInterface;
 use PhpGame\Input\InputActions;
 use PhpGame\SDL\Renderer;
@@ -27,6 +29,7 @@ class Pod implements DrawableInterface, TimeUpdatableInterface, SoundEmitterInte
     private float $fireTimer = 0;
     private float $timer = 0;
     private bool $alive = true;
+    private int $lives = 3;
 
     public function __construct(
         private TextureRepository $textureRepository,
@@ -50,7 +53,11 @@ class Pod implements DrawableInterface, TimeUpdatableInterface, SoundEmitterInte
             $direction = $this->inputActions->getValueForAction('Move');
 
             if (!$direction->isZero()) {
+                // get in account diagonal moves
+                //self.move(dx, 0, 3 - abs(dy))
+                //self.move(0, dy, 3 - abs(dx))
                 $position = $this->sprite->getPosition()->add($direction->multiplyFloat($deltaTime * 180));
+                $this->boundToAllowedPositions($position);
                 $this->sprite->setPosition($position);
 
                 $frame = $this->getSpriteFrame($direction);
@@ -71,6 +78,19 @@ class Pod implements DrawableInterface, TimeUpdatableInterface, SoundEmitterInte
             $image = 'player'.$this->lastDirectionFrame.$this->lastFireFrame.'.png';
         }
         $this->sprite->updateTexture($this->textureRepository[$image]);
+    }
+
+    public function checkCollision(Segments $enemies): void
+    {
+        foreach ($enemies as $enemy) {
+            if ($enemy->collideWith($this->sprite->getBoundedRect()) && ($this->timer > self::INVULNERABILITY_TIME)) {
+                $this->playSound("player_explode0.ogg");
+                //game.explosions.append(Explosion(self.pos, 1))
+                $this->alive = false;
+                $this->timer = 0;
+                --$this->lives;
+            }
+        }
     }
 
     private function invulnerableFrame(): int
@@ -97,6 +117,11 @@ class Pod implements DrawableInterface, TimeUpdatableInterface, SoundEmitterInte
     public function isAlive(): bool
     {
         return $this->alive;
+    }
+
+    public function getLives(): int
+    {
+        return $this->lives;
     }
 
     public function isAnimationPlaying(): bool
@@ -126,5 +151,25 @@ class Pod implements DrawableInterface, TimeUpdatableInterface, SoundEmitterInte
     public function getPosition(): Vector2Float
     {
         return $this->sprite->getPosition();
+    }
+
+    /**
+     * @param Vector2Float $position
+     * @return void
+     */
+    private function boundToAllowedPositions(Vector2Float $position): void
+    {
+        if ($position->x < 40) {
+            $position->x = 40;
+        }
+        if ($position->x > Game::WIDTH - 40) {
+            $position->x = Game::WIDTH - 40;
+        }
+        if ($position->y < 592) {
+            $position->y = 592;
+        }
+        if ($position->y > Game::HEIGHT - 16) {
+            $position->y = Game::HEIGHT - 16;
+        }
     }
 }

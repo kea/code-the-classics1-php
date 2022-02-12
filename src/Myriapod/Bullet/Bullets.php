@@ -29,4 +29,9 @@ class Bullets implements \IteratorAggregate
     {
         $this->bullets = array_filter($this->bullets, static fn($b) => $b !== $object);
     }
+
+    public function cleanUp(): void
+    {
+        $this->bullets = array_filter($this->bullets, static fn($b) => $b->getPosition()->y > 0);
+    }
 }

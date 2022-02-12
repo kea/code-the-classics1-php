@@ -31,8 +31,8 @@ class Rock implements DrawableInterface, TimeUpdatableInterface, SoundEmitterInt
         private int $wave,
         bool $totem
     ) {
-        $anchor = Anchor::CenterBottom(); // (24, 60)
-        $this->sprite = new Sprite($textureRepository['blank.png'], $position->x, $position->y, $anchor);
+        $anchor = Anchor::LeftTop();
+        $this->sprite = new Sprite($textureRepository['blank.png'], $position->x + 16, $position->y, $anchor);
 
         $this->type = random_int(0, 3);
 
@@ -49,12 +49,12 @@ class Rock implements DrawableInterface, TimeUpdatableInterface, SoundEmitterInt
     public function damage(int $amount, bool $damagedByBullet = false): bool
     {
         if ($damagedByBullet && $this->health === 5) {
-            $this->playSound("totem_destroy.ogg");
+            $this->playSound("totem_destroy0.ogg");
 //            game.score += 100
         } elseif ($amount > $this->health - 1) {
-            $this->playSound("rock_destroy.ogg");
+            $this->playSound("rock_destroy0.ogg");
         } else {
-            $this->playSound("hit", 4);
+            $this->playSound("hit".random_int(0, 3).'ogg');
         }
 //        game.explosions.append(Explosion($this->pos, 2 * ($this->health == 5)))
         $this->health -= $amount;
@@ -89,5 +89,11 @@ class Rock implements DrawableInterface, TimeUpdatableInterface, SoundEmitterInt
     public function getPosition(): Vector2Float
     {
         return $this->sprite->getPosition();
+    }
+
+    /** :D */
+    public function isAlive(): bool
+    {
+        return $this->health > 0;
     }
 }

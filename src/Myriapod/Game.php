@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Myriapod;
 
-use Myriapod\Bullet\Bullet;
 use Myriapod\Bullet\Bullets;
 use Myriapod\Enemy\Rocks;
 use Myriapod\Enemy\Segments;
@@ -30,7 +29,7 @@ class Game implements DrawableInterface, TimeUpdatableInterface, SoundEmitterInt
     private int $wave = -1;
     private int $time = 0;
     private Bullets $bullets;
-    private Rocks $grid;
+    private Rocks $rocks;
     private Segments $segments;
 
     public function __construct(
@@ -43,8 +42,8 @@ class Game implements DrawableInterface, TimeUpdatableInterface, SoundEmitterInt
     ) {
         $this->entityRegistry = $entityRegistry;
         $this->bullets = new Bullets();
-        $this->start();
         $this->soundManager = $soundManager;
+        $this->start();
     }
 
     private function handleNewWave(): void
@@ -52,9 +51,9 @@ class Game implements DrawableInterface, TimeUpdatableInterface, SoundEmitterInt
         if (!$this->segments->isEmpty()) {
             return;
         }
-        $numRocks = $this->grid->count();
+        $numRocks = $this->rocks->count();
         if ($numRocks < 31+$this->wave) {
-            $this->grid->addRockRandom();
+            $this->rocks->addRockRandom();
         } else {
             $this->playSound("wave.ogg");
             ++$this->wave;
@@ -66,13 +65,17 @@ class Game implements DrawableInterface, TimeUpdatableInterface, SoundEmitterInt
     public function update(float $deltaTime): void
     {
         $this->handleNewWave();
+
         $updatableObjects = $this->getUpdatableObjects();
         foreach ($updatableObjects as $object) {
             $object->update($deltaTime);
-            if ($object instanceof Bullet && $object->getPosition()->y < 0) {
-                $this->bullets->remove($object);
-            }
         }
+
+        $this->bullets->cleanUp();
+        //$this->explosions->cleanUp(); // timer == 31
+        $this->segments->cleanUp();
+        $this->player?->checkCollision($this->segments);
+
         $this->gui->update($deltaTime);
     }
 
@@ -85,8 +88,8 @@ class Game implements DrawableInterface, TimeUpdatableInterface, SoundEmitterInt
 
         $objectToDraw = $this->getUpdatableObjects();
 
-        $sortScore = fn($obj) => (($obj instanceof Explosion) ? 10000 : 0) + $obj->getPosition()->y;
-        $sort = fn($a, $b) => $sortScore($a) <=> $sortScore($b);
+        $sortScore = static fn($obj) => (($obj instanceof Explosion) ? 10000 : 0) + $obj->getPosition()->y;
+        $sort = static fn($a, $b) => $sortScore($a) <=> $sortScore($b);
 
         usort($objectToDraw, $sort);
 
@@ -106,10 +109,10 @@ class Game implements DrawableInterface, TimeUpdatableInterface, SoundEmitterInt
         $this->wave = -1;
         $this->time = 0;
 
-        $this->grid = new Rocks($this->textureRepository, $this->wave);
+        $this->rocks = new Rocks($this->textureRepository, $this->wave, $this->soundManager);
         $this->bullets->reset();
         $this->explosions = [];
-        $this->segments = new Segments();
+        $this->segments = new Segments($this->textureRepository, $this->rocks);
         $this->flyingEnemy = null;
     }
 
@@ -119,7 +122,7 @@ class Game implements DrawableInterface, TimeUpdatableInterface, SoundEmitterInt
             return false;
         }
 
-        return !$this->player->isAlive() && !$this->player->isAnimationPlaying();
+        return $this->player->getLives() === 0 && !$this->player->isAnimationPlaying();
     }
 
     public function addPlayer(): void
@@ -138,7 +141,10 @@ class Game implements DrawableInterface, TimeUpdatableInterface, SoundEmitterInt
         foreach ($this->bullets as $bullet) {
             $objectToDraw[] = $bullet;
         }
-        foreach ($this->grid as $obj) {
+        foreach ($this->rocks as $obj) {
+            $objectToDraw[] = $obj;
+        }
+        foreach ($this->segments as $obj) {
             $objectToDraw[] = $obj;
         }
         if ($this->player) {
