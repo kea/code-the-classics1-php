@@ -6,7 +6,7 @@ use PhpGame\SDL\Texture;
 
 class Animation implements TimeUpdatableInterface
 {
-    /** @var array<string|Texture> */
+    /** @var array<int, string|Texture> */
     private array $images;
     private int $framePerSecond;
     private float $elapsedTime = 0;
@@ -16,7 +16,7 @@ class Animation implements TimeUpdatableInterface
 
     /**
      * Animation constructor.
-     * @param array<string> $images
+     * @param array<int, string|Texture> $images
      * @param int           $framePerSecond
      * @param bool          $loop
      */
@@ -52,7 +52,7 @@ class Animation implements TimeUpdatableInterface
         return $this->isRunning;
     }
 
-    public function getCurrentFrame() //:string|Texture
+    public function getCurrentFrame(): string|Texture
     {
         return $this->images[$this->getCurrentFrameNumber()];
     }

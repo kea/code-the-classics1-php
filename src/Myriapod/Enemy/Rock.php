@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Myriapod\Enemy;
 
+use Myriapod\Explosion\Explosion;
+use Myriapod\Explosion\Explosions;
 use PhpGame\Anchor;
 use PhpGame\DrawableInterface;
 use PhpGame\SDL\Renderer;
@@ -29,7 +31,8 @@ class Rock implements DrawableInterface, TimeUpdatableInterface, SoundEmitterInt
         private TextureRepository $textureRepository,
         Vector2Float $position,
         private int $wave,
-        bool $totem
+        bool $totem,
+        private Explosions $explosions
     ) {
         $anchor = Anchor::LeftTop();
         $this->sprite = new Sprite($textureRepository['blank.png'], $position->x + 16, $position->y, $anchor);
@@ -54,9 +57,9 @@ class Rock implements DrawableInterface, TimeUpdatableInterface, SoundEmitterInt
         } elseif ($amount > $this->health - 1) {
             $this->playSound("rock_destroy0.ogg");
         } else {
-            $this->playSound("hit".random_int(0, 3).'ogg');
+            $this->playSound("hit".random_int(0, 3).'.ogg');
         }
-//        game.explosions.append(Explosion($this->pos, 2 * ($this->health == 5)))
+        $this->explosions->addExplosion($this->getPosition(), ($this->health === 5) ? Explosion::TOTEM : Explosion::DEFAULT);
         $this->health -= $amount;
         $this->showHealth = $this->health;
 

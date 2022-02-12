@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Myriapod\Enemy;
 
+use Myriapod\Explosion\Explosions;
 use PhpGame\SoundManager;
 use PhpGame\TextureRepository;
 use PhpGame\Vector2Float;
@@ -17,14 +18,24 @@ class Rocks implements \IteratorAggregate
     /** @var array<int, Rock> */
     private array $rocks = [];
 
-    public function __construct(private TextureRepository $textureRepository, private int $wave, private SoundManager $soundManager)
-    {
+    public function __construct(
+        private TextureRepository $textureRepository,
+        private int $wave,
+        private SoundManager $soundManager,
+        private Explosions $explosions
+    ) {
         $this->cells = array_fill(0, self::HEIGHT, array_fill(0, self::WIDTH, null));
     }
 
     public function addRock(int $x, int $y): void
     {
-        $rock = new Rock($this->textureRepository, new Vector2Float($x * 32, $y * 32), $this->wave, false);
+        $rock = new Rock(
+            $this->textureRepository,
+            new Vector2Float($x * 32, $y * 32),
+            $this->wave,
+            false,
+            $this->explosions
+        );
         $rock->setSoundManager($this->soundManager);
         $this->add($rock, $x, $y);
     }

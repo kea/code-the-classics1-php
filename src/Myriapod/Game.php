@@ -7,6 +7,8 @@ namespace Myriapod;
 use Myriapod\Bullet\Bullets;
 use Myriapod\Enemy\Rocks;
 use Myriapod\Enemy\Segments;
+use Myriapod\Explosion\Explosion;
+use Myriapod\Explosion\Explosions;
 use Myriapod\GUI\GUI;
 use Myriapod\Player\Pod;
 use PhpGame\DrawableInterface;
@@ -31,6 +33,7 @@ class Game implements DrawableInterface, TimeUpdatableInterface, SoundEmitterInt
     private Bullets $bullets;
     private Rocks $rocks;
     private Segments $segments;
+    private Explosions $explosions;
 
     public function __construct(
         private TextureRepository $textureRepository,
@@ -72,7 +75,7 @@ class Game implements DrawableInterface, TimeUpdatableInterface, SoundEmitterInt
         }
 
         $this->bullets->cleanUp();
-        //$this->explosions->cleanUp(); // timer == 31
+        $this->explosions->cleanUp();
         $this->segments->cleanUp();
         $this->player?->checkCollision($this->segments);
         $this->bullets->checkCollision($this->rocks);
@@ -110,9 +113,8 @@ class Game implements DrawableInterface, TimeUpdatableInterface, SoundEmitterInt
         $this->wave = -1;
         $this->time = 0;
 
-        $this->rocks = new Rocks($this->textureRepository, $this->wave, $this->soundManager);
-        $this->bullets->reset();
-        $this->explosions = [];
+        $this->explosions = new Explosions($this->textureRepository);
+        $this->rocks = new Rocks($this->textureRepository, $this->wave, $this->soundManager, $this->explosions);
         $this->segments = new Segments($this->textureRepository, $this->rocks);
         $this->flyingEnemy = null;
     }
@@ -142,7 +144,6 @@ class Game implements DrawableInterface, TimeUpdatableInterface, SoundEmitterInt
 
     protected function getUpdatableObjects(): array
     {
-        //all_objs = sum(self.grid, self.bullets + self.segments + self.explosions + [self.player])
         $objectToDraw = [];
         foreach ($this->bullets as $bullet) {
             $objectToDraw[] = $bullet;
@@ -151,6 +152,9 @@ class Game implements DrawableInterface, TimeUpdatableInterface, SoundEmitterInt
             $objectToDraw[] = $obj;
         }
         foreach ($this->segments as $obj) {
+            $objectToDraw[] = $obj;
+        }
+        foreach ($this->explosions as $obj) {
             $objectToDraw[] = $obj;
         }
         if ($this->player) {

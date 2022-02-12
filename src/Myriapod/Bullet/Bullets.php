@@ -14,7 +14,6 @@ class Bullets implements \IteratorAggregate
     public function append(Bullet $bullet): void
     {
         $this->bullets[] = $bullet;
-        echo "B :".count($this->bullets)."\n";
     }
 
     public function getIterator(): \ArrayIterator
