@@ -12,7 +12,8 @@ use PhpGame\Vector2Float;
 
 class Explosion extends Animation implements DrawableInterface
 {
-    public const DEFAULT = 0;
+    public const ROCK = 0;
+    public const POD = 1;
     public const TOTEM = 2;
     protected Sprite $sprite;
 

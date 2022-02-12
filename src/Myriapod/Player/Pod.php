@@ -5,6 +5,8 @@ namespace Myriapod\Player;
 use Myriapod\Bullet\Bullet;
 use Myriapod\Bullet\Bullets;
 use Myriapod\Enemy\Segments;
+use Myriapod\Explosion\Explosion;
+use Myriapod\Explosion\Explosions;
 use Myriapod\Game;
 use PhpGame\DrawableInterface;
 use PhpGame\Input\InputActions;
@@ -34,7 +36,8 @@ class Pod implements DrawableInterface, TimeUpdatableInterface, SoundEmitterInte
     public function __construct(
         private TextureRepository $textureRepository,
         private InputActions $inputActions,
-        private Bullets $bullets
+        private Bullets $bullets,
+        private Explosions $explosions
     )
     {
         $this->sprite = new Sprite($textureRepository['player00.png'], 240, 768);
@@ -83,9 +86,9 @@ class Pod implements DrawableInterface, TimeUpdatableInterface, SoundEmitterInte
     public function checkCollision(Segments $enemies): void
     {
         foreach ($enemies as $enemy) {
-            if ($enemy->collideWith($this->sprite->getBoundedRect()) && ($this->timer > self::INVULNERABILITY_TIME)) {
+            if (($this->timer > self::INVULNERABILITY_TIME) && $enemy->collideWith($this->sprite->getBoundedRect())) {
                 $this->playSound("player_explode0.ogg");
-                //game.explosions.append(Explosion(self.pos, 1))
+                $this->explosions->addExplosion($this->getPosition(), Explosion::POD);
                 $this->alive = false;
                 $this->timer = 0;
                 --$this->lives;

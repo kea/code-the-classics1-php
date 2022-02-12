@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Myriapod\Explosion;
 
 use PhpGame\TextureRepository;
+use PhpGame\Vector2Float;
 
 class Explosions implements \IteratorAggregate
 {
@@ -30,7 +31,7 @@ class Explosions implements \IteratorAggregate
         $this->explosions = array_filter($this->explosions, static fn($b) => $b->isRunning());
     }
 
-    public function addExplosion(\PhpGame\Vector2Float $position, int $type): void
+    public function addExplosion(Vector2Float $position, int $type): void
     {
         $this->append(new Explosion($this->textureRepository, $position, $type));
     }
