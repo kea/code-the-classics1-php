@@ -5,6 +5,7 @@ namespace Myriapod\GUI;
 use Myriapod\Game;
 use Myriapod\Player\Pod;
 use Myriapod\Score;
+use PhpGame\Anchor;
 use PhpGame\Animation;
 use PhpGame\Camera;
 use PhpGame\DigitsSprites;
@@ -51,6 +52,9 @@ class GUI implements DrawableInterface, TimeUpdatableInterface
         $this->scoreText = new DigitsSprites($digits, '0', new Vector2Float(360.0, 20.0));
         $this->sprites["title"] = new Sprite($this->textureRepository["title.png"], Game::WIDTH / 2, Game::HEIGHT / 2);
         $this->sprites["gameover"] = new Sprite($this->textureRepository["over.png"], Game::WIDTH / 2, Game::HEIGHT / 2);
+        $this->sprites["life1"] = new Sprite($this->textureRepository["life.png"], 8, 4, Anchor::LeftTop());
+        $this->sprites["life2"] = new Sprite($this->textureRepository["life.png"], 48, 4, Anchor::LeftTop());
+        $this->sprites["life3"] = new Sprite($this->textureRepository["life.png"], 88, 4, Anchor::LeftTop());
 
         $images = [];
         for ($i = 0; $i <= 13; $i++) {
@@ -83,6 +87,7 @@ class GUI implements DrawableInterface, TimeUpdatableInterface
         if ($this->state === self::PLAY) {
             $this->scoreText->updateText((string)($this->score->get()));
             $this->scoreText->draw($renderer);
+            $this->drawLives($renderer);
         }
     }
 
@@ -104,5 +109,16 @@ class GUI implements DrawableInterface, TimeUpdatableInterface
     public function addPlayer(Pod $player): void
     {
         $this->player = $player;
+    }
+
+    private function drawLives(Renderer $renderer): void
+    {
+        if ($this->player === null) {
+            return;
+        }
+
+        for ($i = 1; $i <= $this->player->getLives(); ++$i) {
+            $this->sprites['life'.$i]->draw($renderer);
+        }
     }
 }
