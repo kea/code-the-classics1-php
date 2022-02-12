@@ -94,4 +94,20 @@ class Rocks implements \IteratorAggregate
 
         return true;
     }
+
+    public function clearRocksForRespawn(\SDL_Rect $collider): void
+    {
+        foreach ($this->rocks as $key => $rock) {
+            if ($collider->HasIntersection($rock->getCollider())) {
+                unset($this->rocks[$key]);
+                foreach ($this->cells as $y => $row) {
+                    $x = array_search($rock, $row, true);
+                    if ($x !== false) {
+                        unset($this->cells[$y][$x]);
+                        return;
+                    }
+                }
+            }
+        }
+    }
 }

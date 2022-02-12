@@ -78,7 +78,7 @@ class Pod implements DrawableInterface, TimeUpdatableInterface, SoundEmitterInte
             $this->alive = true;
             $this->timer = 0;
             $this->sprite->setPosition(new Vector2Float(240.0, 768.0));
-            //game.clear_rocks_for_respawn(*self.pos)
+            $this->rocks->clearRocksForRespawn($this->getCollider());
         }
 
         $image = "blank.png";
