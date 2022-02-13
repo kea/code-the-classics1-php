@@ -14,7 +14,7 @@ class Explosion extends Animation implements DrawableInterface
 {
     public const ROCK = 0;
     public const POD = 1;
-    public const TOTEM = 2;
+    public const ENEMY = 2;
     protected Sprite $sprite;
 
     public function __construct(TextureRepository $textureRepository, Vector2Float $position, int $type)

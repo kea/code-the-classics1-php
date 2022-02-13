@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Myriapod\Bullet;
 
+use Myriapod\Enemy\FlyingEnemy;
 use Myriapod\Enemy\Rocks;
 use Myriapod\Enemy\Segments;
 
@@ -37,7 +38,7 @@ class Bullets implements \IteratorAggregate
         $this->bullets = array_filter($this->bullets, static fn($b) => $b->getPosition()->y > 0);
     }
 
-    public function checkCollision(Rocks $rocks, Segments $segments): void
+    public function checkCollision(Rocks $rocks, Segments $segments, ?FlyingEnemy $flyingEnemy): void
     {
         foreach ($this->bullets as $bullet) {
             $gridCell = $this->pos2cell($bullet->getPosition()->x, $bullet->getPosition()->y);
@@ -53,9 +54,12 @@ class Bullets implements \IteratorAggregate
                 return;
             }
 
-            # If it's not a segment, it must be the flying enemy
-            //game.play_sound("meanie_explode")
-            //game.score += 20
+            if ($flyingEnemy && $flyingEnemy->collideWith($bullet->getCollider())) {
+                $flyingEnemy->damage(1);
+
+                return;
+            }
+
         }
     }
 

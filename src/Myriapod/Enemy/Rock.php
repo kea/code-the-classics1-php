@@ -62,7 +62,7 @@ class Rock implements DrawableInterface, TimeUpdatableInterface, SoundEmitterInt
         if ($this->health === 5) {
             $this->sprite->setAnchor(Anchor::LeftTop());
         }
-        $this->explosions->addExplosion($this->getPosition(), ($this->health === 5) ? Explosion::TOTEM : Explosion::ROCK);
+        $this->explosions->addExplosion($this->getPosition(), ($this->health === 5) ? Explosion::ENEMY : Explosion::ROCK);
         $this->health -= $amount;
         $this->showHealth = $this->health;
 

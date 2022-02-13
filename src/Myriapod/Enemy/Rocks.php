@@ -93,6 +93,7 @@ class Rocks implements \IteratorAggregate
         if (!$this->cells[$y][$x]->isAlive()) {
             $rock = $this->cells[$y][$x];
             unset($this->rocks[array_search($rock, $this->rocks, true)], $this->cells[$y][$x], $rock);
+            $this->cells[$y][$x] = null;
         }
 
         return true;
@@ -109,6 +110,7 @@ class Rocks implements \IteratorAggregate
                 $x = array_search($rock, $row, true);
                 if ($x !== false) {
                     unset($this->cells[$y][$x]);
+                    $this->cells[$y][$x] = null;
 
                     return;
                 }

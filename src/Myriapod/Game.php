@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Myriapod;
 
 use Myriapod\Bullet\Bullets;
+use Myriapod\Enemy\FlyingEnemy;
 use Myriapod\Enemy\Rocks;
 use Myriapod\Enemy\Segments;
 use Myriapod\Explosion\Explosion;
@@ -34,6 +35,7 @@ class Game implements DrawableInterface, TimeUpdatableInterface, SoundEmitterInt
     private Rocks $rocks;
     private Segments $segments;
     private Explosions $explosions;
+    private ?FlyingEnemy $flyingEnemy;
 
     public function __construct(
         private TextureRepository $textureRepository,
@@ -76,11 +78,25 @@ class Game implements DrawableInterface, TimeUpdatableInterface, SoundEmitterInt
             $object->update($deltaTime);
         }
 
+        if ($this->flyingEnemy) {
+            $this->flyingEnemy->update($deltaTime);
+            if (!$this->flyingEnemy->isAlive()) {
+                $this->explosions->addExplosion($this->flyingEnemy->getPosition(), Explosion::ENEMY);
+                $this->playSound("meanie_explode0.ogg");
+                //score += 20
+                $this->flyingEnemy = null;
+            } elseif ($this->flyingEnemy->outOfBound()) {
+                $this->flyingEnemy = null;
+            }
+        } elseif (random_int(0, 100) < 2) {
+            $this->flyingEnemy = new FlyingEnemy($this->textureRepository, $this->player?->getPosition()->x ?? 240.0);
+        }
+
         $this->bullets->cleanUp();
         $this->explosions->cleanUp();
         $this->segments->cleanUp();
         $this->player?->checkEnemiesCollision($this->segments);
-        $this->bullets->checkCollision($this->rocks, $this->segments);
+        $this->bullets->checkCollision($this->rocks, $this->segments, $this->flyingEnemy);
 
         $this->gui->update($deltaTime);
     }
@@ -99,12 +115,10 @@ class Game implements DrawableInterface, TimeUpdatableInterface, SoundEmitterInt
 
         usort($objectToDraw, $sort);
 
-        # Draw the flying enemy on top of everything else
-        //all_objs.append(self.flying_enemy)
-
         foreach ($objectToDraw as $object) {
             $object->draw($renderer);
         }
+        $this->flyingEnemy?->draw($renderer);
 
         $this->gui->draw($renderer);
     }

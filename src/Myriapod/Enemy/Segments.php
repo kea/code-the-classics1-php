@@ -69,7 +69,7 @@ class Segments implements \IteratorAggregate
         /** @var Segment $segment */
         foreach ($this->segments as $segment) {
             if ($segment->collideWith($bulletCollider)) {
-                $this->explosions->addExplosion($segment->getPosition()->sub(new Vector2Float(16, 16)), Explosion::TOTEM);
+                $this->explosions->addExplosion($segment->getPosition()->sub(new Vector2Float(16, 16)), Explosion::ENEMY);
                 $segment->damage(1);
 
                 // @todo check
