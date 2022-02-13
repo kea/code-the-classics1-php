@@ -80,7 +80,7 @@ class Game implements DrawableInterface, TimeUpdatableInterface, SoundEmitterInt
         $this->explosions->cleanUp();
         $this->segments->cleanUp();
         $this->player?->checkEnemiesCollision($this->segments);
-        $this->bullets->checkCollision($this->rocks);
+        $this->bullets->checkCollision($this->rocks, $this->segments);
 
         $this->gui->update($deltaTime);
     }
@@ -115,7 +115,7 @@ class Game implements DrawableInterface, TimeUpdatableInterface, SoundEmitterInt
         $this->wave = -1;
         $this->time = 0;
 
-        $this->segments = new Segments($this->textureRepository, $this->rocks);
+        $this->segments = new Segments($this->textureRepository, $this->rocks, $this->explosions);
         $this->flyingEnemy = null;
     }
 

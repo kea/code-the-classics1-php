@@ -143,9 +143,11 @@ class Segment implements DrawableInterface, TimeUpdatableInterface
         };
     }
 
-    private function pos2cell(float $x, float $y): array
+    public function pos2cell(): array
     {
-        return [intdiv((int)$x - 16, 32), intdiv((int)$y, 32)];
+        $position = $this->sprite->getPosition();
+
+        return [intdiv((int)$position->x - 16, 32), intdiv((int)$position->y, 32)];
     }
 
     private function cell2pos(int $cellX, int $cellY, int $xOffset = 0, int $yOffset = 0): array
@@ -235,5 +237,10 @@ class Segment implements DrawableInterface, TimeUpdatableInterface
     public function collideWith(\SDL_Rect $rect): bool
     {
         return $this->sprite->getBoundedRect()->HasIntersection($rect);
+    }
+
+    public function damage(int $damage): void
+    {
+        $this->health -= $damage;
     }
 }

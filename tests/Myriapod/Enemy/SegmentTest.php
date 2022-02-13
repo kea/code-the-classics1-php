@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Myriapod\Enemy;
 
+use Myriapod\Explosion\Explosions;
 use PhpGame\SDL\Texture;
 use PhpGame\SoundManager;
 use PhpGame\TextureRepository;
@@ -18,10 +19,11 @@ class SegmentTest extends TestCase
     public function testMovePriorityHorizontal(): void
     {
         $soundManager = $this->createStub(SoundManager::class);
+        $explosions = $this->createStub(Explosions::class);
         $textureRepo = $this->createStub(TextureRepository::class);
         $textureRepo->method('offsetGet')->willReturn($this->createStub(Texture::class));
         $segment = new Segment(
-            $textureRepo, 10, 10, 1, false, true, new SegmentPositions(), new Rocks($textureRepo, 1, $soundManager)
+            $textureRepo, 10, 10, 1, false, true, new SegmentPositions(), new Rocks($textureRepo, 1, $soundManager, $explosions)
         );
         $this->assertSame(10010, $segment->movePriority(Segment::DIRECTION_UP));
         $this->assertSame(1, $segment->movePriority(Segment::DIRECTION_RIGHT));
@@ -32,10 +34,11 @@ class SegmentTest extends TestCase
     public function testMovePriorityOutOfGrid(): void
     {
         $soundManager = $this->createStub(SoundManager::class);
+        $explosions = $this->createStub(Explosions::class);
         $textureRepo = $this->createStub(TextureRepository::class);
         $textureRepo->method('offsetGet')->willReturn($this->createStub(Texture::class));
         $segment = new Segment(
-            $textureRepo, 12, 10, 1, false, true, new SegmentPositions(), new Rocks($textureRepo, 1, $soundManager)
+            $textureRepo, 12, 10, 1, false, true, new SegmentPositions(), new Rocks($textureRepo, 1, $soundManager, $explosions)
         );
         $phaseDuration = 1 / 60;
         $segment->update(0.001);
@@ -53,12 +56,13 @@ class SegmentTest extends TestCase
     public function testUpdate()
     {
         $soundManager = $this->createStub(SoundManager::class);
+        $explosions = $this->createStub(Explosions::class);
         $textureRepo = $this->createStub(TextureRepository::class);
         $textureRepo->method('offsetGet')->willReturn($this->createStub(Texture::class));
         $currentCellX = 10;
         $currentCellY = 12;
         $segment = new Segment(
-            $textureRepo, $currentCellX, $currentCellY, 1, false, true, new SegmentPositions(), new Rocks($textureRepo, 1, $soundManager)
+            $textureRepo, $currentCellX, $currentCellY, 1, false, true, new SegmentPositions(), new Rocks($textureRepo, 1, $soundManager, $explosions)
         );
         $nextCellX = $currentCellX + 1;
         $nextCellY = $currentCellY;

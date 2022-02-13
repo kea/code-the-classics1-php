@@ -34,4 +34,11 @@ class Bullet implements DrawableInterface, TimeUpdatableInterface
     {
         return $this->sprite->getPosition();
     }
+
+    public function getCollider(): \SDL_Rect
+    {
+        $position = $this->sprite->getPosition();
+
+        return new \SDL_Rect((int)$position->x - 5, (int)$position->y - 5, 10, 40);
+    }
 }

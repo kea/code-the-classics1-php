@@ -34,19 +34,19 @@ class Rock implements DrawableInterface, TimeUpdatableInterface, SoundEmitterInt
         bool $totem,
         private Explosions $explosions
     ) {
-        $anchor = Anchor::LeftTop();
+        if ($totem) {
+            $this->health = 5;
+            $this->showHealth = 5;
+            $anchor = new Anchor(0, 0.5);
+        } else {
+            $this->health = random_int(3, 4);
+            $this->showHealth = 1;
+            $anchor = Anchor::LeftTop();
+        }
         $this->sprite = new Sprite($textureRepository['blank.png'], $position->x + 16, $position->y, $anchor);
 
         $this->type = random_int(0, 3);
 
-        if ($totem) {
-            $this->playSound("totem_create.ogg");
-            $this->health = 5;
-            $this->showHealth = 5;
-        } else {
-            $this->health = random_int(3, 4);
-            $this->showHealth = 1;
-        }
     }
 
     public function damage(int $amount, bool $damagedByBullet = false): bool
@@ -58,6 +58,9 @@ class Rock implements DrawableInterface, TimeUpdatableInterface, SoundEmitterInt
             $this->playSound("rock_destroy0.ogg");
         } else {
             $this->playSound("hit".random_int(0, 3).'.ogg');
+        }
+        if ($this->health === 5) {
+            $this->sprite->setAnchor(Anchor::LeftTop());
         }
         $this->explosions->addExplosion($this->getPosition(), ($this->health === 5) ? Explosion::TOTEM : Explosion::ROCK);
         $this->health -= $amount;

@@ -4,7 +4,10 @@ declare(strict_types=1);
 
 namespace Myriapod\Enemy;
 
+use Myriapod\Explosion\Explosion;
+use Myriapod\Explosion\Explosions;
 use PhpGame\TextureRepository;
+use PhpGame\Vector2Float;
 
 class Segments implements \IteratorAggregate
 {
@@ -12,8 +15,11 @@ class Segments implements \IteratorAggregate
     private array $segments = [];
     private SegmentPositions $segmentPositions;
 
-    public function __construct(private TextureRepository $textureRepository, private Rocks $rocks)
-    {
+    public function __construct(
+        private TextureRepository $textureRepository,
+        private Rocks $rocks,
+        private Explosions $explosions
+    ) {
         $this->segmentPositions = new SegmentPositions();
     }
 
@@ -29,7 +35,16 @@ class Segments implements \IteratorAggregate
 
             $health = $healthPattern[$i % 2];
             $head = $i === 0;
-            $this->segments[] = new Segment($this->textureRepository, $cellX, $cellY, $health, $fast, $head, $this->segmentPositions, $this->rocks);
+            $this->segments[] = new Segment(
+                $this->textureRepository,
+                $cellX,
+                $cellY,
+                $health,
+                $fast,
+                $head,
+                $this->segmentPositions,
+                $this->rocks
+            );
         }
     }
 
@@ -47,5 +62,28 @@ class Segments implements \IteratorAggregate
     {
         $this->segmentPositions->reset();
         $this->segments = array_filter($this->segments, static fn(Segment $b) => $b->isAlive());
+    }
+
+    public function damage(\SDL_Rect $bulletCollider): bool
+    {
+        /** @var Segment $segment */
+        foreach ($this->segments as $segment) {
+            if ($segment->collideWith($bulletCollider)) {
+                $this->explosions->addExplosion($segment->getPosition()->sub(new Vector2Float(16, 16)), Explosion::TOTEM);
+                $segment->damage(1);
+
+                // @todo check
+                // if obj.health == 0 and not game.grid[obj.cell_y][obj.cell_x] and game.allow_movement(game.player.x, game.player.y, obj.cell_x, obj.cell_y):
+                $position = $segment->pos2cell();
+                $this->rocks->addRock($position[0], $position[1], random_int(0, 100) < 20);
+
+                // @todo $this->playSound("segment_explode0.ogg");
+                // @todo score += 10
+
+                return true;
+            }
+        }
+
+        return false;
     }
 }

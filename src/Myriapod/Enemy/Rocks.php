@@ -27,17 +27,20 @@ class Rocks implements \IteratorAggregate
         $this->cells = array_fill(0, self::HEIGHT, array_fill(0, self::WIDTH, null));
     }
 
-    public function addRock(int $x, int $y): void
+    public function addRock(int $x, int $y, bool $totem = false): void
     {
         $rock = new Rock(
             $this->textureRepository,
             new Vector2Float($x * 32, $y * 32),
             $this->wave,
-            false,
+            $totem,
             $this->explosions
         );
         $rock->setSoundManager($this->soundManager);
         $this->add($rock, $x, $y);
+        if ($totem) {
+            $this->soundManager->playSound("totem_create0.ogg");
+        }
     }
 
     private function add(mixed $object, int $x, int $y): void
@@ -98,14 +101,16 @@ class Rocks implements \IteratorAggregate
     public function clearRocksForRespawn(\SDL_Rect $collider): void
     {
         foreach ($this->rocks as $key => $rock) {
-            if ($collider->HasIntersection($rock->getCollider())) {
-                unset($this->rocks[$key]);
-                foreach ($this->cells as $y => $row) {
-                    $x = array_search($rock, $row, true);
-                    if ($x !== false) {
-                        unset($this->cells[$y][$x]);
-                        return;
-                    }
+            if (!$collider->HasIntersection($rock->getCollider())) {
+                continue;
+            }
+            unset($this->rocks[$key]);
+            foreach ($this->cells as $y => $row) {
+                $x = array_search($rock, $row, true);
+                if ($x !== false) {
+                    unset($this->cells[$y][$x]);
+
+                    return;
                 }
             }
         }
