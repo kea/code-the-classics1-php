@@ -12,10 +12,11 @@ class AnchorTest extends TestCase
     public function positionsProvider()
     {
         return [
-            [Anchor::CENTER, Anchor::CENTER, -5, -5],
-            [Anchor::LEFT, Anchor::CENTER, 0, -5],
-            [Anchor::RIGHT, Anchor::BOTTOM, -10, -10],
-            [Anchor::LEFT, Anchor::TOP, 0, 0],
+            [Anchor::CenterCenter(), -5, -5],
+            [Anchor::LeftCenter(), 0, -5],
+            [Anchor::RightBottom(), -10, -10],
+            [Anchor::LeftTop(), 0, 0],
+            [new Anchor(0.2, 0.4), -2, -4],
         ];
     }
 
@@ -23,9 +24,8 @@ class AnchorTest extends TestCase
      * @test
      * @dataProvider positionsProvider
      */
-    public function changeBoundedRect($anchorX, $anchorY, $x, $y)
+    public function changeBoundedRect(Anchor $anchor, $x, $y)
     {
-        $anchor = new Anchor($anchorX, $anchorY);
         $this->assertEquals(new \SDL_Rect($x, $y, 10, 10), $anchor->getBoundedRect(0, 0, 10, 10));
     }
 }

@@ -43,7 +43,20 @@ class Anchor
     private float $x;
     private float $y;
 
-    public function __construct(string $anchorHorizontal, string $anchorVertical)
+    public function __construct(float $horizontalPercentage, float $verticalPercentage)
+    {
+        if ($horizontalPercentage < 0. || $horizontalPercentage > 1.0) {
+            throw new \InvalidArgumentException("Invalid horizontal anchor percentage: ".$horizontalPercentage);
+        }
+        if ($verticalPercentage < 0. || $verticalPercentage > 1.0) {
+            throw new \InvalidArgumentException("Invalid vertical anchor percentage: ".$verticalPercentage);
+        }
+
+        $this->x = $horizontalPercentage;
+        $this->y = $verticalPercentage;
+    }
+
+    public static function fromFixedPoints(string $anchorHorizontal, string $anchorVertical)
     {
         if (!in_array($anchorHorizontal, self::VALID_ANCHOR_NAMES_HORIZONTAL, true)) {
             throw new \InvalidArgumentException("Invalid anchor name: ".$anchorHorizontal);
@@ -52,28 +65,40 @@ class Anchor
             throw new \InvalidArgumentException("Invalid anchor name: ".$anchorVertical);
         }
 
-        $this->x = self::ANCHORS_RELATIVE_POSITION['x'][$anchorHorizontal];
-        $this->y = self::ANCHORS_RELATIVE_POSITION['y'][$anchorVertical];
+        $x = self::ANCHORS_RELATIVE_POSITION['x'][$anchorHorizontal];
+        $y = self::ANCHORS_RELATIVE_POSITION['y'][$anchorVertical];
+
+        return new Anchor($x, $y);
     }
 
     public static function CenterCenter(): Anchor
     {
-        return new Anchor(self::CENTER, self::CENTER);
+        return self::fromFixedPoints(self::CENTER, self::CENTER);
     }
 
     public static function CenterBottom(): Anchor
     {
-        return new Anchor(self::CENTER, self::BOTTOM);
+        return self::fromFixedPoints(self::CENTER, self::BOTTOM);
     }
 
     public static function LeftTop(): Anchor
     {
-        return new Anchor(self::LEFT, self::TOP);
+        return self::fromFixedPoints(self::LEFT, self::TOP);
     }
 
     public static function LeftBottom(): Anchor
     {
-        return new Anchor(self::LEFT, self::BOTTOM);
+        return self::fromFixedPoints(self::LEFT, self::BOTTOM);
+    }
+
+    public static function LeftCenter()
+    {
+        return self::fromFixedPoints(self::LEFT, self::CENTER);
+    }
+
+    public static function RightBottom()
+    {
+        return self::fromFixedPoints(self::RIGHT, self::BOTTOM);
     }
 
     public function getBoundedRect(float $posX, float $posY, int $width, int $height): \SDL_Rect
