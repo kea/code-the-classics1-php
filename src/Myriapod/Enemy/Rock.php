@@ -107,4 +107,9 @@ class Rock implements DrawableInterface, TimeUpdatableInterface, SoundEmitterInt
     {
         return $this->health > 0;
     }
+
+    public function updateWave(int $wave): void
+    {
+        $this->wave = $wave;
+    }
 }

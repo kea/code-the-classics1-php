@@ -66,6 +66,7 @@ class Game implements DrawableInterface, TimeUpdatableInterface, SoundEmitterInt
             ++$this->wave;
             $this->time = 0;
             $this->segments->create($this->wave);
+            $this->rocks->updateWave($this->wave);
         }
     }
 

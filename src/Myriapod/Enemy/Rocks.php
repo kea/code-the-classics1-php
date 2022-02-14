@@ -117,4 +117,12 @@ class Rocks implements \IteratorAggregate
             }
         }
     }
+
+    public function updateWave(int $wave): void
+    {
+        $this->wave = $wave;
+        foreach ($this->rocks as $rock) {
+            $rock->updateWave($wave);
+        }
+    }
 }
