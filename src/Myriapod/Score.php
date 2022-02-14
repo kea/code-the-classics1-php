@@ -15,7 +15,7 @@ final class Score
 
     public function add(int $score): void
     {
-        $this->score = max($this->score, $score);
+        $this->score += $score;
     }
 
     public function reset(): void

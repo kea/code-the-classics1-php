@@ -12,7 +12,6 @@ use PhpGame\DigitsSprites;
 use PhpGame\DrawableInterface;
 use PhpGame\SDL\Renderer;
 use PhpGame\Sprite;
-use PhpGame\TextSprite;
 use PhpGame\TextureRepository;
 use PhpGame\TimeUpdatableInterface;
 use PhpGame\Vector2Float;
@@ -49,7 +48,9 @@ class GUI implements DrawableInterface, TimeUpdatableInterface
         for ($i = 0; $i < 10; $i++) {
             $digits[] = $this->textureRepository['digit'.$i.'.png'];
         }
-        $this->scoreText = new DigitsSprites($digits, '0', new Vector2Float(360.0, 20.0));
+        $this->scoreText = new DigitsSprites($digits, '0', new Vector2Float(468.0, 5.0));
+        $this->scoreText->setTracking(-6);
+        $this->scoreText->setAnchor(Anchor:: RightTop());
         $this->sprites["title"] = new Sprite($this->textureRepository["title.png"], Game::WIDTH / 2, Game::HEIGHT / 2);
         $this->sprites["gameover"] = new Sprite($this->textureRepository["over.png"], Game::WIDTH / 2, Game::HEIGHT / 2);
         $this->sprites["life1"] = new Sprite($this->textureRepository["life.png"], 8, 4, Anchor::LeftTop());
@@ -85,7 +86,7 @@ class GUI implements DrawableInterface, TimeUpdatableInterface
             $this->sprites['gameover']->draw($renderer);
         }
         if ($this->state === self::PLAY) {
-            $this->scoreText->updateText((string)($this->score->get()));
+            $this->scoreText->updateText((string)$this->score->get());
             $this->scoreText->draw($renderer);
             $this->drawLives($renderer);
         }

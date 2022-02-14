@@ -6,6 +6,7 @@ namespace Myriapod\Enemy;
 
 use Myriapod\Explosion\Explosion;
 use Myriapod\Explosion\Explosions;
+use Myriapod\Score;
 use PhpGame\TextureRepository;
 use PhpGame\Vector2Float;
 
@@ -64,7 +65,7 @@ class Segments implements \IteratorAggregate
         $this->segments = array_filter($this->segments, static fn(Segment $b) => $b->isAlive());
     }
 
-    public function damage(\SDL_Rect $bulletCollider): bool
+    public function damage(\SDL_Rect $bulletCollider, Score $score): bool
     {
         /** @var Segment $segment */
         foreach ($this->segments as $segment) {
@@ -78,7 +79,7 @@ class Segments implements \IteratorAggregate
                 $this->rocks->addRock($position[0], $position[1], random_int(0, 100) < 20);
 
                 // @todo $this->playSound("segment_explode0.ogg");
-                // @todo score += 10
+                $score->add(10);
 
                 return true;
             }

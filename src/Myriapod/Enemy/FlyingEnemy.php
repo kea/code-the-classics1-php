@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Myriapod\Enemy;
 
+use Myriapod\Score;
 use PhpGame\DrawableInterface;
 use PhpGame\SDL\Renderer;
 use PhpGame\Sprite;
@@ -82,9 +83,10 @@ class FlyingEnemy implements DrawableInterface, TimeUpdatableInterface
         return $this->sprite->getBoundedRect()->HasIntersection($rect);
     }
 
-    public function damage(int $damage): void
+    public function damage(int $damage, Score $score): void
     {
         $this->health -= $damage;
+        $score->add(20);
     }
 
     public function getPosition(): Vector2Float

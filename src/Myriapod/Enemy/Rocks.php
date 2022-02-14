@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Myriapod\Enemy;
 
 use Myriapod\Explosion\Explosions;
+use Myriapod\Score;
 use PhpGame\SoundManager;
 use PhpGame\TextureRepository;
 use PhpGame\Vector2Float;
@@ -83,13 +84,13 @@ class Rocks implements \IteratorAggregate
         return !empty($this->cells[$y][$x]);
     }
 
-    public function damage(int $x, int $y, int $damage, bool $isBullet): bool
+    public function damage(int $x, int $y, int $damage, bool $isBullet, ?Score $score = null): bool
     {
         if (!$this->isOccupied($x, $y)) {
             return false;
         }
 
-        $this->cells[$y][$x]->damage($damage, $isBullet);
+        $this->cells[$y][$x]->damage($damage, $isBullet, $score);
         if (!$this->cells[$y][$x]->isAlive()) {
             $rock = $this->cells[$y][$x];
             unset($this->rocks[array_search($rock, $this->rocks, true)], $this->cells[$y][$x], $rock);

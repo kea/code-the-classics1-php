@@ -46,7 +46,7 @@ class Game implements DrawableInterface, TimeUpdatableInterface, SoundEmitterInt
         private Score $score
     ) {
         $this->entityRegistry = $entityRegistry;
-        $this->bullets = new Bullets();
+        $this->bullets = new Bullets($score);
         $this->explosions = new Explosions($this->textureRepository);
         $this->soundManager = $soundManager;
         $this->rocks = new Rocks($this->textureRepository, $this->wave, $this->soundManager, $this->explosions);

@@ -7,11 +7,16 @@ namespace Myriapod\Bullet;
 use Myriapod\Enemy\FlyingEnemy;
 use Myriapod\Enemy\Rocks;
 use Myriapod\Enemy\Segments;
+use Myriapod\Score;
 
 class Bullets implements \IteratorAggregate
 {
     /** @var array<int, Bullet> */
     private array $bullets = [];
+
+    public function __construct(private Score $score)
+    {
+    }
 
     public function append(Bullet $bullet): void
     {
@@ -42,25 +47,24 @@ class Bullets implements \IteratorAggregate
     {
         foreach ($this->bullets as $bullet) {
             $gridCell = $this->pos2cell($bullet->getPosition()->x, $bullet->getPosition()->y);
-            if ($rocks->damage($gridCell[0], $gridCell[1], 1, true)) {
+            if ($rocks->damage($gridCell[0], $gridCell[1], 1, true, $this->score)) {
                 $this->remove($bullet);
 
                 return;
             }
 
-            if ($segments->damage($bullet->getCollider())) {
+            if ($segments->damage($bullet->getCollider(), $this->score)) {
                 $this->remove($bullet);
 
                 return;
             }
 
             if ($flyingEnemy && $flyingEnemy->collideWith($bullet->getCollider())) {
-                $flyingEnemy->damage(1);
+                $flyingEnemy->damage(1, $this->score);
                 $this->remove($bullet);
 
                 return;
             }
-
         }
     }
 

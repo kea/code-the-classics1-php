@@ -91,14 +91,19 @@ class Anchor
         return self::fromFixedPoints(self::LEFT, self::BOTTOM);
     }
 
-    public static function LeftCenter()
+    public static function LeftCenter(): Anchor
     {
         return self::fromFixedPoints(self::LEFT, self::CENTER);
     }
 
-    public static function RightBottom()
+    public static function RightBottom(): Anchor
     {
         return self::fromFixedPoints(self::RIGHT, self::BOTTOM);
+    }
+
+    public static function RightTop(): Anchor
+    {
+        return self::fromFixedPoints(self::RIGHT, self::TOP);
     }
 
     public function getBoundedRect(float $posX, float $posY, int $width, int $height): \SDL_Rect

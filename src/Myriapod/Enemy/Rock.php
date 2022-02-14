@@ -6,6 +6,7 @@ namespace Myriapod\Enemy;
 
 use Myriapod\Explosion\Explosion;
 use Myriapod\Explosion\Explosions;
+use Myriapod\Score;
 use PhpGame\Anchor;
 use PhpGame\DrawableInterface;
 use PhpGame\SDL\Renderer;
@@ -49,11 +50,11 @@ class Rock implements DrawableInterface, TimeUpdatableInterface, SoundEmitterInt
 
     }
 
-    public function damage(int $amount, bool $damagedByBullet = false): bool
+    public function damage(int $amount, bool $damagedByBullet = false, ?Score $score = null): bool
     {
         if ($damagedByBullet && $this->health === 5) {
             $this->playSound("totem_destroy0.ogg");
-//            game.score += 100
+            $score?->add(100);
         } elseif ($amount > $this->health - 1) {
             $this->playSound("rock_destroy0.ogg");
         } else {

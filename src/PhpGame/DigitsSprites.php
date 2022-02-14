@@ -12,6 +12,9 @@ class DigitsSprites
     private string $text;
     private Transform $transform;
     private Anchor $anchor;
+    private int $digitWidth;
+    private int $digitHeight;
+    private int $tracking = 0;
 
     /**
      * Sprite constructor.
@@ -26,7 +29,19 @@ class DigitsSprites
         $this->textures = $textures;
         $this->text = $text;
         $this->transform = new Transform($position);
-        $this->anchor = Anchor::CenterBottom();
+        $this->anchor = Anchor::LeftTop();
+        $this->digitWidth = $this->textures[0]->getWidth();
+        $this->digitHeight = $this->textures[0]->getWidth();
+    }
+
+    public function setTracking(int $tracking): void
+    {
+        $this->tracking = $tracking;
+    }
+
+    public function setAnchor(Anchor $anchor): void
+    {
+        $this->anchor = $anchor;
     }
 
     /**
@@ -34,7 +49,7 @@ class DigitsSprites
      * @param Renderer           $renderer
      * @return static
      */
-    public static function fromImage(array $paths, Renderer $renderer): self
+    public static function fromImages(array $paths, Renderer $renderer): self
     {
         $textures = [];
         foreach ($paths as $path) {
@@ -57,12 +72,26 @@ class DigitsSprites
     public function draw(Renderer $renderer): void
     {
         $chars = str_split($this->text);
-        $nextPosition = clone $this->transform->getPosition();
-        $digitWidth = $this->textures[0]->getWidth();
+
+        $digitRealWidth = $this->digitWidth + $this->tracking;
+        $displacement = new Vector2Float($digitRealWidth, 0);
+
+        $boundedRect = $this->anchor->getBoundedRect(
+            $this->transform->getPosition()->x,
+            $this->transform->getPosition()->y,
+            $digitRealWidth * count($chars),
+            $this->digitHeight
+        );
+
+        $nextPosition = new Vector2Float($boundedRect->x, $boundedRect->y);
+
         foreach ($chars as $char) {
             $digitIndex = max(0, min(9, ord($char) - ord('0')));
-            $renderer->drawTexture($this->textures[$digitIndex], new \SDL_Rect((int)$nextPosition->x, (int)$nextPosition->y));
-            $nextPosition = $nextPosition->add(new Vector2Float($digitWidth, 0));
+            $renderer->drawTexture(
+                $this->textures[$digitIndex],
+                new \SDL_Rect((int)$nextPosition->x, (int)$nextPosition->y, $this->digitWidth, $this->digitHeight)
+            );
+            $nextPosition = $nextPosition->add($displacement);
         }
     }
 }
