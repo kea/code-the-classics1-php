@@ -56,6 +56,7 @@ class Bullets implements \IteratorAggregate
 
             if ($flyingEnemy && $flyingEnemy->collideWith($bullet->getCollider())) {
                 $flyingEnemy->damage(1);
+                $this->remove($bullet);
 
                 return;
             }
