@@ -7,6 +7,11 @@ It's not a web game with the backend in PHP but a fully PHP game.
 It is possible thanks to the [Php-SDL extension](https://github.com/Ponup/php-sdl).
 You need also two PHP extensions for [SDL_mixer](https://github.com/kea/php-sdl-mixer) (sound) and [SDL_image](https://github.com/kea/php-sdl-image) (multiple image format loader).
 
+![Boing](images/boing.png "Boing")
+![Cavern](images/cavern.png "Cavern")
+![Infinite Bunner](images/bunner.png "Infinite bunner")
+![Myriapod](images/myriapod.png "Myriapod")
+
 # Porting status
 
 - Boing! [Ready]
