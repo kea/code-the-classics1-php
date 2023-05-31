@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PhpGame\Input;
 
 class Keyboard
@@ -14,7 +16,7 @@ class Keyboard
     public function update(): void
     {
         $numkeys = 0;
-        $keys = array_flip(SDL_GetKeyboardState($numkeys, false));
+        $keys = array_filter(SDL_GetKeyboardState($numkeys), fn($key) => $key !== 0);
         $this->down = array_diff($this->keys, $keys);
         $this->up = array_diff($keys, $this->keys);
         $this->keys = $keys;
